@@ -6,6 +6,11 @@ import {useLang, setLanguage} from '../../../i18n/Metronici18n'
 
 const languages = [
   {
+    lang: 'tw',
+    name: 'Mandarin Taiwan',
+    flag: toAbsoluteUrl('media/flags/taiwan.svg'),
+  },
+  {
     lang: 'en',
     name: 'English',
     flag: toAbsoluteUrl('media/flags/united-states.svg'),
