@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import {KTIcon, toAbsoluteUrl} from '../../../helpers'
-import {HeaderUserMenu, Search, ThemeModeSwitcher} from '../../../partials'
+import {HeaderUserMenu, Search} from '../../../partials'
 import {useLayout} from '../../core'
 
 const itemClass = 'ms-1 ms-md-4'
@@ -15,10 +15,6 @@ const Navbar = () => {
     <div className='app-navbar flex-shrink-0'>
       <div className={clsx('app-navbar-item align-items-stretch', itemClass)}>
         <Search />
-      </div>
-
-      <div className={clsx('app-navbar-item', itemClass)}>
-        <ThemeModeSwitcher toggleBtnClass={clsx('btn-active-light-primary btn-custom')} />
       </div>
 
       <div className={clsx('app-navbar-item', itemClass)}>
