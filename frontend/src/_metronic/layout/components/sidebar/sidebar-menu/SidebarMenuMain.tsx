@@ -1,17 +1,23 @@
-import {useIntl} from 'react-intl'
 import {KTIcon} from '../../../../helpers'
 import {SidebarMenuItemWithSub} from './SidebarMenuItemWithSub'
 import {SidebarMenuItem} from './SidebarMenuItem'
 
 const SidebarMenuMain = () => {
-  const intl = useIntl()
-
   return (
     <>
+      <SidebarMenuItemWithSub
+        to='/example'
+        title='範例'
+        fontIcon='bi-archive'
+        icon='element-plus'
+      >
+        <SidebarMenuItem to='/example/overview' title='總攬' hasBullet={true} />
+      </SidebarMenuItemWithSub>
+
       <SidebarMenuItem
         to='/dashboard'
         icon='element-11'
-        title={intl.formatMessage({id: 'MENU.DASHBOARD'})}
+        title='儀錶板'
         fontIcon='bi-app-indicator'
       />
       <SidebarMenuItem to='/builder' icon='switch' title='Layout Builder' fontIcon='bi-layers' />
