@@ -1,4 +1,3 @@
-import {KTIcon} from '../../../../helpers'
 import {SidebarMenuItemWithSub} from './SidebarMenuItemWithSub'
 import {SidebarMenuItem} from './SidebarMenuItem'
 
@@ -92,34 +91,12 @@ const SidebarMenuMain = () => {
           <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Apps</span>
         </div>
       </div>
-      <SidebarMenuItemWithSub
-        to='/apps/chat'
-        title='Chat'
-        fontIcon='bi-chat-left'
-        icon='message-text-2'
-      >
-        <SidebarMenuItem to='/apps/chat/private-chat' title='Private Chat' hasBullet={true} />
-        <SidebarMenuItem to='/apps/chat/group-chat' title='Group Chart' hasBullet={true} />
-        <SidebarMenuItem to='/apps/chat/drawer-chat' title='Drawer Chart' hasBullet={true} />
-      </SidebarMenuItemWithSub>
       <SidebarMenuItem
         to='/apps/user-management/users'
         icon='abstract-28'
         title='User management'
         fontIcon='bi-layers'
       />
-      <div className='menu-item'>
-        <a
-          target='_blank'
-          className='menu-link'
-          href={import.meta.env.VITE_APP_PREVIEW_DOCS_URL + '/changelog'}
-        >
-          <span className='menu-icon'>
-            <KTIcon iconName='code' className='fs-2' />
-          </span>
-          <span className='menu-title'>Changelog {import.meta.env.VITE_APP_VERSION}</span>
-        </a>
-      </div>
     </>
   )
 }
