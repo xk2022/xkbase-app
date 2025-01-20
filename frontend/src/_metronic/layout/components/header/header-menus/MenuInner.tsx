@@ -11,7 +11,7 @@ export function MenuInner() {
           menuPlacement='bottom-start'
           menuTrigger='click'
         >
-          <MenuItem to='/example/example1' title='範例1' hasBullet={true} />
+          <MenuItem to='/example/overview' title='範例1' hasBullet={true} />
       </MenuInnerWithSub>
       <MenuItem title='儀錶板' to='/dashboard' />
       <MenuItem title='Layout Builder' to='/builder' />
