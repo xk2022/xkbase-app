@@ -4,7 +4,7 @@ import {HeaderWrapper} from './components/header'
 import {ScrollTop} from './components/scroll-top'
 import {FooterWrapper} from './components/footer'
 import {Sidebar} from './components/sidebar'
-import {ActivityDrawer, InviteUsers, UpgradePlan} from '../partials'
+import {InviteUsers, UpgradePlan} from '../partials'
 import {PageDataProvider} from './core'
 import {reInitMenu} from '../helpers'
 
@@ -30,10 +30,6 @@ const MasterLayout = () => {
           </div>
         </div>
       </div>
-
-      {/* begin:: Drawers */}
-      <ActivityDrawer />
-      {/* end:: Drawers */}
 
       {/* begin:: Modals */}
       <InviteUsers />
