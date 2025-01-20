@@ -1,13 +1,19 @@
-import {useIntl} from 'react-intl'
 import {MenuItem} from './MenuItem'
 import {MenuInnerWithSub} from './MenuInnerWithSub'
 import {MegaMenu} from './MegaMenu'
 
 export function MenuInner() {
-  const intl = useIntl()
   return (
     <>
-      <MenuItem title={intl.formatMessage({id: 'MENU.DASHBOARD'})} to='/dashboard' />
+      <MenuInnerWithSub
+          title='範例'
+          to='/example'
+          menuPlacement='bottom-start'
+          menuTrigger='click'
+        >
+          <MenuItem to='/example/example1' title='範例1' hasBullet={true} />
+      </MenuInnerWithSub>
+      <MenuItem title='儀錶板' to='/dashboard' />
       <MenuItem title='Layout Builder' to='/builder' />
       <MenuInnerWithSub
         title='Crafted'
