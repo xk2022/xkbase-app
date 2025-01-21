@@ -14,7 +14,6 @@ export function MenuInner() {
           <MenuItem to='/example/overview' title='範例1' hasBullet={true} />
       </MenuInnerWithSub>
       <MenuItem title='儀錶板' to='/dashboard' />
-      <MenuItem title='Layout Builder' to='/builder' />
       <MenuInnerWithSub
         title='Crafted'
         to='/crafted'
