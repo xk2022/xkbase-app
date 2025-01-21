@@ -1,6 +1,5 @@
 import {MenuItem} from './MenuItem'
 import {MenuInnerWithSub} from './MenuInnerWithSub'
-import {MegaMenu} from './MegaMenu'
 
 export function MenuInner() {
   return (
@@ -106,16 +105,6 @@ export function MenuInner() {
 
       <MenuInnerWithSub title='Apps' to='/apps' menuPlacement='bottom-start' menuTrigger='click'>
         <MenuItem icon='abstract-28' to='/apps/user-management/users' title='User management' />
-      </MenuInnerWithSub>
-
-      <MenuInnerWithSub
-        isMega={true}
-        title='Layouts'
-        to='/mega-menu'
-        menuPlacement='bottom-start'
-        menuTrigger='click'
-      >
-        <MegaMenu />
       </MenuInnerWithSub>
     </>
   )
