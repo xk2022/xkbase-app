@@ -30,12 +30,13 @@
   </script>
   <!--end::Theme mode setup on page load-->
 
+  <!-- React 主要渲染的容器 -->
   <div id="root"></div>
 
   <!--begin::Loading markup-->
   <div id="splash-screen" class="splash-screen">
-    <img src="media/logos/keenthemes-dark.svg" class="dark-logo" alt="Keenthemes dark logo" />
-    <img src="media/logos/keenthemes.svg" class="light-logo" alt="Keenthemes light logo" />
+    <!-- <img src="media/logos/keenthemes-dark.svg" class="dark-logo" alt="Keenthemes dark logo" /> -->
+    <!-- <img src="media/logos/keenthemes.svg" class="light-logo" alt="Keenthemes light logo" /> -->
     <div class="loader-wrapper">
       <span class="loader"></span>
       <span class="loading-text">Loading...</span>
@@ -44,6 +45,8 @@
   <!--end::Loading markup-->
 
   <div id="root-modals"></div>
+  <!-- Vite 會在 index.html 內透過 <script> 載入入口文件 -->
+  <!-- <script type="module" src="/src/login.tsx"></script> -->
   <script type="module" src="/src/main.tsx"></script>
 </body>
 
