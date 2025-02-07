@@ -5,12 +5,14 @@ const SidebarMenuMain = () => {
   return (
     <>
       <SidebarMenuItemWithSub
-        to='/example'
-        title='範例'
+        to='/permission/user'
+        title='權限'
         fontIcon='bi-archive'
         icon='element-plus'
       >
-        <SidebarMenuItem to='/example/overview' title='總攬' hasBullet={true} />
+        <SidebarMenuItem to='/permission/user/overview' title='使用者' hasBullet={true} />
+        <SidebarMenuItem to='/permission/role/overview' title='角色' hasBullet={true} />
+        <SidebarMenuItem to='/permission/permission/overview' title='權限' hasBullet={true} />
       </SidebarMenuItemWithSub>
 
       <SidebarMenuItem

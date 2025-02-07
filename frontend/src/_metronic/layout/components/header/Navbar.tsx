@@ -10,7 +10,7 @@ const btnIconClass = 'fs-2'
 const Navbar = () => {
   const {config} = useLayout()
   return (
-    <div className='app-navbar flex-shrink-0'>
+    <div className='app-navbar flex-shrink-0 ms-auto'>
       <div className={clsx('app-navbar-item', itemClass)}>
         <div
           className={clsx('cursor-pointer symbol', userAvatarClass)}
