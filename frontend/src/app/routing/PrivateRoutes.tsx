@@ -16,7 +16,7 @@ import {WithChildren} from '../../_metronic/helpers'
 // 懶加載頁面
 const routesConfig = [
   // TODO add page info here only 設定路由資訊
-  { key: 'ExamplePage', path: 'example/*', importPath: '../modules/example/ExamplePage' },
+  { key: 'UserPage', path: 'permission/user/*', importPath: '../pages/permission/user/UserPage' },
   { key: 'ProfilePage', path: 'crafted/pages/profile/*', importPath: '../modules/profile/ProfilePage' },
   { key: 'WizardsPage', path: 'crafted/pages/wizards/*', importPath: '../modules/wizards/WizardsPage' },
   { key: 'AccountPage', path: 'crafted/account/*', importPath: '../modules/accounts/AccountPage' },
@@ -48,7 +48,7 @@ const PrivateRoutes = () => {
     <Routes>
       <Route element={<MasterLayout />}>
         {/* Redirect to Dashboard after success login/registartion */}
-        <Route path='auth/*' element={<Navigate to='/example/overview' />} />
+        <Route path='auth/*' element={<Navigate to='/permission/user/overview' />} />
 
         {/* Pages 主頁 */}
         <Route path='dashboard' element={<DashboardWrapper />} />
