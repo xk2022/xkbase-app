@@ -35,15 +35,15 @@ const AuthLayout = () => {
           {/* begin::Links */}
           <div className='d-flex fw-semibold text-primary fs-base'>
             <a href='#' className='px-5' target='_blank'>
-              Terms
+              條款
             </a>
 
             <a href='#' className='px-5' target='_blank'>
-              Plans
+              計劃
             </a>
 
             <a href='#' className='px-5' target='_blank'>
-              Contact Us
+              聯絡我們
             </a>
           </div>
           {/* end::Links */}
@@ -61,14 +61,17 @@ const AuthLayout = () => {
         <div className='d-flex flex-column flex-center py-15 px-5 px-md-15 w-100'>
           {/* begin::Logo */}
           <Link to='/' className='mb-12'>
-            <img alt='Logo' src={toAbsoluteUrl('media/logos/custom-1.png')} className='h-75px' />
+            {/* <img alt='Logo' src={toAbsoluteUrl('media/logos/custom-1.png')} className='h-75px' /> */}
+            <h1 className='text-white fs-2qx fw-bolder text-center mb-7'>
+              XKTruck
+            </h1>
           </Link>
           {/* end::Logo */}
 
           {/* begin::Image */}
           <img
             className='mx-auto w-275px w-md-50 w-xl-500px mb-10 mb-lg-20'
-            src={toAbsoluteUrl('media/misc/auth-screens.png')}
+            src={toAbsoluteUrl('media/misc/auth-screens2.png')}
             alt=''
           />
           {/* end::Image */}
@@ -81,7 +84,7 @@ const AuthLayout = () => {
 
           {/* begin::Text */}
           <div className='text-white fs-base text-center'>
-            In this kind of post,{' '}
+            {/* In this kind of post,{' '}
             <a href='#' className='opacity-75-hover text-warning fw-bold me-1'>
               the blogger
             </a>
@@ -90,7 +93,9 @@ const AuthLayout = () => {
             <a href='#' className='opacity-75-hover text-warning fw-bold me-1'>
               the interviewee
             </a>
-            and their <br /> work following this is a transcript of the interview.
+            and their <br /> work following this is a transcript of the interview. */}
+            智慧調度與數據分析，提升車隊運營效能 <br />
+            一站式車輛與物流管理解決方案 <br />
           </div>
           {/* end::Text */}
         </div>

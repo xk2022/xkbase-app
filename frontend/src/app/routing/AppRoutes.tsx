@@ -39,13 +39,14 @@ const {BASE_URL} = import.meta.env
  */
 const AppRoutes: FC = () => {
   const {currentUser} = useAuth()
+  
   return (
     <BrowserRouter basename={BASE_URL}>
       <Routes>
         <Route element={<App />}>
           <Route path='error/*' element={<ErrorsPage />} />
           <Route path='logout' element={<Logout />} />
-          /** 登入狀態分流 */
+          {/* 登入狀態分流 */}
           {currentUser ? ( // 如果已登入
             <>
               <Route path='/*' element={<PrivateRoutes />} />
