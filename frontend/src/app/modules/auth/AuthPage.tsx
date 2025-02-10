@@ -4,6 +4,11 @@ import {ForgotPassword} from './components/ForgotPassword'
 import {Login} from './components/Login'
 import {AuthLayout} from './AuthLayout'
 
+/**
+ * index 代表 預設路由，當使用者進入 /auth 時，會 自動載入 <Login />。
+ * 
+ * @returns 
+ */
 const AuthPage = () => (
   <Routes>
     <Route element={<AuthLayout />}>
