@@ -50,7 +50,7 @@ const AppRoutes: FC = () => {
           {currentUser ? ( // 如果已登入
             <>
               <Route path='/*' element={<PrivateRoutes />} />
-              <Route index element={<Navigate to='/permission/user' />} />
+              <Route index element={<Navigate to='/dashboard' />} />
             </>
           ) : ( // 未登入
             <>
