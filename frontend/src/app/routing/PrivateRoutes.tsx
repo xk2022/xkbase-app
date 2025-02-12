@@ -23,7 +23,9 @@ const pageImports: Record<string, () => Promise<{ default: React.ComponentType<R
   WidgetsPage: () => import("../modules/widgets/WidgetsPage"),
   UsersPage: () => import("../modules/apps/user-management/UsersPage"),
 
-  UserPage: () => import("../pages/permission/user/UserPage"),
+  UserPage: () => import("../pages/auth/user/UserPage"),
+  RolePage: () => import("../pages/auth/role/RolePage"),
+  PermissionPage: () => import("../pages/auth/permission/PermissionPage"),
 };
 
 const routesConfig = [
@@ -35,7 +37,9 @@ const routesConfig = [
   { key: 'WidgetsPage', path: 'crafted/widgets/*' },
   { key: 'UsersPage', path: 'apps/user-management/*' },
 
-  { key: 'UserPage', path: 'permission/user/*' },
+  { key: 'UserPage', path: 'auth/user/*' },
+  { key: 'RolePage', path: 'auth/role/*' },
+  { key: 'PermissionPage', path: 'auth/permission/*' },
 ]
 // 使用 `map()` 統一處理 `lazy()`
 const pages = routesConfig.map(({ key, path }) => ({

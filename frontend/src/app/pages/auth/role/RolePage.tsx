@@ -3,10 +3,10 @@ import {Route, Routes} from 'react-router-dom'
 import {PageLink, PageTitle} from '../../../../_metronic/layout/core'
 import {Overview} from './Overview'
 
-const userBreadCrumbs: Array<PageLink> = [
+const roleBreadCrumbs: Array<PageLink> = [
   {
-    title: 'User',
-    path: '/permission/user/overview',
+    title: 'Role',
+    path: '/auth/role/overview',
     isSeparator: false,
     isActive: false,
   },
@@ -18,7 +18,7 @@ const userBreadCrumbs: Array<PageLink> = [
   },
 ]
 
-const UserPage: React.FC = () => {
+const RolePage: React.FC = () => {
   return (
     <Routes>
       <Route>
@@ -26,7 +26,7 @@ const UserPage: React.FC = () => {
           path='overview'
           element={
             <>
-              <PageTitle breadcrumbs={userBreadCrumbs}>Overview</PageTitle>
+              <PageTitle breadcrumbs={roleBreadCrumbs}>Overview</PageTitle>
               <Overview />
             </>
           }
@@ -36,4 +36,4 @@ const UserPage: React.FC = () => {
   )
 }
 
-export default UserPage
+export default RolePage

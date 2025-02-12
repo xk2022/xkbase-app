@@ -4,23 +4,22 @@ import {SidebarMenuItem} from './SidebarMenuItem'
 const SidebarMenuMain = () => {
   return (
     <>
-      <SidebarMenuItemWithSub
-        to='/permission/user'
-        title='權限'
-        fontIcon='bi-archive'
-        icon='element-plus'
-      >
-        <SidebarMenuItem to='/permission/user/overview' title='使用者' hasBullet={true} />
-        <SidebarMenuItem to='/permission/role/overview' title='角色' hasBullet={true} />
-        <SidebarMenuItem to='/permission/permission/overview' title='權限' hasBullet={true} />
-      </SidebarMenuItemWithSub>
-
       <SidebarMenuItem
         to='/dashboard'
         icon='element-11'
         title='儀錶板'
         fontIcon='bi-app-indicator'
       />
+      <SidebarMenuItemWithSub
+        to='/auth'
+        title='權限'
+        fontIcon='bi-archive'
+        icon='element-plus'
+      >
+        <SidebarMenuItem to='/auth/user/overview' title='使用者' hasBullet={true} />
+        <SidebarMenuItem to='/auth/role/overview' title='角色' hasBullet={true} />
+        <SidebarMenuItem to='/auth/permission/overview' title='權限' hasBullet={true} />
+      </SidebarMenuItemWithSub>
       <div className='menu-item'>
         <div className='menu-content pt-8 pb-2'>
           <span className='menu-section text-muted text-uppercase fs-8 ls-1'>Crafted</span>
