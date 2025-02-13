@@ -91,12 +91,16 @@ export function Overview() {
 
   return (
     <Content>
-      <nav aria-label="breadcrumb">
-        <ol className="breadcrumb">
-          <li className="breadcrumb-item">權限</li>
-          <li className="breadcrumb-item">使用者</li>
+      <div className="container">
+        <ol className="breadcrumb text-muted fs-6 fw-bold">
+          <li className="breadcrumb-item pe-3">
+            <a href="#" className="pe-3">
+            權限
+            </a>
+          </li>
+          <li className="breadcrumb-item px-3 text-muted">使用者</li>
         </ol>
-      </nav>
+      </div>
       <div className="app-content flex-column-fluid">
         <div className="card">
           <div className="card-header border-0 pt-6">
