@@ -2,37 +2,39 @@ import { useState } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
-interface Role {
+interface User {
     id: number;
-    code: string;
-    title: string;
-    description: string;
-    orders: number;
+    username: string;
+    email: string;
+    cellPhone: string;
+    password: string;
 }
 
 interface DeleteModalProps {
     deleteModal: boolean;
     onClose: () => void;
-    role: Role | null;
+    user: User | null;
     onAlert: (message: string, type: "success" | "danger" | "warning") => void;
-    onRoleUpdated: () => void;
+    onUserUpdated: () => void;
 }
 
-export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated }: DeleteModalProps) {
-    // 刪除角色
+export function DeleteModal({ deleteModal, onClose, user, onAlert, onUserUpdated }: DeleteModalProps) {
+    // 刪除使用者
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!role) {
+        if (!user) {
             return;
         }
         try {
-            const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
+            const response = await fetch(`http://localhost:8081/api/upms/users/${user.id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
+
             if (response.ok) {
-                onAlert("角色已成功刪除！", "success");
-                onRoleUpdated();
+                onAlert("使用者已成功刪除！", "success");
+                onUserUpdated();
+                onClose();
                 return;
             }
             const responseData = await response.json();
@@ -48,7 +50,7 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
         }
     };
 
-    if (!deleteModal || !role) {
+    if (!deleteModal || !user) {
         return null;
     }
 
@@ -58,7 +60,7 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
                 <div className="modal-dialog modal-dialog-centered mw-650px">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h2 className="fw-bolder">刪除角色</h2>
+                            <h2 className="fw-bolder">刪除使用者</h2>
                             <button type="button" className="btn btn-icon btn-sm btn-active-icon-primary" onClick={onClose}>
                                 <KTIcon iconName="cross" className="fs-1" />
                             </button>
@@ -67,7 +69,7 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
                             <form className="form" noValidate onSubmit={handleDelete}>
                                 <div className="row fv-row">
                                     <label className="col-lg col-form-label fw-bold fs-6">
-                                        是否確定要刪除角色 "{role.code}"？
+                                        是否確定要刪除使用者 "{user.username}"？
                                     </label>
                                 </div>
                                 <div className="modal-footer">

@@ -3,34 +3,36 @@ import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
 
-interface Role {
+interface User {
   id: number;
-  code: string;
-  title: string;
-  description: string;
-  orders: number;
+  username: string;
+  email: string;
+  cellPhone: string;
+  password: string;
+  enabled: boolean;
+  locked: boolean;
 }
 
-interface RoleListProps {
+interface UserListProps {
   searchKeyword: string;
   onAlert: (message: string, type: "success" | "warning" | "danger") => void;
 }
 
-const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
-  const [roles, setRoles] = useState<Role[]>([]);
+const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
+  const [users, setUsers] = useState<User[]>([]);
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   // 獲取角色列表的函數
-  const fetchRoles = async () => {
+  const fetchUsers = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8081/api/upms/roles?keyword=${encodeURIComponent(searchKeyword)}`
+        `http://localhost:8081/api/upms/users?keyword=${encodeURIComponent(searchKeyword)}`
       );
       const responseData = await response.json();
       if (response.ok) {
-        setRoles(responseData.data);
+        setUsers(responseData.data);
         return;
       }
       if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
@@ -43,26 +45,25 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
     }
   };
 
-  // 當 searchKeyword 更新時重新獲取角色資料
   useEffect(() => {
-    fetchRoles();
+    fetchUsers();
   }, [searchKeyword]);
 
   // 打開編輯模式
-  const handleEditClick = (role: Role) => {
-    setSelectedRole(role);
+  const handleEditClick = (user: User) => {
+    setSelectedUser(user);
     setEditModalOpen(true);
   };
 
   // 打開刪除模式
-  const handleDeleteClick = (role: Role) => {
-    setSelectedRole(role);
-    setDeleteModalOpen(true); // 開啟刪除Modal
+  const handleDeleteClick = (user: User) => {
+    setSelectedUser(user);
+    setDeleteModalOpen(true);
   };
 
   // 角色更新後刷新角色列表
-  const handleRoleUpdated = () => {
-    fetchRoles();
+  const handleUserUpdated = () => {
+    fetchUsers();
     setEditModalOpen(false);
   };
 
@@ -73,31 +74,51 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
           <thead>
             <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
               <td className="min-w-125px">名稱</td>
-              <td className="min-w-125px">標題</td>
-              <td className="min-w-125px">描述</td>
-              <td className="min-w-125px">排序</td>
+              <td className="min-w-125px">信箱</td>
+              <td className="min-w-125px">手機</td>
+              <td className="min-w-125px">啟用</td>
+              <td className="min-w-125px">鎖定</td>
               <td className="min-w-125px">功能</td>
             </tr>
           </thead>
           <tbody>
-            {roles.length > 0 ? (
-              roles.map((role) => (
-                <tr key={role.id}>
-                  <td>{role.code}</td>
-                  <td>{role.title}</td>
-                  <td>{role.description}</td>
-                  <td>{role.orders}</td>
+            {users.length > 0 ? (
+              users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.username}</td>
+                  <td>{user.email}</td>
+                  <td>{user.cellPhone}</td>
+                  <td>
+                    <div className="form-check form-switch form-check-custom form-check-solid">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={!user.locked}
+                        readOnly
+                      />
+                    </div>
+                  </td>
+                  <td>
+                    <div className="form-check form-switch form-check-custom form-check-solid">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={!user.enabled}
+                        readOnly
+                      />
+                    </div>
+                  </td>
                   <td>
                     <button
                       className="btn btn-sm btn-warning"
-                      onClick={() => handleEditClick(role)}
+                      onClick={() => handleEditClick(user)}
                     >
                       <KTIcon iconName="message-edit" className="fs-2" />
                       編輯
                     </button>
                     <button
                       className="btn btn-sm btn-danger ms-2"
-                      onClick={() => handleDeleteClick(role)}
+                      onClick={() => handleDeleteClick(user)}
                     >
                       <KTIcon iconName="cross" className="fs-2" />
                       刪除
@@ -108,7 +129,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
             ) : (
               <tr>
                 <td colSpan={5} className="text-center text-muted">
-                  沒有角色資料
+                  沒有使用者資料
                 </td>
               </tr>
             )}
@@ -116,27 +137,27 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
         </table>
       </div>
 
-      {editModal && selectedRole && (
+      {editModal && selectedUser && (
         <EditModal
           editModal={editModal}
           onClose={() => setEditModalOpen(false)}
-          role={selectedRole}
+          user={selectedUser}
           onAlert={onAlert}
-          onRoleUpdated={handleRoleUpdated}
+          onUserUpdated={handleUserUpdated}
         />
       )}
 
-      {deleteModal && selectedRole && (
+      {deleteModal && selectedUser && (
         <DeleteModal
           deleteModal={deleteModal}
           onClose={() => setDeleteModalOpen(false)}
-          role={selectedRole}
+          user={selectedUser}
           onAlert={onAlert}
-          onRoleUpdated={handleRoleUpdated}
+          onUserUpdated={handleUserUpdated}
         />
       )}
     </>
   );
 };
 
-export default RoleList;
+export default UserList;
