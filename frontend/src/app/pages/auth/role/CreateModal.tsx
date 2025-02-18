@@ -11,8 +11,8 @@ interface CreateModalProps {
 
 export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: CreateModalProps) {
   const initialFormState = { code: '', title: '', description: '', orders: '0' };
-  const initialErrorState = { code: false, title: false, description: false, orders: false };
-  const initialTouchedState = { code: false, title: false, description: false, orders: false };
+  const initialErrorState = { code: false, title: false, orders: false };
+  const initialTouchedState = { code: false, title: false, orders: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -41,11 +41,10 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ code: true, title: true, description: true, orders: true });
+    setTouched({ code: true, title: true, orders: true });
     const newErrors = {
       code: formData.code.trim() === '',
       title: formData.title.trim() === '',
-      description: formData.description.trim() === '',
       orders: formData.orders.trim() === '' || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100
     };
     setErrors(newErrors);
@@ -61,15 +60,21 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
       if (response.ok) {
         onAlert("新增成功！", "success");
         onRoleCreated();
-      } else {
-        onAlert("新增失敗，請稍後再試！", "warning");
+        onClose();
+        return;
       }
+      const responseData = await response.json();
+      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+        onAlert(responseData.errorDetails.join("\n"), "warning");
+        return;
+      }
+      onAlert(responseData.message, "warning");
     } catch (error) {
       console.error("提交錯誤:", error);
       onAlert("系統錯誤，請稍後再試！", "danger");
+      onClose();
     }
-    onClose();
-  };  
+  };
 
   if (!createModal) {
     return null;
@@ -77,7 +82,7 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
 
   return (
     <Content>
-      <div className={`modal fade ${createModal ? 'show d-block' : ''}`} id="kt_modal_add_user" role="dialog" tabIndex={-1} aria-modal="true">
+      <div className={`modal fade ${createModal ? 'show d-block' : ''}`} id="kt_modal_add_role" role="dialog" tabIndex={-1} aria-modal="true">
         <div className="modal-dialog modal-dialog-centered mw-650px">
           <div className="modal-content">
             <div className="modal-header">
@@ -87,8 +92,8 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
               </button>
             </div>
             <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-              <form id="kt_modal_add_user_form" className="form" onSubmit={handleSubmit}>
-                
+              <form id="kt_modal_add_role_form" className="form" onSubmit={handleSubmit}>
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -146,16 +151,8 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
                       autoComplete="off"
                       value={formData.description}
                       onChange={handleChange}
-                      onBlur={handleBlur}
                     />
                   </div>
-                  {touched.description && errors.description && (
-                    <div className="fv-plugins-message-container">
-                      <div className="fv-help-block">
-                        <span role="alert">描述不得為空</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <div className="row fv-row mb-6">

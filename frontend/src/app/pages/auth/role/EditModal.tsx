@@ -19,8 +19,8 @@ interface EditModalProps {
 }
 
 export function EditModal({ editModal, onClose, role, onAlert, onRoleUpdated }: EditModalProps) {
-  const initialErrorState = { code: false, title: false, description: false, orders: false };
-  const initialTouchedState = { code: false, title: false, description: false, orders: false };
+  const initialErrorState = { code: false, title: false, orders: false };
+  const initialTouchedState = { code: false, title: false, orders: false };
 
   const [formData, setFormData] = useState<Role | null>(role);
   const [errors, setErrors] = useState(initialErrorState);
@@ -48,17 +48,18 @@ export function EditModal({ editModal, onClose, role, onAlert, onRoleUpdated }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData) return;
-
+    if (!formData) {
+      return
+    };
     const newErrors = {
       code: formData.code.trim() === '',
       title: formData.title.trim() === '',
-      description: formData.description.trim() === '',
       orders: isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100,
     };
     setErrors(newErrors);
-    if (Object.values(newErrors).some((error) => error)) return;
-
+    if (Object.values(newErrors).some((error) => error)) {
+      return;
+    }
     try {
       const response = await fetch(`http://localhost:8081/api/upms/roles/${formData.id}`, {
         method: "PUT",
@@ -68,14 +69,20 @@ export function EditModal({ editModal, onClose, role, onAlert, onRoleUpdated }: 
       if (response.ok) {
         onAlert("編輯成功！", "success");
         onRoleUpdated();
-      } else {
-        onAlert("編輯失敗，請稍後再試！", "warning");
+        onClose();
+        return;
       }
+      const responseData = await response.json();
+      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+        onAlert(responseData.errorDetails.join("\n"), "warning");
+        return;
+      }
+      onAlert(responseData.message, "warning");
     } catch (error) {
       console.error("提交錯誤:", error);
       onAlert("系統錯誤，請稍後再試！", "danger");
+      onClose();
     }
-    onClose();
   };
 
   if (!editModal || !formData) return null;
@@ -151,16 +158,8 @@ export function EditModal({ editModal, onClose, role, onAlert, onRoleUpdated }: 
                       autoComplete="off"
                       value={formData.description}
                       onChange={handleChange}
-                      onBlur={handleBlur}
                     />
                   </div>
-                  {touched.description && errors.description && (
-                    <div className="fv-plugins-message-container">
-                      <div className="fv-help-block">
-                        <span role="alert">描述不得為空</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
 
                 <div className="row fv-row mb-6">

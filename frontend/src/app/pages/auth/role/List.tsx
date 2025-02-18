@@ -28,12 +28,16 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
       const response = await fetch(
         `http://localhost:8081/api/upms/roles?keyword=${encodeURIComponent(searchKeyword)}`
       );
+      const responseData = await response.json();
       if (response.ok) {
-        const data = await response.json();
-        setRoles(data.data); // 更新角色列表
-      } else {
-        console.error("取得角色清單失敗");
+        setRoles(responseData.data);
+        return;
       }
+      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+        onAlert(responseData.errorDetails.join("\n"), "warning");
+        return;
+      }
+      onAlert(responseData.message, "warning");
     } catch (error) {
       console.error("API 錯誤:", error);
     }
@@ -125,7 +129,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
       {deleteModal && selectedRole && (
         <DeleteModal
           deleteModal={deleteModal}
-          onClose={() => setDeleteModalOpen(false)} // 關閉刪除Modal
+          onClose={() => setDeleteModalOpen(false)}
           role={selectedRole}
           onAlert={onAlert}
           onRoleUpdated={handleRoleUpdated}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
@@ -19,12 +19,12 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated }: DeleteModalProps) {
-    const [loading, setLoading] = useState(false);
-
     // 刪除角色
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!role) return;
+        if (!role) {
+            return;
+        }
         try {
             const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
                 method: "DELETE",
@@ -33,13 +33,17 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
             if (response.ok) {
                 onAlert("角色已成功刪除！", "success");
                 onRoleUpdated();
-            } else {
-                onAlert("刪除失敗，請稍後再試！", "warning");
+                return;
             }
+            const responseData = await response.json();
+            if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+                onAlert(responseData.errorDetails.join("\n"), "warning");
+                return;
+            }
+            onAlert(responseData.message, "warning");
         } catch (error) {
             console.error("提交錯誤:", error);
             onAlert("系統錯誤，請稍後再試！", "danger");
-        } finally {
             onClose();
         }
     };
@@ -55,9 +59,9 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
                     <div className="modal-content">
                         <div className="modal-header">
                             <h2 className="fw-bolder">刪除角色</h2>
-                            <div className="btn btn-icon btn-sm btn-active-icon-primary" onClick={onClose}>
+                            <button type="button" className="btn btn-icon btn-sm btn-active-icon-primary" onClick={onClose}>
                                 <KTIcon iconName="cross" className="fs-1" />
-                            </div>
+                            </button>
                         </div>
                         <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
                             <form className="form" noValidate onSubmit={handleDelete}>
@@ -67,12 +71,8 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
                                     </label>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={onClose}>
-                                        關閉
-                                    </button>
-                                    <button type="submit" className="btn btn-danger" disabled={loading}>
-                                        {loading ? '刪除中...' : '刪除'}
-                                    </button>
+                                    <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
+                                    <button type="submit" className="btn btn-danger">刪除</button>
                                 </div>
                             </form>
                         </div>

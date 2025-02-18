@@ -11,35 +11,35 @@ export function Overview() {
   const [tempKeyword, setTempKeyword] = useState('');
   const [alert, setAlert] = useState<{ message: string; type: 'success' | 'danger' | 'warning' | null } | null>(null);
 
-  const handleAlert = (message: string, type: 'success' | 'danger' | 'warning' | null) => {
+  const onAlert = (message: string, type: 'success' | 'danger' | 'warning' | null) => {
     setAlert({ message, type });
   };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
-      setSearchKeyword(tempKeyword);  // 當 Enter 被按下時，更新搜尋關鍵字
+      setSearchKeyword(tempKeyword);
     }
   };
 
   useEffect(() => {
-    setSearchKeyword(''); // 初始化時，清空搜尋關鍵字
+    setSearchKeyword('');
   }, []);
 
   useEffect(() => {
     if (alert) {
-      const timer = setTimeout(() => setAlert(null), 2000); // 顯示訊息 2 秒後自動消失
+      const timer = setTimeout(() => setAlert(null), 3000);
       return () => clearTimeout(timer);
     }
   }, [alert]);
 
   const handleRoleCreated = () => {
-    setListKey(prevKey => prevKey + 1);  // 當角色被創建時，更新 listKey 來強制重新渲染角色列表
+    setListKey(prevKey => prevKey + 1); 
   };
 
   return (
     <Content>
       {alert && (
-        <div className={`mb-lg-15 alert alert-${alert.type} position-fixed end-0 m-3 shadow-lg`} style={{ top: "10%", zIndex: 1050, minWidth: "250px" }}>
+        <div className={`mb-lg-15 alert alert-${alert.type} position-fixed end-0 m-3 shadow-lg`} style={{ top: "10%", zIndex: 9999, minWidth: "250px" }}>
           <div className='alert-text font-weight-bold'>{alert.message}</div>
         </div>
       )}
@@ -76,13 +76,13 @@ export function Overview() {
           </div>
           <div className="card-body py-4">
             {/* 加入 key 屬性，讓 React 強制重新渲染 RoleList */}
-            <RoleList key={listKey} searchKeyword={searchKeyword} onAlert={handleAlert} />
+            <RoleList key={listKey} searchKeyword={searchKeyword} onAlert={onAlert} />
           </div>
         </div>
       </div>
 
       {/* 新增角色的 Modal */}
-      <CreateModal createModal={createModal} onClose={() => setCreateModal(false)} onAlert={handleAlert} onRoleCreated={handleRoleCreated} />
+      <CreateModal createModal={createModal} onClose={() => setCreateModal(false)} onAlert={onAlert} onRoleCreated={handleRoleCreated} />
     </Content>
   );
 }
