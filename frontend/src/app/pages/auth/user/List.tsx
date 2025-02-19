@@ -8,9 +8,11 @@ interface User {
   username: string;
   email: string;
   cellPhone: string;
+  role: number;
   password: string;
   enabled: boolean;
   locked: boolean;
+  lastLogin: string;
 }
 
 interface UserListProps {
@@ -76,8 +78,10 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
               <td className="min-w-125px">名稱</td>
               <td className="min-w-125px">信箱</td>
               <td className="min-w-125px">手機</td>
+              <td className="min-w-125px">角色</td>
               <td className="min-w-125px">啟用</td>
               <td className="min-w-125px">鎖定</td>
+              <td className="min-w-125px">最後登入時間</td>
               <td className="min-w-125px">功能</td>
             </tr>
           </thead>
@@ -88,6 +92,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
                   <td>{user.username}</td>
                   <td>{user.email}</td>
                   <td>{user.cellPhone}</td>
+                  <td>{user.role}</td>
                   <td>
                     <div className="form-check form-switch form-check-custom form-check-solid">
                       <input
@@ -108,6 +113,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
                       />
                     </div>
                   </td>
+                  <td>{user.lastLogin}</td>
                   <td>
                     <button
                       className="btn btn-sm btn-warning"
