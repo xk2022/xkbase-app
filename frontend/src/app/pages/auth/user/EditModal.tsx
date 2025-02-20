@@ -7,7 +7,11 @@ interface User {
   username: string;
   email: string;
   cellPhone: string;
+  roleId: number;
   password: string;
+  enabled: boolean;
+  locked: boolean;
+  lastLogin: string;
 }
 
 interface EditModalProps {
@@ -16,9 +20,10 @@ interface EditModalProps {
   user: User | null;
   onAlert: (message: string, type: "success" | "danger" | "warning") => void;
   onUserUpdated: () => void;
+  roles: { id: number, code: string, title: string, description: string, orders: number }[];
 }
 
-export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated }: EditModalProps) {
+export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, roles }: EditModalProps) {
   const initialErrorState = { username: false, email: false, cellPhone: false};
   const initialTouchedState = { username: false, email: false, cellPhone: false};
 
@@ -32,7 +37,7 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated }: 
     }
   }, [editModal, user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevState) => prevState ? { ...prevState, [name]: value } : prevState);
     if (touched[name as keyof typeof touched]) {
@@ -40,7 +45,7 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated }: 
     }
   };
 
-  const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setTouched({ ...touched, [name]: true });
     setErrors({ ...errors, [name]: value.trim() === '' });
@@ -99,7 +104,7 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated }: 
             <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
               <form className="form" onSubmit={handleSubmit}>
 
-              <div className="row fv-row mb-6">
+                <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
                     <input
@@ -149,10 +154,10 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated }: 
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">手機</label>
                   <div className="col-lg-10">
                     <input
-                      placeholder="請輸入排序值"
+                      placeholder="請輸入手機號碼"
                       className="form-control form-control-solid"
                       type="text"
-                      name="orders"
+                      name="cellPhone"
                       autoComplete="off"
                       value={formData.cellPhone}
                       onChange={handleChange}
@@ -167,10 +172,55 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated }: 
                   {touched.cellPhone && errors.cellPhone && (
                     <div className="fv-plugins-message-container">
                       <div className="fv-help-block">
-                        <span role="alert">排序值必須為 0 ~ 100</span>
+                        <span role="alert">手機號碼不得為空</span>
                       </div>
                     </div>
                   )}
+                </div>
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">角色</label>
+                  <div className="col-lg-10">
+                    <select
+                      className="form-control form-control-solid"
+                      name="roleId"
+                      value={formData.roleId}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    >
+                      {roles.map(role => (
+                        <option key={role.id} value={role.id}>{role.code}</option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">啟用</label>
+                  <div className="col-lg-10 d-flex">
+                    <div className="form-check form-switch form-check-custom form-check-solid">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={formData.enabled} 
+                        onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">鎖定</label>
+                  <div className="col-lg-10 d-flex">
+                    <div className="form-check form-switch form-check-custom form-check-solid">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={formData.locked}
+                        onChange={(e) => setFormData({ ...formData, locked: e.target.checked })}
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="modal-footer">
