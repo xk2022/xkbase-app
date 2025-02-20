@@ -8,7 +8,7 @@ interface User {
   username: string;
   email: string;
   cellPhone: string;
-  role: number;
+  roleId: number;
   password: string;
   enabled: boolean;
   locked: boolean;
@@ -18,9 +18,10 @@ interface User {
 interface UserListProps {
   searchKeyword: string;
   onAlert: (message: string, type: "success" | "warning" | "danger") => void;
+  roles: { id: number, code: string, title: string, description: string, orders: number }[];
 }
 
-const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
+const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert, roles }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
@@ -69,6 +70,12 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
     setEditModalOpen(false);
   };
 
+  // 取得角色
+  const getRoleCode = (roleId: number): string => {
+    const role = roles.find((role) => role.id === roleId);
+    return role ? role.code : "未分配角色";
+  };
+
   return (
     <>
       <div className="table-responsive">
@@ -92,7 +99,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert }) => {
                   <td>{user.username}</td>
                   <td>{user.email}</td>
                   <td>{user.cellPhone}</td>
-                  <td>{user.role}</td>
+                  <td>{getRoleCode(user.roleId)}</td>
                   <td>
                     <div className="form-check form-switch form-check-custom form-check-solid">
                       <input

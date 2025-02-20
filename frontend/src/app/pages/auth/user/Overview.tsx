@@ -97,7 +97,7 @@ export function Overview() {
             </div>
           </div>
           <div className="card-body py-4">
-            <UserList key={listKey} searchKeyword={searchKeyword} onAlert={onAlert} />
+            <UserList key={listKey} searchKeyword={searchKeyword} onAlert={onAlert} roles={roles} />
           </div>
         </div>
       </div>
