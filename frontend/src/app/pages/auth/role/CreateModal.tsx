@@ -64,11 +64,12 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
         return;
       }
       const responseData = await response.json();
-      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+      if(Array.isArray(responseData.errorDetails.length)){
         onAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.message, "warning");
+      onAlert(responseData.errorDetails, "warning");
+      return;
     } catch (error) {
       console.error("提交錯誤:", error);
       onAlert("系統錯誤，請稍後再試！", "danger");

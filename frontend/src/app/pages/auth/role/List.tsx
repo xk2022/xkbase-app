@@ -33,11 +33,11 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
         setRoles(responseData.data);
         return;
       }
-      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+      if(Array.isArray(responseData.errorDetails.length)){
         onAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.message, "warning");
+      onAlert(responseData.errorDetails, "warning");
     } catch (error) {
       console.error("API 錯誤:", error);
     }
