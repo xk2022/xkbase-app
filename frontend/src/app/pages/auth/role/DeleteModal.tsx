@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
@@ -19,6 +19,8 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated }: DeleteModalProps) {
+    // 按鈕loading初始化
+    const btnRef = useRef<HTMLButtonElement | null>(null);
     // 刪除角色
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,10 +28,14 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
             return;
         }
         try {
+            // loading開啟
+            btnRef.current?.setAttribute('data-kt-indicator', 'on');
             const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
+            // loading關閉
+            btnRef.current?.removeAttribute("data-kt-indicator");
             if (response.ok) {
                 onAlert("角色已成功刪除！", "success");
                 onRoleUpdated();
@@ -37,11 +43,11 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
                 return;
             }
             const responseData = await response.json();
-            if(Array.isArray(responseData.errorDetails.length)){
+            if (Array.isArray(responseData.errorDetails.length)) {
                 onAlert(responseData.errorDetails.join("\n"), "warning");
                 return;
-              }
-              onAlert(responseData.errorDetails, "warning");
+            }
+            onAlert(responseData.errorDetails, "warning");
         } catch (error) {
             console.error("提交錯誤:", error);
             onAlert("系統錯誤，請稍後再試！", "danger");
@@ -73,7 +79,12 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
-                                    <button type="submit" className="btn btn-danger">刪除</button>
+                                    <button type="submit" className="btn btn-danger" ref={btnRef}>
+                                        <span className="indicator-label">刪除</span>
+                                        <span className="indicator-progress">請稍後...
+                                            <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span>
+                                    </button>
                                 </div>
                             </form>
                         </div>

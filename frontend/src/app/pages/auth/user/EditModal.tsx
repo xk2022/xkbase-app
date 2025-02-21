@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
@@ -24,9 +24,10 @@ interface EditModalProps {
 }
 
 export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, roles }: EditModalProps) {
-  const initialErrorState = { username: false, email: false, cellPhone: false};
-  const initialTouchedState = { username: false, email: false, cellPhone: false};
-
+  // 按鈕loading初始化
+  const btnRef = useRef<HTMLButtonElement | null>(null);
+  const initialErrorState = { username: false, email: false, cellPhone: false };
+  const initialTouchedState = { username: false, email: false, cellPhone: false };
   const [formData, setFormData] = useState<User | null>(user);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -61,14 +62,19 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, ro
       cellPhone: formData.cellPhone.trim() === ''
     };
     setErrors(newErrors);
-    if (Object.values(newErrors).some((error) => error)) return;
-
+    if (Object.values(newErrors).some((error) => error)) {
+      return;
+    }
     try {
+      // loading開啟
+      btnRef.current?.setAttribute('data-kt-indicator', 'on');
       const response = await fetch(`http://localhost:8081/api/upms/users/${formData.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      // loading關閉
+      btnRef.current?.removeAttribute("data-kt-indicator");
       if (response.ok) {
         onAlert("編輯成功！", "success");
         onUserUpdated();
@@ -202,8 +208,8 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, ro
                       <input
                         className="form-check-input"
                         type="checkbox"
-                        checked={formData.enabled} 
-                        onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })} 
+                        checked={formData.enabled}
+                        onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
                       />
                     </div>
                   </div>
@@ -225,7 +231,12 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, ro
 
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
-                  <button type="submit" className="btn btn-primary">儲存</button>
+                  <button type="submit" className="btn btn-primary" ref={btnRef}>
+                    <span className="indicator-label">儲存</span>
+                    <span className="indicator-progress">請稍後...
+                      <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </button>
                 </div>
               </form>
             </div>

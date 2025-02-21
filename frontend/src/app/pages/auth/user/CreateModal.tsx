@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
@@ -11,6 +11,8 @@ interface CreateModalProps {
 }
 
 export function CreateModal({ createModal, onClose, onAlert, onUserCreated, roles }: CreateModalProps) {
+  // 按鈕loading初始化
+  const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialFormState = { username: '', email: '', cellPhone: '', password: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0 };
   const initialErrorState = { username: false, email: false, cellPhone: false, password: false};
   const initialTouchedState = { username: false, email: false, cellPhone: false, password: false};
@@ -65,11 +67,15 @@ export function CreateModal({ createModal, onClose, onAlert, onUserCreated, role
       return;
     }
     try {
+      // loading開啟
+      btnRef.current?.setAttribute('data-kt-indicator', 'on');
       const response = await fetch("http://localhost:8081/api/upms/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      // loading關閉
+      btnRef.current?.removeAttribute("data-kt-indicator");
       if (response.ok) {
         onAlert("新增成功！", "success");
         onUserCreated();
@@ -223,7 +229,12 @@ export function CreateModal({ createModal, onClose, onAlert, onUserCreated, role
 
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
-                  <button type="submit" className="btn btn-primary">儲存</button>
+                  <button type="submit" className="btn btn-primary" ref={btnRef}>
+                    <span className="indicator-label">儲存</span>
+                    <span className="indicator-progress">請稍後...
+                      <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </button>
                 </div>
 
               </form>

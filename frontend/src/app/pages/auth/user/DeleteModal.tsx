@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
@@ -19,6 +19,8 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ deleteModal, onClose, user, onAlert, onUserUpdated }: DeleteModalProps) {
+    // 按鈕loading初始化
+    const btnRef = useRef<HTMLButtonElement | null>(null);
     // 刪除使用者
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -26,11 +28,14 @@ export function DeleteModal({ deleteModal, onClose, user, onAlert, onUserUpdated
             return;
         }
         try {
+            // loading開啟
+            btnRef.current?.setAttribute('data-kt-indicator', 'on');
             const response = await fetch(`http://localhost:8081/api/upms/users/${user.id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
-
+            // loading關閉
+            btnRef.current?.removeAttribute("data-kt-indicator");
             if (response.ok) {
                 onAlert("使用者已成功刪除！", "success");
                 onUserUpdated();
@@ -74,7 +79,12 @@ export function DeleteModal({ deleteModal, onClose, user, onAlert, onUserUpdated
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
-                                    <button type="submit" className="btn btn-danger">刪除</button>
+                                    <button type="submit" className="btn btn-danger" ref={btnRef}>
+                                        <span className="indicator-label">刪除</span>
+                                        <span className="indicator-progress">請稍後...
+                                            <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                        </span>
+                                    </button>
                                 </div>
                             </form>
                         </div>

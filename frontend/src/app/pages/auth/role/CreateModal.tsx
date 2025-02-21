@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
@@ -10,6 +10,8 @@ interface CreateModalProps {
 }
 
 export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: CreateModalProps) {
+  // 按鈕loading初始化
+  const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialFormState = { code: '', title: '', description: '', orders: '0' };
   const initialErrorState = { code: false, title: false, orders: false };
   const initialTouchedState = { code: false, title: false, orders: false };
@@ -52,11 +54,15 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
       return;
     }
     try {
+      // loading開啟
+      btnRef.current?.setAttribute('data-kt-indicator', 'on');
       const response = await fetch("http://localhost:8081/api/upms/roles", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+      // loading關閉
+      btnRef.current?.removeAttribute("data-kt-indicator");
       if (response.ok) {
         onAlert("新增成功！", "success");
         onRoleCreated();
@@ -64,7 +70,7 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
         return;
       }
       const responseData = await response.json();
-      if(Array.isArray(responseData.errorDetails.length)){
+      if (Array.isArray(responseData.errorDetails.length)) {
         onAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
@@ -186,9 +192,14 @@ export function CreateModal({ createModal, onClose, onAlert, onRoleCreated }: Cr
 
                 <div className="modal-footer">
                   <button type="button" className="btn btn-secondary" onClick={onClose}>
-                    關閉
+                    <span className="indicator-label">關閉</span>
                   </button>
-                  <button type="submit" className="btn btn-primary">儲存</button>
+                  <button type="submit" className="btn btn-primary" ref={btnRef}>
+                    <span className="indicator-label">儲存</span>
+                    <span className="indicator-progress">請稍後...
+                      <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                  </button>
                 </div>
 
               </form>
