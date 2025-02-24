@@ -83,8 +83,8 @@ const AuthLayout = () => {
           {/* end::Title */}
 
           {/* begin::Text */}
-          <div className='text-white fs-base text-center'>
-            {/* In this kind of post,{' '}
+          {/* <div className='text-white fs-base text-center display-2'>
+            In this kind of post,{' '}
             <a href='#' className='opacity-75-hover text-warning fw-bold me-1'>
               the blogger
             </a>
@@ -93,11 +93,16 @@ const AuthLayout = () => {
             <a href='#' className='opacity-75-hover text-warning fw-bold me-1'>
               the interviewee
             </a>
-            and their <br /> work following this is a transcript of the interview. */}
-            智慧調度與數據分析，提升車隊運營效能 <br />
-            一站式車輛與物流管理解決方案 <br />
-          </div>
+            and their <br /> work following this is a transcript of the interview.
+          </div> */}
+          <h3 className='text-white fw-bolder text-center mb-7'>
+            AI智慧調度與數據分析，提升車隊運營效能
+          </h3>
+          <h3 className='text-white fw-bolder text-center mb-7'>
+            一站式車輛與物流管理解決方案
+          </h3>
           {/* end::Text */}
+
         </div>
         {/* end::Content */}
       </div>
