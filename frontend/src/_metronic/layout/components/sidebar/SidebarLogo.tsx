@@ -50,30 +50,37 @@ const SidebarLogo = (props: PropsType) => {
   return (
     <div className='app-sidebar-logo px-6' id='kt_app_sidebar_logo'>
       <Link to='/dashboard'>
-        {config.layoutType === 'dark-sidebar' ? (
-          <img
-            alt='Logo'
-            src={toAbsoluteUrl('media/logos/default-dark.svg')}
-            className='h-25px app-sidebar-logo-default'
-          />
-        ) : (
-          <>
+        <div className="d-inline-flex align-items-center">
+          {config.layoutType === 'dark-sidebar' ? (
             <img
               alt='Logo'
-              src={toAbsoluteUrl('media/logos/default.svg')}
-              className='h-25px app-sidebar-logo-default theme-light-show'
+              src={toAbsoluteUrl('media/misc/auth-screens2.png')}
+              className='h-25px app-sidebar-logo-default'
             />
-            <img
-              alt='Logo'
-              src={toAbsoluteUrl('media/logos/default-dark.svg')}
-              className='h-25px app-sidebar-logo-default theme-dark-show'
-            />
-          </>
-        )}
+          ) : (
+            <>
+              <img
+                alt='Logo'
+                src={toAbsoluteUrl('media/misc/auth-screens2.png')}
+                className='h-25px app-sidebar-logo-default theme-light-show'
+              />
+              <img
+                alt='Logo'
+                src={toAbsoluteUrl('media/misc/auth-screens2.png')}
+                className='h-25px app-sidebar-logo-default theme-dark-show'
+              />
+            </>
+          )}
 
+          {/* 让 h1 和图片保持在同一行 */}
+          <h1 className='text-white fw-bolder mb-0 ms-3'>
+            XKTruck
+          </h1>
+        </div>
+        
         <img
           alt='Logo'
-          src={toAbsoluteUrl('media/logos/default-small.svg')}
+          src={toAbsoluteUrl('media/misc/auth-screens2.png')}
           className='h-20px app-sidebar-logo-minimize'
         />
       </Link>
