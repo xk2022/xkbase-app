@@ -1,232 +1,245 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
-import { KTIcon } from '../../../../_metronic/helpers';
-
-// 檢核標單資料是否有效
-const validateFormData = (formData: { name: string, email: string, cellphone: string }) => {
-  return {
-    name: formData.name.trim() === '',
-    email: formData.email.trim() === '',
-    cellphone: formData.cellphone.trim() === '',
-  };
-};
-
-// 自定義錯誤訊息
-const ErrorMessage = ({ show, message }: { show: boolean, message: string }) => {
-  return show ? (
-    <div className="fv-plugins-message-container">
-      <div className="fv-help-block">
-        <span role="alert">{message}</span>
-      </div>
-    </div>
-  ) : null;
-};
+import { KTIcon } from "../../../../_metronic/helpers";
+import { AccordionItem } from './AccordionItem';
 
 export function Overview() {
+  // ✅ 手動定義 checkbox 狀態
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({
+    user_add: false,
+    user_edit: false,
+    user_delete: false,
+    user_query: false,
+    role_add: false,
+    role_edit: false,
+    role_delete: false,
+    role_query: false,
+  });
+  const [alert, setAlert] = useState<{ message: string; type: 'success' | 'danger' | 'warning' | null } | null>(null);
+  const [systems, setSystems] = useState<{ id: number, name: string }[]>([]);
+  const [roles, setRoles] = useState<{ id: number, code: string, title: string, description: string, orders: number }[]>([]);
 
-  // modal開關
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // 初始化表單為空字串
-  const [formData, setFormData] = useState(
-    { 
-      name: '', 
-      email: '', 
-      cellphone: ''
-    }
-  );
-
-  // 初始化驗證狀態為不顯示
-  const [errors, setErrors] = useState(
-    { 
-      name: false, 
-      email: false, 
-      cellphone: false
-    }
-  );
-
-  // 處理輸入框改變事件，更新表單資料和錯誤狀態
-  const handleChange = (e: any) => {
-    const { name, value } = e.target;
-    // 更新表單資料
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // 如果輸入框為空，顯示錯誤
-    setErrors(prev => ({ ...prev, [name]: value.trim() === '' }));
+  const onAlert = (message: string, type: 'success' | 'danger' | 'warning' | null) => {
+    setAlert({ message, type });
   };
 
-  // 表單提交事件處理
-  const handleSubmit = (e: any) => {
-    // 阻止表單默認提交行為
-    e.preventDefault();
-    // 驗證表單資料
-    const newErrors = validateFormData(formData);
-    setErrors(newErrors);
-    // 驗證結果
-    if (!Object.values(newErrors).includes(true)) {
-      alert('表單提交成功！');
-      setIsModalOpen(false);
-    }
+  const handleCheckboxChange = (id: string) => {
+    setCheckedItems((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
   };
 
-  const openModal = () => {
-    // 設定modal為開啟狀態
-    setIsModalOpen(true);
-    // 設定表單資料為空
-    setFormData(
-      { 
-        name: '', 
-        email: '', 
-        cellphone: '' 
+  const fetchSystems = async () => {
+    // try {
+    //   const response = await fetch(
+    //     `http://localhost:8081/api/upms/permissions`
+    //   );
+    //   const responseData = await response.json();
+    //   if (response.ok) {
+    //     setSystems(responseData.data);
+    //     return;
+    //   }
+    //   if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+    //     onAlert(responseData.errorDetails.join("\n"), "warning");
+    //     return;
+    //   }
+    //   onAlert(responseData.message, "warning");
+    // } catch (error) {
+    //   console.error("API 錯誤:", error);
+    // }
+    const mockData = [
+      { id: 1, name: "系統一" },
+      { id: 2, name: "系統二" },
+      { id: 3, name: "系統三" },
+    ];
+    setSystems(mockData);
+  };
+
+  const fetchRoles = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:8081/api/upms/roles`
+      );
+      const responseData = await response.json();
+      if (response.ok) {
+        setRoles(responseData.data);
+        return;
       }
-    );
-    // 設定標單驗證不顯示
-    setErrors(
-      { 
-        name: false, 
-        email: false, 
-        cellphone: false
+      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
+        onAlert(responseData.errorDetails.join("\n"), "warning");
+        return;
       }
-    );
+      onAlert(responseData.message, "warning");
+    } catch (error) {
+      console.error("API 錯誤:", error);
+    }
   };
+
+  useEffect(() => {
+    fetchSystems();
+    fetchRoles();
+  }, []);
+
+  useEffect(() => {
+    if (alert) {
+      const timer = setTimeout(() => setAlert(null), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
 
   return (
     <Content>
+      {alert && (
+        <div className={`mb-lg-15 alert alert-${alert.type} position-fixed end-0 m-3 shadow-lg`} style={{ top: "10%", zIndex: 9999, minWidth: "250px" }}>
+          <div className='alert-text font-weight-bold'>{alert.message}</div>
+        </div>
+      )}
       <div className="container">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">
-            <a href="#" className="pe-3">
-            權限
-            </a>
+            <a href="#" className="pe-3">權限</a>
           </li>
           <li className="breadcrumb-item px-3 text-muted">權限</li>
         </ol>
       </div>
+
       <div className="app-content flex-column-fluid">
         <div className="card">
           <div className="card-header border-0 pt-6">
             <div className="card-title">
-              <div className="d-flex align-items-center position-relative my-1">
-                <KTIcon iconName="magnifier" className="fs-1 position-absolute ms-6" />
-                <input
-                  type="text"
-                  data-kt-user-table-filter="search"
-                  className="form-control form-control-solid w-250px ps-14"
-                  placeholder="請輸入關鍵字"
-                />
-              </div>
             </div>
-            <div className="card-toolbar">
-              <div className="d-flex justify-content-end" data-kt-user-table-toolbar="base">
-                <button type="button" className="btn btn-primary" onClick={openModal}>
-                  <KTIcon iconName="plus" className="fs-2" />
-                  新增使用者
-                </button>
-              </div>
+            <div className="card-toolbar d-flex align-items-center gap-3">
+              <select className="form-select form-select-solid w-auto" name="systemId">
+                {systems.map((system) => (
+                  <option key={system.id} value={system.id}>{system.name}</option>
+                ))}
+              </select>
+              <select className="form-select form-select-solid w-auto" name="roleId">
+                {roles.map((role) => (
+                  <option key={role.id} value={role.id}>{role.code}</option>
+                ))}
+              </select>
+              <button type="button" className="btn btn-success d-flex align-items-center">
+                <KTIcon iconName="setting-4" className="fs-2 me-2" />
+                儲存
+              </button>
             </div>
           </div>
           <div className="card-body py-4">
-            <div className="table-responsive">
-              <table
-                id="kt_table_users"
-                className="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer"
-              >
-                <thead>
-                  <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
-                    <td className="min-w-125px">名稱</td>
-                    <td className="min-w-125px">角色</td>
-                    <td className="min-w-125px">信箱</td>
-                    <td className="min-w-125px">手機</td>
-                    <td className="min-w-125px">最後登入時間</td>
-                    <td className="min-w-125px">狀態</td>
-                  </tr>
-                </thead>
-              </table>
+            <div className="accordion accordion-icon-toggle" id="system">
+
+              <div className="accordion accordion-icon-toggle">
+                <AccordionItem id="user_management" title="使用者管理">
+                  <div className="accordion accordion-icon-toggle">
+                    <div className="mt-2">
+                      <div className="form-check form-check-custom form-check-solid form-check-sm">
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="user_add"
+                            checked={checkedItems.user_add}
+                            onChange={() => handleCheckboxChange("user_add")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="user_add">新增</label>
+                        </div>
+
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="user_edit"
+                            checked={checkedItems.user_edit}
+                            onChange={() => handleCheckboxChange("user_edit")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="user_edit">編輯</label>
+                        </div>
+
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="user_delete"
+                            checked={checkedItems.user_delete}
+                            onChange={() => handleCheckboxChange("user_delete")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="user_delete">刪除</label>
+                        </div>
+
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="user_query"
+                            checked={checkedItems.user_query}
+                            onChange={() => handleCheckboxChange("user_query")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="user_query">查詢</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionItem>
+
+                <AccordionItem id="role_management" title="角色管理">
+                  <div className="accordion accordion-icon-toggle">
+                    <div className="mt-2">
+                      <div className="form-check form-check-custom form-check-solid form-check-sm">
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="role_add"
+                            checked={checkedItems.role_add}
+                            onChange={() => handleCheckboxChange("role_add")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="role_add">新增</label>
+                        </div>
+
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="role_edit"
+                            checked={checkedItems.role_edit}
+                            onChange={() => handleCheckboxChange("role_edit")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="role_edit">編輯</label>
+                        </div>
+
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="role_delete"
+                            checked={checkedItems.role_delete}
+                            onChange={() => handleCheckboxChange("role_delete")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="role_delete">刪除</label>
+                        </div>
+
+                        <div className="d-inline-block me-5">
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id="role_query"
+                            checked={checkedItems.role_query}
+                            onChange={() => handleCheckboxChange("role_query")}
+                          />
+                          <label className="form-check-label ms-2" htmlFor="role_query">查詢</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </AccordionItem>
+              </div>
             </div>
+
           </div>
         </div>
       </div>
 
-      {isModalOpen && (
-        <>
-          <div className="modal fade show d-block" id="kt_modal_add_user" role="dialog" tabIndex={-1} aria-modal="true">
-            <div className="modal-dialog modal-dialog-centered mw-650px">
-              <div className="modal-content">
-                <div className="modal-header">
-                  <h2 className="fw-bolder">新增使用者</h2>
-                  <div
-                    className="btn btn-icon btn-sm btn-active-icon-primary"
-                    onClick={() => setIsModalOpen(false)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <KTIcon iconName="cross" className="fs-1" />
-                  </div>
-                </div>
-                <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                  <form id="kt_modal_add_user_form" className="form" noValidate onSubmit={handleSubmit}>
-                    <div className="row fv-row mb-6">
-                      <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
-                      <div className="col-lg-10">
-                        <input
-                          placeholder="請輸入名稱"
-                          className="form-control form-control-solid"
-                          type="text"
-                          name="name"
-                          autoComplete="off"
-                          value={formData.name}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <ErrorMessage show={errors.name} message="名稱不得為空" />
-                    </div>
-                    <div className="row fv-row mb-6">
-                      <label className="col-lg-2 col-form-label required fw-bold fs-6">信箱</label>
-                      <div className="col-lg-10">
-                        <input
-                          placeholder="請輸入信箱"
-                          className="form-control form-control-solid"
-                          type="email"
-                          name="email"
-                          autoComplete="off"
-                          value={formData.email}
-                          onChange={handleChange}
-                        />
-                      </div>
-                      <ErrorMessage show={errors.email} message="信箱不得為空" />
-                    </div>
-                    <div className="row fv-row mb-6">
-                      <label className="col-lg-2 col-form-label required fw-bold fs-6">手機</label>
-                      <div className="col-lg-10">
-                        <input
-                          placeholder="請輸入手機號碼"
-                          className="form-control form-control-solid"
-                          type="text"
-                          name="cellphone"
-                          autoComplete="off"
-                          value={formData.cellphone}
-                          onChange={handleChange}
-                          onKeyDown={(e) => {
-                            if (!/^[0-9]$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
-                              e.preventDefault();
-                            }
-                          }}
-                        />
-                      </div>
-                      <ErrorMessage show={errors.cellphone} message="手機不得為空" />
-                    </div>
-                    <div className="modal-footer">
-                      <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>
-                        關閉
-                      </button>
-                      <button type="submit" className="btn btn-primary">儲存</button>
-                    </div>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="modal-backdrop fade show"></div>
-        </>
-      )}
     </Content>
   );
 }

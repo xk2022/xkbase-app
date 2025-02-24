@@ -35,7 +35,6 @@ export function CreateModal({ createModal, onClose, onAlert, onUserCreated, role
     }
   }, [roles]);
 
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
@@ -214,7 +213,7 @@ export function CreateModal({ createModal, onClose, onAlert, onUserCreated, role
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">角色</label>
                   <div className="col-lg-10">
                     <select
-                      className="form-control form-control-solid"
+                      className="form-select form-select-solid"
                       name="roleId"
                       value={formData.roleId}
                       onChange={handleChange}
