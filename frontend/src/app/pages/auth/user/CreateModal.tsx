@@ -13,8 +13,8 @@ interface CreateModalProps {
 export function CreateModal({ createModal, onClose, showAlert, onUserCreated, roles }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialFormState = { username: '', email: '', cellPhone: '', password: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0 };
-  const initialErrorState = { username: false, email: false, cellPhone: false, password: false};
-  const initialTouchedState = { username: false, email: false, cellPhone: false, password: false};
+  const initialErrorState = { username: false, email: false, cellPhone: false, password: false };
+  const initialTouchedState = { username: false, email: false, cellPhone: false, password: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -81,7 +81,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
         return;
       }
       const responseData = await response.json();
-      if(Array.isArray(responseData.errorDetails.length)){
+      if (Array.isArray(responseData.errorDetails.length)) {
         showAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
@@ -108,9 +108,8 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
                 <KTIcon iconName="cross" className="fs-1" />
               </button>
             </div>
-            <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-              <form id="kt_modal_add_user_form" className="form" onSubmit={handleSubmit}>
-                
+            <form id="kt_modal_add_user_form" className="form" onSubmit={handleSubmit}>
+              <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -224,19 +223,17 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
                     </select>
                   </div>
                 </div>
-
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
-                  <button type="submit" className="btn btn-primary" ref={btnRef}>
-                    <span className="indicator-label">儲存</span>
-                    <span className="indicator-progress">請稍後...
-                      <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                    </span>
-                  </button>
-                </div>
-
-              </form>
-            </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
+                <button type="submit" className="btn btn-primary" ref={btnRef}>
+                  <span className="indicator-label">儲存</span>
+                  <span className="indicator-progress">請稍後...
+                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>

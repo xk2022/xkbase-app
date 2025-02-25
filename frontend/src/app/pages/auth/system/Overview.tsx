@@ -29,11 +29,7 @@ export function Overview() {
 
   return (
     <Content>
-      {alert && (
-        <div className={`mb-lg-15 alert alert-${alert.type} position-fixed end-0 m-3 shadow-lg`} style={{ top: "10%", zIndex: 9999, minWidth: "250px" }}>
-          <div className='alert-text font-weight-bold'>{alert.message}</div>
-        </div>
-      )}
+      {alert && <Alert message={alert.message} type={alert.type} />}
       <div className="container">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">

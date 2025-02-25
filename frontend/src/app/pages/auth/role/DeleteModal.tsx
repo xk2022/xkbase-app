@@ -69,24 +69,24 @@ export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdat
                                 <KTIcon iconName="cross" className="fs-1" />
                             </button>
                         </div>
-                        <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                            <form className="form" noValidate onSubmit={handleDelete}>
+                        <form className="form" noValidate onSubmit={handleDelete}>
+                            <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
                                 <div className="row fv-row">
                                     <label className="col-lg col-form-label fw-bold fs-6">
                                         是否確定要刪除角色 "{role.code}"？
                                     </label>
                                 </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
-                                    <button type="submit" className="btn btn-danger" ref={btnRef}>
-                                        <span className="indicator-label">刪除</span>
-                                        <span className="indicator-progress">請稍後...
-                                            <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                                        </span>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>
+                                <button type="submit" className="btn btn-danger" ref={btnRef}>
+                                    <span className="indicator-label">刪除</span>
+                                    <span className="indicator-progress">請稍後...
+                                        <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                                    </span>
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
