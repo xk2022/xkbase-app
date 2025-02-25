@@ -17,11 +17,11 @@ interface User {
 
 interface UserListProps {
   searchKeyword: string;
-  onAlert: (message: string, type: "success" | "warning" | "danger") => void;
+  showAlert: (message: string, type: "success" | "warning" | "danger") => void;
   roles: { id: number, code: string, title: string, description: string, orders: number }[];
 }
 
-const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert, roles }) => {
+const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) => {
   const [users, setUsers] = useState<User[]>([]);
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
@@ -39,10 +39,10 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert, roles }) =>
         return;
       }
       if(Array.isArray(responseData.errorDetails.length)){
-        onAlert(responseData.errorDetails.join("\n"), "warning");
+        showAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.errorDetails, "warning");
+      showAlert(responseData.errorDetails, "warning");
     } catch (error) {
       console.error("API 錯誤:", error);
     }
@@ -155,7 +155,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert, roles }) =>
           editModal={editModal}
           onClose={() => setEditModalOpen(false)}
           user={selectedUser}
-          onAlert={onAlert}
+          showAlert={showAlert}
           onUserUpdated={handleUserUpdated}
           roles={roles}
         />
@@ -166,7 +166,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, onAlert, roles }) =>
           deleteModal={deleteModal}
           onClose={() => setDeleteModalOpen(false)}
           user={selectedUser}
-          onAlert={onAlert}
+          showAlert={showAlert}
           onUserUpdated={handleUserUpdated}
         />
       )}

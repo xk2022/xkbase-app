@@ -2,34 +2,33 @@ import { useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 
-interface Role {
+interface System {
     id: number;
-    code: string;
-    title: string;
-    description: string;
+    name: string;
     orders: number;
 }
 
 interface DeleteModalProps {
     deleteModal: boolean;
     onClose: () => void;
-    role: Role | null;
+    system: System | null;
     showAlert: (message: string, type: "success" | "danger" | "warning") => void;
-    onRoleUpdated: () => void;
+    onSystemUpdated: () => void;
 }
 
-export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdated }: DeleteModalProps) {
+export function DeleteModal({ deleteModal, onClose, system, showAlert, onSystemUpdated }: DeleteModalProps) {
+    // 按鈕loading初始化
     const btnRef = useRef<HTMLButtonElement | null>(null);
     // 刪除角色
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!role) {
+        if (!system) {
             return;
         }
         try {
             // loading開啟
             btnRef.current?.setAttribute('data-kt-indicator', 'on');
-            const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
+            const response = await fetch(`http://localhost:8081/api/upms/systems/${system.id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
@@ -37,7 +36,7 @@ export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdat
             btnRef.current?.removeAttribute("data-kt-indicator");
             if (response.ok) {
                 showAlert("角色已成功刪除！", "success");
-                onRoleUpdated();
+                onSystemUpdated();
                 onClose();
                 return;
             }
@@ -54,7 +53,7 @@ export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdat
         }
     };
 
-    if (!deleteModal || !role) {
+    if (!deleteModal || !system) {
         return null;
     }
 
@@ -64,7 +63,7 @@ export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdat
                 <div className="modal-dialog modal-dialog-centered mw-650px">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h2 className="fw-bolder">刪除角色</h2>
+                            <h2 className="fw-bolder">刪除系統</h2>
                             <button type="button" className="btn btn-icon btn-sm btn-active-icon-primary" onClick={onClose}>
                                 <KTIcon iconName="cross" className="fs-1" />
                             </button>
@@ -73,7 +72,7 @@ export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdat
                             <form className="form" noValidate onSubmit={handleDelete}>
                                 <div className="row fv-row">
                                     <label className="col-lg col-form-label fw-bold fs-6">
-                                        是否確定要刪除角色 "{role.code}"？
+                                        是否確定要刪除系統 "{system.name}"？
                                     </label>
                                 </div>
                                 <div className="modal-footer">

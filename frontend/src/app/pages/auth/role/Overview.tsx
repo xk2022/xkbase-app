@@ -1,19 +1,17 @@
 import { useEffect, useState } from "react";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { KTIcon } from "../../../../_metronic/helpers";
+import { useAlert } from "../../common/alert/useAlert";
+import { Alert } from "../../common/alert/Alert";
 import { CreateModal } from "./CreateModal";
 import RoleList from "./List";
 
 export function Overview() {
+  const { alert, showAlert } = useAlert();
   const [createModal, setCreateModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [listKey, setListKey] = useState(0);
   const [tempKeyword, setTempKeyword] = useState('');
-  const [alert, setAlert] = useState<{ message: string; type: 'success' | 'danger' | 'warning' | null } | null>(null);
-
-  const onAlert = (message: string, type: 'success' | 'danger' | 'warning' | null) => {
-    setAlert({ message, type });
-  };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -25,24 +23,13 @@ export function Overview() {
     setSearchKeyword('');
   }, []);
 
-  useEffect(() => {
-    if (alert) {
-      const timer = setTimeout(() => setAlert(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
-
   const handleRoleCreated = () => {
     setListKey(prevKey => prevKey + 1); 
   };
 
   return (
     <Content>
-      {alert && (
-        <div className={`mb-lg-15 alert alert-${alert.type} position-fixed end-0 m-3 shadow-lg`} style={{ top: "10%", zIndex: 9999, minWidth: "250px" }}>
-          <div className='alert-text font-weight-bold'>{alert.message}</div>
-        </div>
-      )}
+      {alert && <Alert message={alert.message} type={alert.type} />}
       <div className="container">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">
@@ -75,13 +62,12 @@ export function Overview() {
             </div>
           </div>
           <div className="card-body py-4">
-            {/* 加入 key 屬性，讓 React 強制重新渲染 RoleList */}
-            <RoleList key={listKey} searchKeyword={searchKeyword} onAlert={onAlert} />
+            <RoleList key={listKey} searchKeyword={searchKeyword} showAlert={showAlert} />
           </div>
         </div>
       </div>
 
-      <CreateModal createModal={createModal} onClose={() => setCreateModal(false)} onAlert={onAlert} onRoleCreated={handleRoleCreated} />
+      <CreateModal createModal={createModal} onClose={() => setCreateModal(false)} showAlert={showAlert} onRoleCreated={handleRoleCreated} />
       
     </Content>
   );

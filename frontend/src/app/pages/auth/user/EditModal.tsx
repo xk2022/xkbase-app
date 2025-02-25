@@ -18,12 +18,12 @@ interface EditModalProps {
   editModal: boolean;
   onClose: () => void;
   user: User | null;
-  onAlert: (message: string, type: "success" | "danger" | "warning") => void;
+  showAlert: (message: string, type: "success" | "danger" | "warning") => void;
   onUserUpdated: () => void;
   roles: { id: number, code: string, title: string, description: string, orders: number }[];
 }
 
-export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, roles }: EditModalProps) {
+export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, roles }: EditModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialErrorState = { username: false, email: false, cellPhone: false };
@@ -76,20 +76,20 @@ export function EditModal({ editModal, onClose, user, onAlert, onUserUpdated, ro
       // loading關閉
       btnRef.current?.removeAttribute("data-kt-indicator");
       if (response.ok) {
-        onAlert("編輯成功！", "success");
+        showAlert("編輯成功！", "success");
         onUserUpdated();
         onClose();
         return;
       }
       const responseData = await response.json();
       if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
-        onAlert(responseData.errorDetails.join("\n"), "warning");
+        showAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.message || "請求失敗，請檢查輸入資料", "warning");
+      showAlert(responseData.message || "請求失敗，請檢查輸入資料", "warning");
     } catch (error) {
       console.error("提交錯誤:", error);
-      onAlert("系統錯誤，請稍後再試！", "danger");
+      showAlert("系統錯誤，請稍後再試！", "danger");
       onClose();
     }
   };

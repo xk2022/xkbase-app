@@ -5,13 +5,12 @@ import { KTIcon } from '../../../../_metronic/helpers';
 interface CreateModalProps {
   createModal: boolean;
   onClose: () => void;
-  onAlert: (message: string, type: 'success' | 'danger' | 'warning' | null) => void;
+  showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void;
   onUserCreated: () => void;
   roles: { id: number, code: string, title: string, description: string, orders: number }[];
 }
 
-export function CreateModal({ createModal, onClose, onAlert, onUserCreated, roles }: CreateModalProps) {
-  // 按鈕loading初始化
+export function CreateModal({ createModal, onClose, showAlert, onUserCreated, roles }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialFormState = { username: '', email: '', cellPhone: '', password: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0 };
   const initialErrorState = { username: false, email: false, cellPhone: false, password: false};
@@ -76,20 +75,20 @@ export function CreateModal({ createModal, onClose, onAlert, onUserCreated, role
       // loading關閉
       btnRef.current?.removeAttribute("data-kt-indicator");
       if (response.ok) {
-        onAlert("新增成功！", "success");
+        showAlert("新增成功！", "success");
         onUserCreated();
         onClose();
         return;
       }
       const responseData = await response.json();
       if(Array.isArray(responseData.errorDetails.length)){
-        onAlert(responseData.errorDetails.join("\n"), "warning");
+        showAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.errorDetails, "warning");
+      showAlert(responseData.errorDetails, "warning");
     } catch (error) {
       console.error("提交錯誤:", error);
-      onAlert("系統錯誤，請稍後再試！", "danger");
+      showAlert("系統錯誤，請稍後再試！", "danger");
       onClose();
     }
   };

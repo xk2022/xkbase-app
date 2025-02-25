@@ -5,16 +5,16 @@ import { KTIcon } from '../../../../_metronic/helpers';
 interface CreateModalProps {
   createModal: boolean;
   onClose: () => void;
-  showAlert: (message: string, type: "success" | "danger" | "warning") => void;
-  onRoleCreated: () => void;
+  showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void;
+  onSystemCreated: () => void;
 }
 
-export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: CreateModalProps) {
+export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }: CreateModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { code: '', title: '', description: '', orders: '0' };
-  const initialErrorState = { code: false, title: false, orders: false };
-  const initialTouchedState = { code: false, title: false, orders: false };
+  const initialFormState = { name: '', orders: '0' };
+  const initialErrorState = { name: false, orders: false };
+  const initialTouchedState = { name: false, orders: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -43,10 +43,9 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ code: true, title: true, orders: true });
+    setTouched({ name: true, orders: true });
     const newErrors = {
-      code: formData.code.trim() === '',
-      title: formData.title.trim() === '',
+      name: formData.name.trim() === '',
       orders: formData.orders.trim() === '' || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100
     };
     setErrors(newErrors);
@@ -56,7 +55,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
     try {
       // loading開啟
       btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch("http://localhost:8081/api/upms/roles", {
+      const response = await fetch("http://localhost:8081/api/upms/systems", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -65,7 +64,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
       btnRef.current?.removeAttribute("data-kt-indicator");
       if (response.ok) {
         showAlert("新增成功！", "success");
-        onRoleCreated();
+        onSystemCreated();
         onClose();
         return;
       }
@@ -89,17 +88,17 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
 
   return (
     <Content>
-      <div className={`modal fade ${createModal ? 'show d-block' : ''}`} id="kt_modal_add_role" role="dialog" tabIndex={-1} aria-modal="true">
+      <div className={`modal fade ${createModal ? 'show d-block' : ''}`} id="kt_modal_add_system" role="dialog" tabIndex={-1} aria-modal="true">
         <div className="modal-dialog modal-dialog-centered mw-650px">
           <div className="modal-content">
             <div className="modal-header">
-              <h2 className="fw-bolder">新增角色</h2>
+              <h2 className="fw-bolder">新增系統</h2>
               <button type="button" className="btn btn-icon btn-sm btn-active-icon-primary" onClick={onClose}>
                 <KTIcon iconName="cross" className="fs-1" />
               </button>
             </div>
             <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-              <form id="kt_modal_add_role_form" className="form" onSubmit={handleSubmit}>
+              <form id="kt_modal_add_system_form" className="form" onSubmit={handleSubmit}>
 
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
@@ -108,58 +107,20 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
                       placeholder="請輸入名稱"
                       className="form-control form-control-solid"
                       type="text"
-                      name="code"
+                      name="name"
                       autoComplete="off"
-                      value={formData.code}
+                      value={formData.name}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
                   </div>
-                  {touched.code && errors.code && (
+                  {touched.name && errors.name && (
                     <div className="fv-plugins-message-container">
                       <div className="fv-help-block">
                         <span role="alert">名稱不得為空</span>
                       </div>
                     </div>
                   )}
-                </div>
-
-                <div className="row fv-row mb-6">
-                  <label className="col-lg-2 col-form-label required fw-bold fs-6">標題</label>
-                  <div className="col-lg-10">
-                    <input
-                      placeholder="請輸入標題"
-                      className="form-control form-control-solid"
-                      type="text"
-                      name="title"
-                      autoComplete="off"
-                      value={formData.title}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                    />
-                  </div>
-                  {touched.title && errors.title && (
-                    <div className="fv-plugins-message-container">
-                      <div className="fv-help-block">
-                        <span role="alert">標題不得為空</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                <div className="row fv-row mb-6">
-                  <label className="col-lg-2 col-form-label required fw-bold fs-6">描述</label>
-                  <div className="col-lg-10">
-                    <input
-                      placeholder="請輸入描述"
-                      className="form-control form-control-solid"
-                      type="text"
-                      name="description"
-                      autoComplete="off"
-                      value={formData.description}
-                      onChange={handleChange}
-                    />
-                  </div>
                 </div>
 
                 <div className="row fv-row mb-6">

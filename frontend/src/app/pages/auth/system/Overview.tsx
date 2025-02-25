@@ -4,7 +4,7 @@ import { KTIcon } from "../../../../_metronic/helpers";
 import { CreateModal } from "./CreateModal";
 import { useAlert } from "../../common/alert/useAlert";
 import { Alert } from "../../common/alert/Alert";
-import UserList from "./List";
+import SystemList from "./List";
 
 export function Overview() {
   const { alert, showAlert } = useAlert();
@@ -12,7 +12,6 @@ export function Overview() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [listKey, setListKey] = useState(0);
   const [tempKeyword, setTempKeyword] = useState('');
-  const [roles, setRoles] = useState<{ id: number, code: string, title: string, description: string, orders: number }[]>([]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -20,34 +19,13 @@ export function Overview() {
     }
   };
 
-  const handleUserCreated = () => {
-    setListKey(prevKey => prevKey + 1); 
-  };
-
-  const fetchRoles = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8081/api/upms/roles`
-      );
-      const responseData = await response.json();
-      if (response.ok) {
-        setRoles(responseData.data);
-        return;
-      }
-      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.message, "warning");
-    } catch (error) {
-      console.error("API 錯誤:", error);
-    }
-  };
-
   useEffect(() => {
-    fetchRoles();
     setSearchKeyword('');
   }, []);
+
+  const handleSystemCreated = () => {
+    setListKey(prevKey => prevKey + 1); 
+  };
 
   return (
     <Content>
@@ -61,7 +39,7 @@ export function Overview() {
           <li className="breadcrumb-item pe-3">
             <a href="#" className="pe-3">權限</a>
           </li>
-          <li className="breadcrumb-item px-3 text-muted">使用者</li>
+          <li className="breadcrumb-item px-3 text-muted">系統</li>
         </ol>
       </div>
       <div className="app-content flex-column-fluid">
@@ -76,31 +54,25 @@ export function Overview() {
                   placeholder="請輸入關鍵字"
                   value={tempKeyword}
                   onChange={(e) => setTempKeyword(e.target.value)} 
-                  onKeyDown={handleSearchKeyDown}
+                  onKeyDown={handleSearchKeyDown} 
                 />
               </div>
             </div>
             <div className="card-toolbar">
               <button type="button" className="btn btn-primary" onClick={() => setCreateModal(true)}>
                 <KTIcon iconName="plus" className="fs-2" />
-                新增使用者
+                新增系統
               </button>
             </div>
           </div>
           <div className="card-body py-4">
-            <UserList key={listKey} searchKeyword={searchKeyword} showAlert={showAlert} roles={roles} />
+            <SystemList key={listKey} searchKeyword={searchKeyword} showAlert={showAlert} />
           </div>
         </div>
       </div>
 
-      <CreateModal 
-        createModal={createModal} 
-        onClose={() => setCreateModal(false)} 
-        showAlert={showAlert} 
-        onUserCreated={handleUserCreated} 
-        roles={roles}
-      />
-
+      <CreateModal createModal={createModal} onClose={() => setCreateModal(false)} showAlert={showAlert} onSystemCreated={handleSystemCreated} />
+      
     </Content>
   );
 }
