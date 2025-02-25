@@ -10,7 +10,6 @@ interface CreateModalProps {
 }
 
 export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }: CreateModalProps) {
-  // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialFormState = { name: '', orders: '0' };
   const initialErrorState = { name: false, orders: false };
@@ -97,9 +96,8 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
                 <KTIcon iconName="cross" className="fs-1" />
               </button>
             </div>
-            <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-              <form id="kt_modal_add_system_form" className="form" onSubmit={handleSubmit}>
-
+            <form id="kt_modal_add_system_form" className="form" onSubmit={handleSubmit}>
+              <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -150,21 +148,19 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
                     </div>
                   )}
                 </div>
-
-                <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={onClose}>
-                    <span className="indicator-label">關閉</span>
-                  </button>
-                  <button type="submit" className="btn btn-primary" ref={btnRef}>
-                    <span className="indicator-label">儲存</span>
-                    <span className="indicator-progress">請稍後...
-                      <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
-                    </span>
-                  </button>
-                </div>
-
-              </form>
-            </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={onClose}>
+                  <span className="indicator-label">關閉</span>
+                </button>
+                <button type="submit" className="btn btn-primary" ref={btnRef}>
+                  <span className="indicator-label">儲存</span>
+                  <span className="indicator-progress">請稍後...
+                    <span className="spinner-border spinner-border-sm align-middle ms-2"></span>
+                  </span>
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
