@@ -14,12 +14,11 @@ interface DeleteModalProps {
     deleteModal: boolean;
     onClose: () => void;
     role: Role | null;
-    onAlert: (message: string, type: "success" | "danger" | "warning") => void;
+    showAlert: (message: string, type: "success" | "danger" | "warning") => void;
     onRoleUpdated: () => void;
 }
 
-export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated }: DeleteModalProps) {
-    // 按鈕loading初始化
+export function DeleteModal({ deleteModal, onClose, role, showAlert, onRoleUpdated }: DeleteModalProps) {
     const btnRef = useRef<HTMLButtonElement | null>(null);
     // 刪除角色
     const handleDelete = async (e: React.FormEvent) => {
@@ -37,20 +36,20 @@ export function DeleteModal({ deleteModal, onClose, role, onAlert, onRoleUpdated
             // loading關閉
             btnRef.current?.removeAttribute("data-kt-indicator");
             if (response.ok) {
-                onAlert("角色已成功刪除！", "success");
+                showAlert("角色已成功刪除！", "success");
                 onRoleUpdated();
                 onClose();
                 return;
             }
             const responseData = await response.json();
             if (Array.isArray(responseData.errorDetails.length)) {
-                onAlert(responseData.errorDetails.join("\n"), "warning");
+                showAlert(responseData.errorDetails.join("\n"), "warning");
                 return;
             }
-            onAlert(responseData.errorDetails, "warning");
+            showAlert(responseData.errorDetails, "warning");
         } catch (error) {
             console.error("提交錯誤:", error);
-            onAlert("系統錯誤，請稍後再試！", "danger");
+            showAlert("系統錯誤，請稍後再試！", "danger");
             onClose();
         }
     };

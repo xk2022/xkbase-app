@@ -2,19 +2,17 @@ import { useEffect, useState } from "react";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { KTIcon } from "../../../../_metronic/helpers";
 import { CreateModal } from "./CreateModal";
+import { useAlert } from "../../common/alert/useAlert";
+import { Alert } from "../../common/alert/Alert";
 import UserList from "./List";
 
 export function Overview() {
+  const { alert, showAlert } = useAlert();
   const [createModal, setCreateModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [listKey, setListKey] = useState(0);
   const [tempKeyword, setTempKeyword] = useState('');
-  const [alert, setAlert] = useState<{ message: string; type: 'success' | 'danger' | 'warning' | null } | null>(null);
   const [roles, setRoles] = useState<{ id: number, code: string, title: string, description: string, orders: number }[]>([]);
-
-  const onAlert = (message: string, type: 'success' | 'danger' | 'warning' | null) => {
-    setAlert({ message, type });
-  };
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -37,10 +35,10 @@ export function Overview() {
         return;
       }
       if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
-        onAlert(responseData.errorDetails.join("\n"), "warning");
+        showAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.message, "warning");
+      showAlert(responseData.message, "warning");
     } catch (error) {
       console.error("API 錯誤:", error);
     }
@@ -50,13 +48,6 @@ export function Overview() {
     fetchRoles();
     setSearchKeyword('');
   }, []);
-
-  useEffect(() => {
-    if (alert) {
-      const timer = setTimeout(() => setAlert(null), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [alert]);
 
   return (
     <Content>
@@ -97,7 +88,7 @@ export function Overview() {
             </div>
           </div>
           <div className="card-body py-4">
-            <UserList key={listKey} searchKeyword={searchKeyword} onAlert={onAlert} roles={roles} />
+            <UserList key={listKey} searchKeyword={searchKeyword} showAlert={showAlert} roles={roles} />
           </div>
         </div>
       </div>
@@ -105,7 +96,7 @@ export function Overview() {
       <CreateModal 
         createModal={createModal} 
         onClose={() => setCreateModal(false)} 
-        onAlert={onAlert} 
+        showAlert={showAlert} 
         onUserCreated={handleUserCreated} 
         roles={roles}
       />

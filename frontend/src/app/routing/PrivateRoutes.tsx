@@ -23,6 +23,7 @@ const pageImports: Record<string, () => Promise<{ default: React.ComponentType<R
   WidgetsPage: () => import("../modules/widgets/WidgetsPage"),
   UsersPage: () => import("../modules/apps/user-management/UsersPage"),
 
+  SystemPage: () => import("../pages/auth/system/SystemPage"),
   UserPage: () => import("../pages/auth/user/UserPage"),
   RolePage: () => import("../pages/auth/role/RolePage"),
   PermissionPage: () => import("../pages/auth/permission/PermissionPage"),
@@ -37,6 +38,7 @@ const routesConfig = [
   { key: 'WidgetsPage', path: 'crafted/widgets/*' },
   { key: 'UsersPage', path: 'apps/user-management/*' },
 
+  { key: 'SystemPage', path: 'auth/system/*' },
   { key: 'UserPage', path: 'auth/user/*' },
   { key: 'RolePage', path: 'auth/role/*' },
   { key: 'PermissionPage', path: 'auth/permission/*' },

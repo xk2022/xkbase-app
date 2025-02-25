@@ -13,10 +13,10 @@ interface Role {
 
 interface RoleListProps {
   searchKeyword: string;
-  onAlert: (message: string, type: "success" | "warning" | "danger") => void;
+  showAlert: (message: string, type: "success" | "warning" | "danger") => void;
 }
 
-const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
+const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
@@ -34,10 +34,10 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
         return;
       }
       if(Array.isArray(responseData.errorDetails.length)){
-        onAlert(responseData.errorDetails.join("\n"), "warning");
+        showAlert(responseData.errorDetails.join("\n"), "warning");
         return;
       }
-      onAlert(responseData.errorDetails, "warning");
+      showAlert(responseData.errorDetails, "warning");
     } catch (error) {
       console.error("API 錯誤:", error);
     }
@@ -57,7 +57,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
   // 打開刪除模式
   const handleDeleteClick = (role: Role) => {
     setSelectedRole(role);
-    setDeleteModalOpen(true); // 開啟刪除Modal
+    setDeleteModalOpen(true);
   };
 
   // 角色更新後刷新角色列表
@@ -121,7 +121,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
           editModal={editModal}
           onClose={() => setEditModalOpen(false)}
           role={selectedRole}
-          onAlert={onAlert}
+          showAlert={showAlert}
           onRoleUpdated={handleRoleUpdated}
         />
       )}
@@ -131,7 +131,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, onAlert }) => {
           deleteModal={deleteModal}
           onClose={() => setDeleteModalOpen(false)}
           role={selectedRole}
-          onAlert={onAlert}
+          showAlert={showAlert}
           onRoleUpdated={handleRoleUpdated}
         />
       )}

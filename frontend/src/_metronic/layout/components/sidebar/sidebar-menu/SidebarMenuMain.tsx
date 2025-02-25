@@ -16,6 +16,7 @@ const SidebarMenuMain = () => {
         fontIcon='bi-archive'
         icon='element-plus'
       >
+        <SidebarMenuItem to='/auth/system/overview' title='系統' hasBullet={true} />
         <SidebarMenuItem to='/auth/user/overview' title='使用者' hasBullet={true} />
         <SidebarMenuItem to='/auth/role/overview' title='角色' hasBullet={true} />
         <SidebarMenuItem to='/auth/permission/overview' title='權限' hasBullet={true} />
