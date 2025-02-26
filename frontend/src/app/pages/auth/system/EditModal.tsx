@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
+import { useSystem } from '../../common/api/SystemContext';
 
 interface System {
-  id: number;
+  id: string;
+  code: string;
   name: string;
-  orders: number;
+  description: string;
+  enabled: boolean;
 }
 
 interface EditModalProps {
@@ -18,11 +21,13 @@ interface EditModalProps {
 
 export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdated }: EditModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialErrorState = { name: false, orders: false };
-  const initialTouchedState = { name: false, orders: false };
+  const initialErrorState = { code: false, name: false};
+  const initialTouchedState = { code: false, name: false};
   const [formData, setFormData] = useState<System | null>(system);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
+  // global系統參數
+  const { refreshSystems } = useSystem();
 
   useEffect(() => {
     if (editModal && system) {
@@ -50,8 +55,8 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
       return
     };
     const newErrors = {
+      code: formData.code.trim() === '',
       name: formData.name.trim() === '',
-      orders: isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100,
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
@@ -60,7 +65,7 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
     try {
       // loading開啟
       btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch(`http://localhost:8081/api/upms/systems/${formData.id}`, {
+      const response = await fetch(`http://localhost:8081/api/adm/system/${formData.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -70,6 +75,7 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
       if (response.ok) {
         showAlert("編輯成功！", "success");
         onSystemUpdated();
+        refreshSystems();
         onClose();
         return;
       }
@@ -101,6 +107,30 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
             </div>
             <form className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+
+              <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">代碼</label>
+                  <div className="col-lg-10">
+                    <input
+                      placeholder="請輸入代碼"
+                      className="form-control form-control-solid"
+                      type="text"
+                      name="code"
+                      autoComplete="off"
+                      value={formData.code}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </div>
+                  {touched.name && errors.name && (
+                    <div className="fv-plugins-message-container">
+                      <div className="fv-help-block">
+                        <span role="alert">代碼不得為空</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -125,32 +155,21 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
                 </div>
 
                 <div className="row fv-row mb-6">
-                  <label className="col-lg-2 col-form-label required fw-bold fs-6">排序</label>
+                  <label className="col-lg-2 col-form-label fw-bold fs-6">描述</label>
                   <div className="col-lg-10">
                     <input
-                      placeholder="請輸入排序值"
+                      placeholder="請輸入名稱"
                       className="form-control form-control-solid"
                       type="text"
-                      name="orders"
+                      name="description"
                       autoComplete="off"
-                      value={formData.orders}
+                      value={formData.description}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      onKeyDown={(e) => {
-                        if (!/^[0-9]$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
-                          e.preventDefault();
-                        }
-                      }}
                     />
                   </div>
-                  {touched.orders && errors.orders && (
-                    <div className="fv-plugins-message-container">
-                      <div className="fv-help-block">
-                        <span role="alert">排序值必須為 0 ~ 100</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
+
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>

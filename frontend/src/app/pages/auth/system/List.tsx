@@ -4,17 +4,18 @@ import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
 
 interface System {
-  id: number;
+  id: string;
+  code: string;
   name: string;
-  orders: number;
+  description: string;
+  enabled: boolean;
 }
 
 interface SystemListProps {
-  searchKeyword: string;
   showAlert: (message: string, type: "success" | "warning" | "danger") => void;
 }
 
-const SystemList: React.FC<SystemListProps> = ({ searchKeyword, showAlert }) => {
+const SystemList: React.FC<SystemListProps> = ({ showAlert }) => {
   const [systems, setSystems] = useState<System[]>([]);
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
@@ -24,7 +25,7 @@ const SystemList: React.FC<SystemListProps> = ({ searchKeyword, showAlert }) => 
   const fetchSystems = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8081/api/upms/systems?keyword=${encodeURIComponent(searchKeyword)}`
+        `http://localhost:8081/api/adm/system`
       );
       const responseData = await response.json();
       if (response.ok) {
@@ -40,11 +41,6 @@ const SystemList: React.FC<SystemListProps> = ({ searchKeyword, showAlert }) => 
       console.error("API 錯誤:", error);
     }
   };
-
-  // 當 searchKeyword 更新時重新獲取角色資料
-  useEffect(() => {
-    fetchSystems();
-  }, [searchKeyword]);
 
   // 打開編輯模式
   const handleEditClick = (system: System) => {
@@ -64,20 +60,37 @@ const SystemList: React.FC<SystemListProps> = ({ searchKeyword, showAlert }) => 
     setEditModalOpen(false);
   };
 
+  useEffect(() => {
+    fetchSystems();
+  }, []);
+
   return (
     <>
       <div className="table-responsive">
         <table className="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer">
           <thead>
             <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+              <td className="min-w-125px">代碼</td>
               <td className="min-w-125px">名稱</td>
+              <td className="min-w-125px">描述</td>
+              <td className="min-w-125px">狀態</td>
+              <td className="min-w-125px">功能</td>
             </tr>
           </thead>
           <tbody>
             {systems.length > 0 ? (
               systems.map((system) => (
                 <tr key={system.id}>
+                  <td>{system.code}</td>
                   <td>{system.name}</td>
+                  <td>{system.description}</td>
+                  <td>
+                    {system.enabled ? (
+                      <span className="badge badge-light-success fw-bolder me-auto px-4 py-3">啟用</span>
+                    ) : (
+                      <span className="badge badge-light-secondary fw-bolder me-auto px-4 py-3">停用</span>
+                    )}
+                  </td>
                   <td>
                     <button
                       className="btn btn-sm btn-warning"

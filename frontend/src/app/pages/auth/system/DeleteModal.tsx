@@ -1,11 +1,14 @@
 import { useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
+import { useSystem } from '../../common/api/SystemContext';
 
 interface System {
-    id: number;
+    id: string;
+    code: string;
     name: string;
-    orders: number;
+    description: string;
+    enabled: boolean;
 }
 
 interface DeleteModalProps {
@@ -17,9 +20,10 @@ interface DeleteModalProps {
 }
 
 export function DeleteModal({ deleteModal, onClose, system, showAlert, onSystemUpdated }: DeleteModalProps) {
-    // 按鈕loading初始化
     const btnRef = useRef<HTMLButtonElement | null>(null);
-    // 刪除角色
+    // global系統參數
+    const { refreshSystems } = useSystem();
+    // 刪除系統
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!system) {
@@ -28,15 +32,16 @@ export function DeleteModal({ deleteModal, onClose, system, showAlert, onSystemU
         try {
             // loading開啟
             btnRef.current?.setAttribute('data-kt-indicator', 'on');
-            const response = await fetch(`http://localhost:8081/api/upms/systems/${system.id}`, {
+            const response = await fetch(`http://localhost:8081/api/adm/system/${system.id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
             // loading關閉
             btnRef.current?.removeAttribute("data-kt-indicator");
             if (response.ok) {
-                showAlert("角色已成功刪除！", "success");
+                showAlert("系統已成功刪除！", "success");
                 onSystemUpdated();
+                refreshSystems();
                 onClose();
                 return;
             }

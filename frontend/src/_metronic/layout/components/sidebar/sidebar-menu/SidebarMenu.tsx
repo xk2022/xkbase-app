@@ -1,18 +1,25 @@
-import { SidebarMenuMain } from './SidebarMenuMain'
-import Select from 'react-select'
-import { useMemo } from 'react'
-
-const sidebarOptions = [
-  { value: 'system 1', label: 'System 1' },
-  { value: 'system 2', label: 'System 2' },
-  { value: 'system 3', label: 'System 3' },
-  { value: 'system 4', label: 'System 4' },
-  { value: 'system 5', label: 'System 5' },
-]
+import { SidebarMenuMain } from './SidebarMenuMain';
+import Select from 'react-select';
+import { useMemo, useState, useEffect } from 'react';
+import { useSystem } from '../../../../../app/pages/common/api/SystemContext';
 
 const SidebarMenu = () => {
-  // useMemo 避免每次渲染都重新创建数组
-  const options = useMemo(() => sidebarOptions, [])
+  const { systems } = useSystem();
+  const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
+  // 使用 useMemo 來避免每次渲染時都重新創建 options
+  const options = useMemo(() => {
+    return systems.map((system) => ({
+      value: system.code, 
+      label: system.name,
+    }));
+  }, [systems]);
+
+  // 設置預設選中的系統為第一個系統
+  useEffect(() => {
+    if (systems.length > 0) {
+      setSelectedSystem(systems[0].code);
+    }
+  }, [systems]);
 
   return (
     <div className='app-sidebar-menu overflow-hidden flex-column-fluid'>
@@ -25,13 +32,12 @@ const SidebarMenu = () => {
         data-kt-scroll-offset='5px'
         data-kt-scroll-save-state='true'
       >
-        {/* Sidebar Logo + Select Dropdown */}
         <div className='app-sidebar-logo px-6' id='kt_app_sidebar_logo'>
           <div className='mb-10'>
             <label className='form-label'>Select an Option</label>
             <Select
-              className='react-select-styled react-select-solid'
-              classNamePrefix='react-select'
+              className='react-select-styled' 
+              classNamePrefix='react-select' 
               styles={{
                 container: (base) => ({
                   ...base,
@@ -51,13 +57,14 @@ const SidebarMenu = () => {
                 }),
               }}
               options={options}
+              value={options.find(option => option.value === selectedSystem)}
+              onChange={(selectedOption) => setSelectedSystem(selectedOption?.value || null)}
               placeholder='Choose...'
             />
 
           </div>
         </div>
 
-        {/* Sidebar Menu */}
         <div className='menu menu-column menu-rounded menu-sub-indention px-3' data-kt-menu='true'>
           <SidebarMenuMain />
         </div>
