@@ -100,6 +100,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
             </div>
             <form id="kt_modal_add_role_form" className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -188,6 +189,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
                     </div>
                   )}
                 </div>
+                
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>

@@ -101,24 +101,18 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
                   <td>{user.cellPhone}</td>
                   <td>{getRoleCode(user.roleId)}</td>
                   <td>
-                    <div className="form-check form-switch form-check-custom form-check-solid">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        checked={!user.locked}
-                        readOnly
-                      />
-                    </div>
+                    {user.enabled ? (
+                      <span className="badge badge-light-success fw-bolder me-auto px-4 py-3">啟用</span>
+                    ) : (
+                      <span className="badge badge-light-secondary fw-bolder me-auto px-4 py-3">停用</span>
+                    )}
                   </td>
                   <td>
-                    <div className="form-check form-switch form-check-custom form-check-solid">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        checked={!user.enabled}
-                        readOnly
-                      />
-                    </div>
+                    {user.locked ? (
+                      <span className="badge badge-light-danger fw-bolder me-auto px-4 py-3">已鎖定</span>
+                    ) : (
+                      <span className="badge badge-light-success fw-bolder me-auto px-4 py-3">未鎖定</span>
+                    )}
                   </td>
                   <td>{user.lastLogin}</td>
                   <td>

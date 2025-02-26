@@ -3,7 +3,6 @@ import { Content } from "../../../../_metronic/layout/components/content";
 import { KTIcon } from "../../../../_metronic/helpers";
 import { CreateModal } from "./CreateModal";
 import { useAlert } from "../../common/alert/useAlert";
-import { Alert } from "../../common/alert/Alert";
 import UserList from "./List";
 
 export function Overview() {

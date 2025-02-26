@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
+import { useSystem } from '../../common/api/SystemContext';
 
 interface CreateModalProps {
   createModal: boolean;
@@ -11,12 +12,14 @@ interface CreateModalProps {
 
 export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { name: '', orders: '0' };
-  const initialErrorState = { name: false, orders: false };
-  const initialTouchedState = { name: false, orders: false };
+  const initialFormState = { code: '', name: '', description: ''};
+  const initialErrorState = { code: false, name: false};
+  const initialTouchedState = { code: false, name: false};
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
+  // global系統參數
+  const { refreshSystems } = useSystem();
 
   useEffect(() => {
     if (createModal) {
@@ -42,10 +45,10 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ name: true, orders: true });
+    setTouched({ code: true, name: true});
     const newErrors = {
+      code: formData.code.trim() === '',
       name: formData.name.trim() === '',
-      orders: formData.orders.trim() === '' || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
@@ -54,7 +57,7 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
     try {
       // loading開啟
       btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch("http://localhost:8081/api/upms/systems", {
+      const response = await fetch("http://localhost:8081/api/adm/system", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -64,6 +67,7 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
       if (response.ok) {
         showAlert("新增成功！", "success");
         onSystemCreated();
+        refreshSystems();
         onClose();
         return;
       }
@@ -98,6 +102,30 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
             </div>
             <form id="kt_modal_add_system_form" className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">代碼</label>
+                  <div className="col-lg-10">
+                    <input
+                      placeholder="請輸入代碼"
+                      className="form-control form-control-solid"
+                      type="text"
+                      name="code"
+                      autoComplete="off"
+                      value={formData.code}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </div>
+                  {touched.code && errors.code && (
+                    <div className="fv-plugins-message-container">
+                      <div className="fv-help-block">
+                        <span role="alert">代碼不得為空</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -122,32 +150,21 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
                 </div>
 
                 <div className="row fv-row mb-6">
-                  <label className="col-lg-2 col-form-label required fw-bold fs-6">排序</label>
+                  <label className="col-lg-2 col-form-label fw-bold fs-6">描述</label>
                   <div className="col-lg-10">
                     <input
-                      placeholder="請輸入排序值"
+                      placeholder="請輸入描述"
                       className="form-control form-control-solid"
                       type="text"
-                      name="orders"
+                      name="description"
                       autoComplete="off"
-                      value={formData.orders}
+                      value={formData.description}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      onKeyDown={(e) => {
-                        if (!/^[0-9]$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
-                          e.preventDefault();
-                        }
-                      }}
                     />
                   </div>
-                  {touched.orders && errors.orders && (
-                    <div className="fv-plugins-message-container">
-                      <div className="fv-help-block">
-                        <span role="alert">排序值必須為 0 ~ 100</span>
-                      </div>
-                    </div>
-                  )}
                 </div>
+
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>
