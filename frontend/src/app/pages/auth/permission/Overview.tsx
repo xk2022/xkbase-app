@@ -14,9 +14,10 @@ interface Role {
 }
 
 interface System {
-  id: number;
+  uuid: string;
   name: string;
-  orders: number;
+  description: string;
+  enabled: boolean;
 }
 
 interface Permission {
@@ -29,7 +30,7 @@ export function Overview() {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
   const [roles, setRoles] = useState<Role[]>();
   const [systems, setSystems] = useState<System[]>();
-  const [systemId, setSystemId] = useState<number | null>(null);
+  const [systemId, setSystemId] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<number | null>(null);
 
   const handleCheckboxChange = (id: string) => {
@@ -39,39 +40,23 @@ export function Overview() {
     }));
   };
 
-  const fetchSystems = async () => {
-    const mockData = [
-      { id: 1, name: "系統一", orders: 0 },
-      { id: 2, name: "系統二", orders: 1 },
-      { id: 3, name: "系統三", orders: 2 },
-    ];
-    setSystems(mockData);
-  };
-
   useEffect(() => {
-    // const fetchSystems = async () => {
-    //   try {
-    //     const response = await fetch("http://localhost:8081/api/upms/systems");
-    //     const responseData = await response.json();
-    //     if (response.ok) {
-    //       setSystems(responseData.data);
-    //       if (responseData.data.length > 0) {
-    //         setSystemId(responseData.data[0].id);
-    //       }
-    //     } else {
-    //       onAlert(responseData.message, "warning");
-    //     }
-    //   } catch (error) {
-    //     console.error("API 錯誤:", error);
-    //   }
-    // };
-    const mockData = [
-      { id: 1, name: "系統一", orders: 0 },
-      { id: 2, name: "系統二", orders: 1 },
-      { id: 3, name: "系統三", orders: 2 },
-    ];
-    setSystems(mockData);
-    setSystemId(mockData[0].id);
+    const fetchSystems = async () => {
+      try {
+        const response = await fetch("http://localhost:8081/api/adm/system");
+        const responseData = await response.json();
+        if (response.ok) {
+          setSystems(responseData.data);
+          if (responseData.data.length > 0) {
+            setSystemId(responseData.data[0].uuid);
+          }
+          return;
+        }
+        showAlert(responseData.message, "warning");
+      } catch (error) {
+        console.error("API 錯誤:", error);
+      }
+    };
     fetchSystems();
   }, []);
 
@@ -96,31 +81,33 @@ export function Overview() {
   }, []);
 
   useEffect(() => {
-    if (systemId !== null && roleId !== null) {
-      const fetchPermissions = async () => {
-        try {
-          const response = await fetch(`http://localhost:8081/api/upms/permissions?systemId=${systemId}&roleId=${roleId}`);
-          const responseData = await response.json();
-          if (response.ok) {
-            const updatedPermissions: { [key: string]: boolean } = {};
-            responseData.data.forEach((perm: Permission) => {
-              updatedPermissions[perm.id] = perm.allowed;
-            });
-            setCheckedItems(updatedPermissions);
-          } else {
-            showAlert(responseData.message, "warning");
-          }
-        } catch (error) {
-          console.error("API 錯誤:", error);
-        }
-      };
-      fetchPermissions();
+    if (!systemId || !roleId) {
+      return;
     }
+    const fetchPermissions = async () => {
+      try {
+        const response = await fetch(`http://localhost:8081/api/upms/permissions?systemId=${systemId}&roleId=${roleId}`);
+        const responseData = await response.json();
+        if (response.ok) {
+          const updatedPermissions: { [key: string]: boolean } = {};
+          responseData.data.forEach((perm: Permission) => {
+            updatedPermissions[perm.id] = perm.allowed;
+          });
+          setCheckedItems(updatedPermissions);
+          return;
+        }
+        showAlert(responseData.message, "warning");
+      } catch (error) {
+        console.error("API 錯誤:", error);
+        showAlert("系統錯誤，請稍後再試！", "danger");
+      }
+    };
+    fetchPermissions();
   }, [roleId, systemId]);
 
   // 處理系統選單變動
   const handleSystemChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSystemId(Number(event.target.value));
+    setSystemId(event.target.value);
   };
 
   // 處理角色選單變動
@@ -153,7 +140,7 @@ export function Overview() {
               >
                 {systems && systems.length > 0 ? (
                   systems.map((system) => (
-                    <option key={system.id} value={system.id}>{system.name}</option>
+                    <option key={system.uuid} value={system.uuid}>{system.name}</option>
                   ))
                 ) : (
                   <option disabled>無系統可選</option>

@@ -9,7 +9,7 @@ const SidebarMenu = () => {
   // 使用 useMemo 來避免每次渲染時都重新創建 options
   const options = useMemo(() => {
     return systems.map((system) => ({
-      value: system.code, 
+      value: system.uuid, 
       label: system.name,
     }));
   }, [systems]);
@@ -17,7 +17,7 @@ const SidebarMenu = () => {
   // 設置預設選中的系統為第一個系統
   useEffect(() => {
     if (systems.length > 0) {
-      setSelectedSystem(systems[0].code);
+      setSelectedSystem(systems[0].uuid);
     }
   }, [systems]);
 

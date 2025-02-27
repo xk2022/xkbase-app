@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 interface System {
-  id: string;
+  uuid: string;
   code: string;
   name: string;
   description: string;

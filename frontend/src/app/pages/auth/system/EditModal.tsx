@@ -5,6 +5,7 @@ import { useSystem } from '../../common/api/SystemContext';
 
 interface System {
   id: string;
+  uuid: string;
   code: string;
   name: string;
   description: string;
@@ -65,7 +66,7 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
     try {
       // loading開啟
       btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch(`http://localhost:8081/api/adm/system/${formData.id}`, {
+      const response = await fetch(`http://localhost:8081/api/adm/system/${formData.uuid}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -167,6 +168,20 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
                       onChange={handleChange}
                       onBlur={handleBlur}
                     />
+                  </div>
+                </div>
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">啟用</label>
+                  <div className="col-lg-10 d-flex">
+                    <div className="form-check form-switch form-check-custom form-check-solid">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        checked={formData.enabled}
+                        onChange={(e) => setFormData({ ...formData, enabled: e.target.checked })}
+                      />
+                    </div>
                   </div>
                 </div>
 
