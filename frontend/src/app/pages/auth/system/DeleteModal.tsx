@@ -5,6 +5,7 @@ import { useSystem } from '../../common/api/SystemContext';
 
 interface System {
     id: string;
+    uuid: string;
     code: string;
     name: string;
     description: string;
@@ -32,7 +33,7 @@ export function DeleteModal({ deleteModal, onClose, system, showAlert, onSystemU
         try {
             // loading開啟
             btnRef.current?.setAttribute('data-kt-indicator', 'on');
-            const response = await fetch(`http://localhost:8081/api/adm/system/${system.id}`, {
+            const response = await fetch(`http://localhost:8081/api/adm/system/${system.uuid}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
