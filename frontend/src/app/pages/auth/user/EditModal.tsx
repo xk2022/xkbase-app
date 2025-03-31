@@ -1,18 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  cellPhone: string;
-  roleId: number;
-  password: string;
-  enabled: boolean;
-  locked: boolean;
-  lastLogin: string;
-}
+import { User } from '../../model/UserModel';
+import { Role } from '../../model/RoleModel';
+import { editUser } from './Query';
 
 interface EditModalProps {
   editModal: boolean;
@@ -20,7 +11,7 @@ interface EditModalProps {
   user: User | null;
   showAlert: (message: string, type: "success" | "danger" | "warning") => void;
   onUserUpdated: () => void;
-  roles: { id: number, code: string, title: string, description: string, orders: number }[];
+  roles: Role[];
 }
 
 export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, roles }: EditModalProps) {
@@ -54,47 +45,29 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData) return;
+    if (!user) return;
 
     const newErrors = {
-      username: formData.username.trim() === '',
-      email: formData.email.trim() === '',
-      cellPhone: formData.cellPhone.trim() === ''
+      username: user.username.trim() === '',
+      email: user.email.trim() === '',
+      cellPhone: user.cellPhone.trim() === ''
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
-    try {
-      // loading開啟
-      btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch(`http://localhost:8081/api/upms/users/${formData.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      // loading關閉
-      btnRef.current?.removeAttribute("data-kt-indicator");
-      if (response.ok) {
-        showAlert("編輯成功！", "success");
-        onUserUpdated();
-        onClose();
-        return;
-      }
-      const responseData = await response.json();
-      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.message || "請求失敗，請檢查輸入資料", "warning");
-    } catch (error) {
-      console.error("提交錯誤:", error);
-      showAlert("系統錯誤，請稍後再試！", "danger");
+    btnRef.current?.setAttribute('data-kt-indicator', 'on');
+    const success = await editUser(user, showAlert);
+    btnRef.current?.removeAttribute("data-kt-indicator");
+    if (success) {
+      onUserUpdated();
       onClose();
     }
   };
 
-  if (!editModal || !formData) return null;
+  if (!editModal || !formData) {
+    return null;
+  }
 
   return (
     <Content>
@@ -109,7 +82,7 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
             </div>
             <form className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">

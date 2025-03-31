@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { KTIcon } from "../../../../_metronic/helpers";
-import { useAlert } from "../../common/alert/useAlert";
-import { Alert } from "../../common/alert/Alert";
+import { useAlert } from "../../common/useAlert";
 import { CreateModal } from "./CreateModal";
 import RoleList from "./List";
 
 export function Overview() {
-  const { alert, showAlert } = useAlert();
+  const { alert, showAlert, Alert } = useAlert();
   const [createModal, setCreateModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [listKey, setListKey] = useState(0);
@@ -30,7 +29,7 @@ export function Overview() {
   return (
     <Content>
       {alert && <Alert message={alert.message} type={alert.type} />}
-      <div className="container">
+      <div className="">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">
             <a href="#" className="pe-3">權限</a>

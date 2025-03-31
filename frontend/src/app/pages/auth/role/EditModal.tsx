@@ -1,14 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
-
-interface Role {
-  id: number;
-  code: string;
-  title: string;
-  description: string;
-  orders: number;
-}
+import { Role } from '../../model/RoleModel';
 
 interface EditModalProps {
   editModal: boolean;

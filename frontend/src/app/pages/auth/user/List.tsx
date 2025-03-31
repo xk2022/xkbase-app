@@ -2,23 +2,14 @@ import React, { useState, useEffect } from "react";
 import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
-
-interface User {
-  id: number;
-  username: string;
-  email: string;
-  cellPhone: string;
-  roleId: number;
-  password: string;
-  enabled: boolean;
-  locked: boolean;
-  lastLogin: string;
-}
+import { User } from '../../model/UserModel';
+import { Role } from '../../model/RoleModel';
+import { fetchUsers } from './Query';
 
 interface UserListProps {
   searchKeyword: string;
   showAlert: (message: string, type: "success" | "warning" | "danger") => void;
-  roles: { id: number, code: string, title: string, description: string, orders: number }[];
+  roles: Role[];
 }
 
 const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) => {
@@ -28,28 +19,13 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
   // 獲取角色列表的函數
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8081/api/upms/users?keyword=${encodeURIComponent(searchKeyword)}`
-      );
-      const responseData = await response.json();
-      if (response.ok) {
-        setUsers(responseData.data);
-        return;
-      }
-      if(Array.isArray(responseData.errorDetails.length)){
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-    } catch (error) {
-      console.error("API 錯誤:", error);
-    }
+  const getUsers = async () => {
+    const fetchedUsers = await fetchUsers(searchKeyword, showAlert);
+    setUsers(fetchedUsers);
   };
 
   useEffect(() => {
-    fetchUsers();
+    getUsers();
   }, [searchKeyword]);
 
   // 打開編輯模式
@@ -66,7 +42,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
 
   // 角色更新後刷新角色列表
   const handleUserUpdated = () => {
-    fetchUsers();
+    getUsers();
     setEditModalOpen(false);
   };
 

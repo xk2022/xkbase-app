@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
-import { useSystem } from '../../common/api/SystemContext';
+import { useSystem } from '../../common/SystemContext';
 
 interface CreateModalProps {
   createModal: boolean;

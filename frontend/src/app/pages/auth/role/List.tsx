@@ -2,14 +2,7 @@ import React, { useState, useEffect } from "react";
 import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
-
-interface Role {
-  id: number;
-  code: string;
-  title: string;
-  description: string;
-  orders: number;
-}
+import { Role } from '../../model/RoleModel';
 
 interface RoleListProps {
   searchKeyword: string;

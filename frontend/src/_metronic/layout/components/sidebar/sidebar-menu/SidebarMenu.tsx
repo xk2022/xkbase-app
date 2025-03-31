@@ -1,7 +1,7 @@
 import { SidebarMenuMain } from './SidebarMenuMain';
 import Select from 'react-select';
 import { useMemo, useState, useEffect } from 'react';
-import { useSystem } from '../../../../../app/pages/common/api/SystemContext';
+import { useSystem } from '../../../../../app/pages/common/SystemContext';
 
 const SidebarMenu = () => {
   const { systems } = useSystem();

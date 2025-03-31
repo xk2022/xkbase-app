@@ -1,16 +1,8 @@
 import { useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
-import { useSystem } from '../../common/api/SystemContext';
-
-interface System {
-    id: string;
-    uuid: string;
-    code: string;
-    name: string;
-    description: string;
-    enabled: boolean;
-}
+import { useSystem } from '../../common/SystemContext';
+import { System } from '../../model/SystemModel';
 
 interface DeleteModalProps {
     deleteModal: boolean;

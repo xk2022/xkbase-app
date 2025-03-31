@@ -2,12 +2,11 @@ import { useState } from "react";
 import { Content } from "../../../../_metronic/layout/components/content";
 import { KTIcon } from "../../../../_metronic/helpers";
 import { CreateModal } from "./CreateModal";
-import { useAlert } from "../../common/alert/useAlert";
-import { Alert } from "../../common/alert/Alert";
+import { useAlert } from "../../common/useAlert";
 import SystemList from "./List";
 
 export function Overview() {
-  const { alert, showAlert } = useAlert();
+  const { alert, showAlert, Alert } = useAlert();
   const [createModal, setCreateModal] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -18,7 +17,7 @@ export function Overview() {
   return (
     <Content>
       {alert && <Alert message={alert.message} type={alert.type} />}
-      <div className="container">
+      <div className="">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">
             <a href="#" className="pe-3">權限</a>
