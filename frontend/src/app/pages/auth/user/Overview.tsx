@@ -1,17 +1,19 @@
 import { useEffect, useState } from "react";
-import { Content } from "../../../../_metronic/layout/components/content";
-import { KTIcon } from "../../../../_metronic/helpers";
-import { CreateModal } from "./CreateModal";
-import { useAlert } from "../../common/alert/useAlert";
-import UserList from "./List";
+import { Content } from '../../../../_metronic/layout/components/content';
+import { KTIcon } from '../../../../_metronic/helpers';
+import { useAlert } from '../../common/useAlert';
+import { fetchRoles } from '../role/Query';
+import { CreateModal } from './CreateModal';
+import { Role } from '../../model/RoleModel';
+import UserList from './List';
 
 export function Overview() {
-  const { alert, showAlert } = useAlert();
+  const { alert, showAlert, Alert } = useAlert();
   const [createModal, setCreateModal] = useState(false);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [listKey, setListKey] = useState(0);
   const [tempKeyword, setTempKeyword] = useState('');
-  const [roles, setRoles] = useState<{ id: number, code: string, title: string, description: string, orders: number }[]>([]);
+  const [roles, setRoles] = useState<Role[]>([]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -23,39 +25,20 @@ export function Overview() {
     setListKey(prevKey => prevKey + 1); 
   };
 
-  const fetchRoles = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8081/api/upms/roles`
-      );
-      const responseData = await response.json();
-      if (response.ok) {
-        setRoles(responseData.data);
-        return;
-      }
-      if (responseData.errorDetails && Array.isArray(responseData.errorDetails)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.message, "warning");
-    } catch (error) {
-      console.error("API 錯誤:", error);
-    }
+  // 獲取角色列表的函數
+  const getRoles = async () => {
+    const fetchedUsers = await fetchRoles(searchKeyword, showAlert);
+    setRoles(fetchedUsers);
   };
 
   useEffect(() => {
-    fetchRoles();
-    setSearchKeyword('');
+    getRoles();
   }, []);
 
   return (
     <Content>
-      {alert && (
-        <div className={`mb-lg-15 alert alert-${alert.type} position-fixed end-0 m-3 shadow-lg`} style={{ top: "10%", zIndex: 9999, minWidth: "250px" }}>
-          <div className='alert-text font-weight-bold'>{alert.message}</div>
-        </div>
-      )}
-      <div className="container">
+      {alert && <Alert message={alert.message} type={alert.type} />}
+      <div className="">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">
             <a href="#" className="pe-3">權限</a>

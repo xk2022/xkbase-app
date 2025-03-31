@@ -1,16 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
-import { useSystem } from '../../common/api/SystemContext';
-
-interface System {
-  id: string;
-  uuid: string;
-  code: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-}
+import { useSystem } from '../../common/SystemContext';
+import { System } from '../../model/SystemModel';
 
 interface EditModalProps {
   editModal: boolean;
@@ -22,8 +14,8 @@ interface EditModalProps {
 
 export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdated }: EditModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialErrorState = { code: false, name: false};
-  const initialTouchedState = { code: false, name: false};
+  const initialErrorState = { code: false, name: false };
+  const initialTouchedState = { code: false, name: false };
   const [formData, setFormData] = useState<System | null>(system);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -109,7 +101,7 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
             <form className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
 
-              <div className="row fv-row mb-6">
+                <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">代碼</label>
                   <div className="col-lg-10">
                     <input

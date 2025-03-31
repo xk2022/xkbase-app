@@ -1,14 +1,8 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
-
-interface User {
-    id: number;
-    username: string;
-    email: string;
-    cellPhone: string;
-    password: string;
-}
+import { User } from '../../model/UserModel';
+import { deleteUser } from './Query';
 
 interface DeleteModalProps {
     deleteModal: boolean;
@@ -26,30 +20,11 @@ export function DeleteModal({ deleteModal, onClose, user, showAlert, onUserUpdat
         if (!user) {
             return;
         }
-        try {
-            // loading開啟
-            btnRef.current?.setAttribute('data-kt-indicator', 'on');
-            const response = await fetch(`http://localhost:8081/api/upms/users/${user.id}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
-            // loading關閉
-            btnRef.current?.removeAttribute("data-kt-indicator");
-            if (response.ok) {
-                showAlert("使用者已成功刪除！", "success");
-                onUserUpdated();
-                onClose();
-                return;
-            }
-            const responseData = await response.json();
-            if (Array.isArray(responseData.errorDetails.length)) {
-                showAlert(responseData.errorDetails.join("\n"), "warning");
-                return;
-            }
-            showAlert(responseData.errorDetails, "warning");
-        } catch (error) {
-            console.error("提交錯誤:", error);
-            showAlert("系統錯誤，請稍後再試！", "danger");
+        btnRef.current?.setAttribute('data-kt-indicator', 'on');
+        const success = await deleteUser(user, showAlert);
+        btnRef.current?.removeAttribute("data-kt-indicator");
+        if (success) {
+            onUserUpdated();
             onClose();
         }
     };

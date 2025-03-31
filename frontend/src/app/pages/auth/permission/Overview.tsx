@@ -1,32 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
-import { KTIcon } from "../../../../_metronic/helpers";
-import { AccordionItem } from './AccordionItem';
-import { useAlert } from "../../common/alert/useAlert";
-import { Alert } from "../../common/alert/Alert";
-
-interface Role {
-  id: number;
-  code: string;
-  title: string;
-  description: string;
-  orders: number;
-}
-
-interface System {
-  uuid: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-}
-
-interface Permission {
-  id: string;
-  allowed: boolean;
-}
+import { KTIcon } from '../../../../_metronic/helpers';
+import { useAlert } from '../../common/useAlert';
+import { Tree } from './Tree';
+import { Role } from '../../model/RoleModel';
+import { System } from '../../model/SystemModel';
+import { Permission } from '../../model/PermissionModel';
 
 export function Overview() {
-  const { alert, showAlert } = useAlert();
+  const { alert, showAlert, Alert } = useAlert();
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
   const [roles, setRoles] = useState<Role[]>();
   const [systems, setSystems] = useState<System[]>();
@@ -118,7 +100,7 @@ export function Overview() {
   return (
     <Content>
       {alert && <Alert message={alert.message} type={alert.type} />}
-      <div className="container">
+      <div className="">
         <ol className="breadcrumb text-muted fs-6 fw-bold">
           <li className="breadcrumb-item pe-3">
             <a href="#" className="pe-3">權限</a>
@@ -167,9 +149,9 @@ export function Overview() {
           </div>
           <div className="card-body py-4">
             <div className="accordion accordion-icon-toggle" id="system">
-              <AccordionItem id="auth" title="權限管理">
+              <Tree id="auth" title="權限管理">
                 <div className="accordion accordion-icon-toggle">
-                  <AccordionItem id="user_management" title="使用者管理">
+                  <Tree id="user_management" title="使用者管理">
                     <div className="accordion accordion-icon-toggle">
                       <div className="mt-2">
                         <div className="form-check form-check-custom form-check-solid form-check-sm">
@@ -219,9 +201,9 @@ export function Overview() {
                         </div>
                       </div>
                     </div>
-                  </AccordionItem>
+                  </Tree>
 
-                  <AccordionItem id="role_management" title="角色管理">
+                  <Tree id="role_management" title="角色管理">
                     <div className="accordion accordion-icon-toggle">
                       <div className="mt-2">
                         <div className="form-check form-check-custom form-check-solid form-check-sm">
@@ -271,9 +253,9 @@ export function Overview() {
                         </div>
                       </div>
                     </div>
-                  </AccordionItem>
+                  </Tree>
                 </div>
-              </AccordionItem>
+              </Tree>
             </div>
           </div>
         </div>

@@ -1,12 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-
-interface System {
-  uuid: string;
-  code: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-}
+import { System } from '../../auth/system/Model';
 
 interface SystemContextType {
   systems: System[];

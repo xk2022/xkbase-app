@@ -12,7 +12,7 @@ import { DashboardWrapper } from '../pages/dashboard/DashboardWrapper'
 /* getCSSVariableValue()：獲取 CSS 變數，用於設定 TopBarProgress 的顏色。 */
 import { getCSSVariableValue } from '../../_metronic/assets/ts/_utils'
 import { WithChildren } from '../../_metronic/helpers'
-import { SystemProvider } from '../../app/pages/common/api/SystemContext';
+import { SystemProvider } from '../../app/pages/common/SystemContext';
 
 // 懶加載頁面
 // 懶加載頁面，為每個頁面指定具體的 React 組件類型
@@ -24,10 +24,10 @@ const pageImports: Record<string, () => Promise<{ default: React.ComponentType<R
   WidgetsPage: () => import("../modules/widgets/WidgetsPage"),
   UsersPage: () => import("../modules/apps/user-management/UsersPage"),
 
-  SystemPage: () => import("../pages/auth/system/SystemPage"),
-  UserPage: () => import("../pages/auth/user/UserPage"),
-  RolePage: () => import("../pages/auth/role/RolePage"),
-  PermissionPage: () => import("../pages/auth/permission/PermissionPage"),
+  SystemPage: () => import("../pages/auth/system/index"),
+  UserPage: () => import("../pages/auth/user/index"),
+  RolePage: () => import("../pages/auth/role/index"),
+  PermissionPage: () => import("../pages/auth/permission/index"),
 };
 
 const routesConfig = [

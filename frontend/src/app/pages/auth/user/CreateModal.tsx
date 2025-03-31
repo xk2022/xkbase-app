@@ -1,18 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
+import { Role } from '../../model/RoleModel';
+import { createUser } from './Query';
 
 interface CreateModalProps {
   createModal: boolean;
   onClose: () => void;
   showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void;
   onUserCreated: () => void;
-  roles: { id: number, code: string, title: string, description: string, orders: number }[];
+  roles: Role[];
 }
 
 export function CreateModal({ createModal, onClose, showAlert, onUserCreated, roles }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { username: '', email: '', cellPhone: '', password: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0 };
+  const initialFormState = {id: 0, username: '', email: '', cellPhone: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0, password: '', enabled : true, locked : false, lastLogin: '' };
   const initialErrorState = { username: false, email: false, cellPhone: false, password: false };
   const initialTouchedState = { username: false, email: false, cellPhone: false, password: false };
   const [formData, setFormData] = useState(initialFormState);
@@ -64,31 +66,11 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
-    try {
-      // loading開啟
-      btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch("http://localhost:8081/api/upms/users", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      // loading關閉
-      btnRef.current?.removeAttribute("data-kt-indicator");
-      if (response.ok) {
-        showAlert("新增成功！", "success");
-        onUserCreated();
-        onClose();
-        return;
-      }
-      const responseData = await response.json();
-      if (Array.isArray(responseData.errorDetails.length)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-    } catch (error) {
-      console.error("提交錯誤:", error);
-      showAlert("系統錯誤，請稍後再試！", "danger");
+    btnRef.current?.setAttribute('data-kt-indicator', 'on');
+    const success = await createUser(formData, showAlert);
+    btnRef.current?.removeAttribute('data-kt-indicator');
+    if (success) {
+      onUserCreated();
       onClose();
     }
   };
@@ -110,7 +92,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
             </div>
             <form id="kt_modal_add_user_form" className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
                   <div className="col-lg-10">
@@ -191,7 +173,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
                     <input
                       placeholder="請輸入密碼"
                       className="form-control form-control-solid"
-                      type="text"
+                      type="password"
                       name="password"
                       autoComplete="off"
                       value={formData.password}
@@ -224,7 +206,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
                     </select>
                   </div>
                 </div>
-                
+
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>

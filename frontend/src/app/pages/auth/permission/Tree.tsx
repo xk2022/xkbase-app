@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { KTIcon } from "../../../../_metronic/helpers";
 
-interface AccordionItemProps {
+interface TreeProps {
   id: string;
   title: string;
   children?: React.ReactNode;
 }
 
-export function AccordionItem({ id, title, children }: AccordionItemProps) {
+export function Tree({ id, title, children }: TreeProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

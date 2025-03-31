@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { KTIcon } from '../../../../_metronic/helpers';
+import { System } from '../../model/SystemModel';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
-
-interface System {
-  id: string;
-  code: string;
-  name: string;
-  description: string;
-  enabled: boolean;
-}
 
 interface SystemListProps {
   showAlert: (message: string, type: "success" | "warning" | "danger") => void;
@@ -80,7 +73,7 @@ const SystemList: React.FC<SystemListProps> = ({ showAlert }) => {
           <tbody>
             {systems.length > 0 ? (
               systems.map((system) => (
-                <tr key={system.id}>
+                <tr key={system.uuid}>
                   <td>{system.code}</td>
                   <td>{system.name}</td>
                   <td>{system.description}</td>
