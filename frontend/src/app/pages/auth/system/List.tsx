@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { KTIcon } from '../../../../_metronic/helpers';
 import { System } from '../../model/SystemModel';
-import { EditModal } from "./EditModal";
-import { DeleteModal } from "./DeleteModal";
+import { EditModal } from './EditModal';
+import { DeleteModal } from './DeleteModal';
+import { fetchSystems } from './Query'; 
 
 interface SystemListProps {
   showAlert: (message: string, type: "success" | "warning" | "danger") => void;
@@ -13,27 +14,6 @@ const SystemList: React.FC<SystemListProps> = ({ showAlert }) => {
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
   const [selectedSystem, setSelectedSystem] = useState<System | null>(null);
-
-  // 獲取角色列表的函數
-  const fetchSystems = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8081/api/adm/system`
-      );
-      const responseData = await response.json();
-      if (response.ok) {
-        setSystems(responseData.data);
-        return;
-      }
-      if(Array.isArray(responseData.errorDetails.length)){
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-    } catch (error) {
-      console.error("API 錯誤:", error);
-    }
-  };
 
   // 打開編輯模式
   const handleEditClick = (system: System) => {
@@ -49,12 +29,22 @@ const SystemList: React.FC<SystemListProps> = ({ showAlert }) => {
 
   // 系統更新後刷新系統列表
   const handleSystemUpdated = () => {
-    fetchSystems();
+    getSystems();
     setEditModalOpen(false);
   };
 
+  // 獲取系統列表的函數
+  const getSystems = async () => {
+    const fetchedSystems = await fetchSystems(showAlert);
+    setSystems(fetchedSystems);
+  };
+  
+  // 初始化取得系統清單
   useEffect(() => {
-    fetchSystems();
+    const fetchData = async () => {
+      await getSystems();
+    };
+    fetchData();
   }, []);
 
   return (

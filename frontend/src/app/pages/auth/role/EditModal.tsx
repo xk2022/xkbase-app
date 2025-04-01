@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { Role } from '../../model/RoleModel';
+import { editRole } from './Query';
 
 interface EditModalProps {
   editModal: boolean;
@@ -16,15 +17,9 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialErrorState = { code: false, title: false, orders: false };
   const initialTouchedState = { code: false, title: false, orders: false };
-  const [formData, setFormData] = useState<Role | null>(role);
+  const [formData, setFormData] = useState<Role | null>(null);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
-
-  useEffect(() => {
-    if (editModal && role) {
-      setFormData(role);
-    }
-  }, [editModal, role]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,36 +49,27 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
-    try {
-      // loading開啟
-      btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch(`http://localhost:8081/api/upms/roles/${formData.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      // loading關閉
-      btnRef.current?.removeAttribute("data-kt-indicator");
-      if (response.ok) {
-        showAlert("編輯成功！", "success");
-        onRoleUpdated();
-        onClose();
-        return;
-      }
-      const responseData = await response.json();
-      if (Array.isArray(responseData.errorDetails.length)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-    } catch (error) {
-      console.error("提交錯誤:", error);
-      showAlert("系統錯誤，請稍後再試！", "danger");
+    btnRef.current?.setAttribute('disabled', 'true');
+    btnRef.current?.setAttribute('data-kt-indicator', 'on');
+    const success = await editRole(formData, showAlert);
+    btnRef.current?.removeAttribute('disabled');
+    btnRef.current?.removeAttribute("data-kt-indicator");
+    if (success) {
+      onRoleUpdated();
       onClose();
     }
   };
 
-  if (!editModal || !formData) return null;
+  // 初始化
+  useEffect(() => {
+    if (editModal && role) {
+      setFormData(role);
+    }
+  }, [editModal, role]);
+
+  if (!editModal || !formData) {
+    return null;
+  }
 
   return (
     <Content>
@@ -187,7 +173,7 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
                     </div>
                   )}
                 </div>
-                
+
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>關閉</button>

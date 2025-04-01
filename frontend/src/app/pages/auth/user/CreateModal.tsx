@@ -14,26 +14,19 @@ interface CreateModalProps {
 
 export function CreateModal({ createModal, onClose, showAlert, onUserCreated, roles }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = {id: 0, username: '', email: '', cellPhone: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0, password: '', enabled : true, locked : false, lastLogin: '' };
+  const initialFormState = { id: 0, username: '', email: '', cellPhone: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0, password: '', enabled: true, locked: false, lastLogin: '' };
   const initialErrorState = { username: false, email: false, cellPhone: false, password: false };
   const initialTouchedState = { username: false, email: false, cellPhone: false, password: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
 
-  useEffect(() => {
-    if (createModal) {
-      setFormData(initialFormState);
-      setErrors(initialErrorState);
-      setTouched(initialTouchedState);
-    }
-  }, [createModal]);
-
   // 預設角色下拉選單為第一筆
   useEffect(() => {
-    if (roles.length > 0) {
-      setFormData(prevState => ({ ...prevState, roleId: roles[0].id }));
-    }
+    setFormData(prevState => ({
+      ...prevState,
+      roleId: prevState.roleId || (roles.length > 0 ? roles[0].id : 0),
+    }));
   }, [roles]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -54,11 +47,12 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     e.preventDefault();
     setTouched({ username: true, email: true, cellPhone: true, password: true });
     const newErrors = {
       username: formData.username.trim() === '',
-      email: formData.email.trim() === '',
+      email: !emailRegex.test(formData.email),
       cellPhone: formData.cellPhone.trim() === '' || isNaN(Number(formData.cellPhone)),
       password: formData.password.trim() === '',
     };
@@ -66,14 +60,25 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
+    btnRef.current?.setAttribute('disabled', 'true');
     btnRef.current?.setAttribute('data-kt-indicator', 'on');
     const success = await createUser(formData, showAlert);
-    btnRef.current?.removeAttribute('data-kt-indicator');
+    btnRef.current?.removeAttribute('disabled');
+    btnRef.current?.removeAttribute("data-kt-indicator");
     if (success) {
       onUserCreated();
       onClose();
     }
   };
+
+  // 初始化
+  useEffect(() => {
+    if (createModal) {
+      setFormData(initialFormState);
+      setErrors(initialErrorState);
+      setTouched(initialTouchedState);
+    }
+  }, [createModal]);
 
   if (!createModal) {
     return null;
@@ -152,7 +157,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
                       onChange={handleChange}
                       onBlur={handleBlur}
                       onKeyDown={(e) => {
-                        if (!/^[0-9]$/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Delete') {
+                        if (!/^\d$/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
                           e.preventDefault();
                         }
                       }}

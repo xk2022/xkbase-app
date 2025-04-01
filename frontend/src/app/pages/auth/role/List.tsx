@@ -3,6 +3,7 @@ import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
 import { Role } from '../../model/RoleModel';
+import { fetchRoles } from "./Query"; 
 
 interface RoleListProps {
   searchKeyword: string;
@@ -14,32 +15,6 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-
-  // 獲取角色列表的函數
-  const fetchRoles = async () => {
-    try {
-      const response = await fetch(
-        `http://localhost:8081/api/upms/roles?keyword=${encodeURIComponent(searchKeyword)}`
-      );
-      const responseData = await response.json();
-      if (response.ok) {
-        setRoles(responseData.data);
-        return;
-      }
-      if(Array.isArray(responseData.errorDetails.length)){
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-    } catch (error) {
-      console.error("API 錯誤:", error);
-    }
-  };
-
-  // 當 searchKeyword 更新時重新獲取角色資料
-  useEffect(() => {
-    fetchRoles();
-  }, [searchKeyword]);
 
   // 打開編輯模式
   const handleEditClick = (role: Role) => {
@@ -55,9 +30,23 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
 
   // 角色更新後刷新角色列表
   const handleRoleUpdated = () => {
-    fetchRoles();
+    getRoles();
     setEditModalOpen(false);
   };
+
+  // 獲取角色列表的函數
+  const getRoles = async () => {
+    const fetchedRoles = await fetchRoles(searchKeyword, showAlert);
+    setRoles(fetchedRoles);
+  };
+
+  // 初始化 及 當 searchKeyword 更新時重新獲取角色資料
+  useEffect(() => {
+    const fetchData = async () => {
+      await getRoles();
+    };
+    fetchData();
+  }, [searchKeyword]);
 
   return (
     <>

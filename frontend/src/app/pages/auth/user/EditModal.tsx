@@ -3,7 +3,7 @@ import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { User } from '../../model/UserModel';
 import { Role } from '../../model/RoleModel';
-import { editUser } from './Query';
+import { editUser } from './Query'; 
 
 interface EditModalProps {
   editModal: boolean;
@@ -19,15 +19,9 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialErrorState = { username: false, email: false, cellPhone: false };
   const initialTouchedState = { username: false, email: false, cellPhone: false };
-  const [formData, setFormData] = useState<User | null>(user);
+  const [formData, setFormData] = useState<User | null>(null);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
-
-  useEffect(() => {
-    if (editModal && user) {
-      setFormData(user);
-    }
-  }, [editModal, user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -45,25 +39,35 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
-
+    if (!formData) {
+      return;
+    }
     const newErrors = {
-      username: user.username.trim() === '',
-      email: user.email.trim() === '',
-      cellPhone: user.cellPhone.trim() === ''
+      username: formData.username.trim() === '',
+      email: formData.email.trim() === '',
+      cellPhone: formData.cellPhone.trim() === ''
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
+    btnRef.current?.setAttribute('disabled', 'true');
     btnRef.current?.setAttribute('data-kt-indicator', 'on');
-    const success = await editUser(user, showAlert);
+    const success = await editUser(formData, showAlert);
+    btnRef.current?.removeAttribute('disabled');
     btnRef.current?.removeAttribute("data-kt-indicator");
     if (success) {
       onUserUpdated();
       onClose();
     }
   };
+
+  // 初始化
+  useEffect(() => {
+    if (editModal && user) {
+      setFormData(user);
+    }
+  }, [editModal, user]);
 
   if (!editModal || !formData) {
     return null;

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { useSystem } from '../../common/SystemContext';
+import { createSystem } from './Query'; 
 
 interface CreateModalProps {
   createModal: boolean;
@@ -12,22 +13,14 @@ interface CreateModalProps {
 
 export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { code: '', name: '', description: ''};
-  const initialErrorState = { code: false, name: false};
-  const initialTouchedState = { code: false, name: false};
+  const initialFormState = { uuid: '', code: '', name: '', description: '', enabled: true };
+  const initialErrorState = { code: false, name: false };
+  const initialTouchedState = { code: false, name: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
   // global系統參數
   const { refreshSystems } = useSystem();
-
-  useEffect(() => {
-    if (createModal) {
-      setFormData(initialFormState);
-      setErrors(initialErrorState);
-      setTouched(initialTouchedState);
-    }
-  }, [createModal]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -45,7 +38,7 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setTouched({ code: true, name: true});
+    setTouched({ code: true, name: true });
     const newErrors = {
       code: formData.code.trim() === '',
       name: formData.name.trim() === '',
@@ -54,36 +47,26 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
-    try {
-      // loading開啟
-      btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch("http://localhost:8081/api/adm/system", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      // loading關閉
-      btnRef.current?.removeAttribute("data-kt-indicator");
-      if (response.ok) {
-        showAlert("新增成功！", "success");
-        onSystemCreated();
-        refreshSystems();
-        onClose();
-        return;
-      }
-      const responseData = await response.json();
-      if (Array.isArray(responseData.errorDetails.length)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-      return;
-    } catch (error) {
-      console.error("提交錯誤:", error);
-      showAlert("系統錯誤，請稍後再試！", "danger");
+    btnRef.current?.setAttribute('disabled', 'true');
+    btnRef.current?.setAttribute('data-kt-indicator', 'on');
+    const success = await createSystem(formData, showAlert);
+    btnRef.current?.removeAttribute('disabled');
+    btnRef.current?.removeAttribute("data-kt-indicator");
+    if (success) {
+      onSystemCreated();
+      refreshSystems();
       onClose();
     }
   };
+
+  // 初始化
+  useEffect(() => {
+    if (createModal) {
+      setFormData(initialFormState);
+      setErrors(initialErrorState);
+      setTouched(initialTouchedState);
+    }
+  }, [createModal]);
 
   if (!createModal) {
     return null;
@@ -102,7 +85,7 @@ export function CreateModal({ createModal, onClose, showAlert, onSystemCreated }
             </div>
             <form id="kt_modal_add_system_form" className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
-                
+
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">代碼</label>
                   <div className="col-lg-10">

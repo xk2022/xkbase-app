@@ -3,6 +3,7 @@ import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { useSystem } from '../../common/SystemContext';
 import { System } from '../../model/SystemModel';
+import { editSystem } from './Query'; 
 
 interface EditModalProps {
   editModal: boolean;
@@ -16,17 +17,11 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialErrorState = { code: false, name: false };
   const initialTouchedState = { code: false, name: false };
-  const [formData, setFormData] = useState<System | null>(system);
+  const [formData, setFormData] = useState<System | null>(null);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
   // global系統參數
   const { refreshSystems } = useSystem();
-
-  useEffect(() => {
-    if (editModal && system) {
-      setFormData(system);
-    }
-  }, [editModal, system]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -55,37 +50,28 @@ export function EditModal({ editModal, onClose, system, showAlert, onSystemUpdat
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
-    try {
-      // loading開啟
-      btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch(`http://localhost:8081/api/adm/system/${formData.uuid}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      // loading關閉
-      btnRef.current?.removeAttribute("data-kt-indicator");
-      if (response.ok) {
-        showAlert("編輯成功！", "success");
-        onSystemUpdated();
-        refreshSystems();
-        onClose();
-        return;
-      }
-      const responseData = await response.json();
-      if (Array.isArray(responseData.errorDetails.length)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-    } catch (error) {
-      console.error("提交錯誤:", error);
-      showAlert("系統錯誤，請稍後再試！", "danger");
+    btnRef.current?.setAttribute('disabled', 'true');
+    btnRef.current?.setAttribute('data-kt-indicator', 'on');
+    const success = await editSystem(formData, showAlert);
+    btnRef.current?.removeAttribute('disabled');
+    btnRef.current?.removeAttribute("data-kt-indicator");
+    if (success) {
+      onSystemUpdated();
+      refreshSystems();
       onClose();
     }
   };
 
-  if (!editModal || !formData) return null;
+  // 初始化
+  useEffect(() => {
+    if (editModal && system) {
+      setFormData(system);
+    }
+  }, [editModal, system]);
+
+  if (!editModal || !formData) {
+    return null;
+  }
 
   return (
     <Content>
