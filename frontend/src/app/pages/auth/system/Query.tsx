@@ -1,9 +1,9 @@
-import { Role } from '../../model/RoleModel';  
+import { System } from '../../model/SystemModel'; 
 
-export const fetchRoles = async (searchKeyword: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
+export const fetchSystems = async (showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
     const response = await fetch(
-      `http://localhost:8081/api/upms/roles?keyword=${encodeURIComponent(searchKeyword)}`
+      `http://localhost:8081/api/adm/system`
     );
     const responseData = await response.json();
     if (response.ok) {
@@ -22,12 +22,12 @@ export const fetchRoles = async (searchKeyword: string, showAlert: (message: str
   }
 };
 
-export const createRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
+export const createSystem = async (system: System, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch("http://localhost:8081/api/upms/roles", {
+    const response = await fetch("http://localhost:8081/api/adm/system", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(role),
+      body: JSON.stringify(system),
     });
 
     if (response.ok) {
@@ -50,12 +50,12 @@ export const createRole = async (role: Role, showAlert: (message: string, type: 
   }
 };
 
-export const editRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
+export const editSystem = async (system: System, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
+    const response = await fetch(`http://localhost:8081/api/adm/system/${system.uuid}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(role),
+      body: JSON.stringify(system),
     });
 
     if (response.ok) {
@@ -77,12 +77,12 @@ export const editRole = async (role: Role, showAlert: (message: string, type: 's
   }
 };
 
-export const deleteRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
+export const deleteSystem = async (system: System, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
+    const response = await fetch(`http://localhost:8081/api/adm/system/${system.uuid}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(role),
+      body: JSON.stringify(system),
     });
 
     if (response.ok) {

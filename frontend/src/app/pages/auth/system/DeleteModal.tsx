@@ -3,6 +3,7 @@ import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { useSystem } from '../../common/SystemContext';
 import { System } from '../../model/SystemModel';
+import { deleteSystem } from './Query'; 
 
 interface DeleteModalProps {
     deleteModal: boolean;
@@ -22,31 +23,14 @@ export function DeleteModal({ deleteModal, onClose, system, showAlert, onSystemU
         if (!system) {
             return;
         }
-        try {
-            // loading開啟
-            btnRef.current?.setAttribute('data-kt-indicator', 'on');
-            const response = await fetch(`http://localhost:8081/api/adm/system/${system.uuid}`, {
-                method: "DELETE",
-                headers: { "Content-Type": "application/json" },
-            });
-            // loading關閉
-            btnRef.current?.removeAttribute("data-kt-indicator");
-            if (response.ok) {
-                showAlert("系統已成功刪除！", "success");
-                onSystemUpdated();
-                refreshSystems();
-                onClose();
-                return;
-            }
-            const responseData = await response.json();
-            if (Array.isArray(responseData.errorDetails.length)) {
-                showAlert(responseData.errorDetails.join("\n"), "warning");
-                return;
-            }
-            showAlert(responseData.errorDetails, "warning");
-        } catch (error) {
-            console.error("提交錯誤:", error);
-            showAlert("系統錯誤，請稍後再試！", "danger");
+        btnRef.current?.setAttribute('disabled', 'true');
+        btnRef.current?.setAttribute('data-kt-indicator', 'on');
+        const success = await deleteSystem(system, showAlert);
+        btnRef.current?.removeAttribute('disabled');
+        btnRef.current?.removeAttribute("data-kt-indicator");
+        if (success) {
+            onSystemUpdated();
+            refreshSystems();
             onClose();
         }
     };

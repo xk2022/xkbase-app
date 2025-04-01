@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { User } from '../../model/UserModel';
-import { deleteUser } from './Query';
+import { deleteUser } from './Query'; 
 
 interface DeleteModalProps {
     deleteModal: boolean;
@@ -20,8 +20,10 @@ export function DeleteModal({ deleteModal, onClose, user, showAlert, onUserUpdat
         if (!user) {
             return;
         }
+        btnRef.current?.setAttribute('disabled', 'true');
         btnRef.current?.setAttribute('data-kt-indicator', 'on');
         const success = await deleteUser(user, showAlert);
+        btnRef.current?.removeAttribute('disabled');
         btnRef.current?.removeAttribute("data-kt-indicator");
         if (success) {
             onUserUpdated();

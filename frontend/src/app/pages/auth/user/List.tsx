@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
@@ -24,10 +24,6 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
     setUsers(fetchedUsers);
   };
 
-  useEffect(() => {
-    getUsers();
-  }, [searchKeyword]);
-
   // 打開編輯模式
   const handleEditClick = (user: User) => {
     setSelectedUser(user);
@@ -44,13 +40,25 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
   const handleUserUpdated = () => {
     getUsers();
     setEditModalOpen(false);
+    setDeleteModalOpen(false);
   };
 
   // 取得角色
-  const getRoleCode = (roleId: number): string => {
-    const role = roles.find((role) => role.id === roleId);
-    return role ? role.code : "未分配角色";
+  const roleMap = useMemo(() => {
+    return new Map(roles.map(role => [role.id, role.code]));
+  }, [roles]);
+  
+  const getRoleCode = (roleId: number) => {
+    return roleMap.get(roleId) || "未分配角色";
   };
+
+  // 初始化取得使用者清單
+  useEffect(() => {
+    const fetchData = async () => {
+      await getUsers();
+    };
+    fetchData();
+  }, [searchKeyword]);
 
   return (
     <>

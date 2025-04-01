@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
+import { createRole } from './Query';
 
 interface CreateModalProps {
   createModal: boolean;
@@ -12,20 +13,12 @@ interface CreateModalProps {
 export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: CreateModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { code: '', title: '', description: '', orders: '0' };
+  const initialFormState = { id: 0, code: '', title: '', description: '', orders: 0 };
   const initialErrorState = { code: false, title: false, orders: false };
   const initialTouchedState = { code: false, title: false, orders: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
-
-  useEffect(() => {
-    if (createModal) {
-      setFormData(initialFormState);
-      setErrors(initialErrorState);
-      setTouched(initialTouchedState);
-    }
-  }, [createModal]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -47,41 +40,31 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
     const newErrors = {
       code: formData.code.trim() === '',
       title: formData.title.trim() === '',
-      orders: formData.orders.trim() === '' || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100
+      orders: formData.orders === 0 || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
       return;
     }
-    try {
-      // loading開啟
-      btnRef.current?.setAttribute('data-kt-indicator', 'on');
-      const response = await fetch("http://localhost:8081/api/upms/roles", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-      // loading關閉
-      btnRef.current?.removeAttribute("data-kt-indicator");
-      if (response.ok) {
-        showAlert("新增成功！", "success");
-        onRoleCreated();
-        onClose();
-        return;
-      }
-      const responseData = await response.json();
-      if (Array.isArray(responseData.errorDetails.length)) {
-        showAlert(responseData.errorDetails.join("\n"), "warning");
-        return;
-      }
-      showAlert(responseData.errorDetails, "warning");
-      return;
-    } catch (error) {
-      console.error("提交錯誤:", error);
-      showAlert("系統錯誤，請稍後再試！", "danger");
+    btnRef.current?.setAttribute('disabled', 'true');
+    btnRef.current?.setAttribute('data-kt-indicator', 'on');
+    const success = await createRole(formData, showAlert);
+    btnRef.current?.removeAttribute('disabled');
+    btnRef.current?.removeAttribute("data-kt-indicator");
+    if (success) {
+      onRoleCreated();
       onClose();
     }
   };
+
+  // 初始化
+  useEffect(() => {
+    if (createModal) {
+      setFormData(initialFormState);
+      setErrors(initialErrorState);
+      setTouched(initialTouchedState);
+    }
+  }, [createModal]);
 
   if (!createModal) {
     return null;
@@ -189,7 +172,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
                     </div>
                   )}
                 </div>
-                
+
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>

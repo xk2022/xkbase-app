@@ -6,13 +6,16 @@ import { Tree } from './Tree';
 import { Role } from '../../model/RoleModel';
 import { System } from '../../model/SystemModel';
 import { Permission } from '../../model/PermissionModel';
+import { fetchSystems } from '../system/Query';
+import { fetchRoles } from '../role/Query';
+import { fetchPermissions } from './Query';
 
 export function Overview() {
   const { alert, showAlert, Alert } = useAlert();
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
   const [roles, setRoles] = useState<Role[]>();
   const [systems, setSystems] = useState<System[]>();
-  const [systemId, setSystemId] = useState<string | null>(null);
+  const [systemUuid, setSystemUuid] = useState<string | null>(null);
   const [roleId, setRoleId] = useState<number | null>(null);
 
   const handleCheckboxChange = (id: string) => {
@@ -22,74 +25,51 @@ export function Overview() {
     }));
   };
 
-  useEffect(() => {
-    const fetchSystems = async () => {
-      try {
-        const response = await fetch("http://localhost:8081/api/adm/system");
-        const responseData = await response.json();
-        if (response.ok) {
-          setSystems(responseData.data);
-          if (responseData.data.length > 0) {
-            setSystemId(responseData.data[0].uuid);
-          }
-          return;
-        }
-        showAlert(responseData.message, "warning");
-      } catch (error) {
-        console.error("API 錯誤:", error);
-      }
-    };
-    fetchSystems();
-  }, []);
+  // 獲取系統列表的函數
+  const getSystems = async () => {
+    const fetchedSystems = await fetchSystems(showAlert);
+    setSystems(fetchedSystems);
+  };
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        const response = await fetch(`http://localhost:8081/api/upms/roles`);
-        const responseData = await response.json();
-        if (response.ok) {
-          setRoles(responseData.data);
-          if (responseData.data.length > 0) {
-            setRoleId(responseData.data[0].id);
-          }
-        } else {
-          showAlert(responseData.message, "warning");
-        }
-      } catch (error) {
-        console.error("API 錯誤:", error);
-      }
-    };
-    fetchRoles();
-  }, []);
+  // 獲取角色列表的函數
+  const getRoles = async () => {
+    const fetchedRoles = await fetchRoles('', showAlert);
+    setRoles(fetchedRoles);
+  };
 
-  useEffect(() => {
-    if (!systemId || !roleId) {
+  // 獲取權限列表的函數
+  const getPermissions = async () => {
+    if (!systemUuid || !roleId) {
       return;
     }
-    const fetchPermissions = async () => {
-      try {
-        const response = await fetch(`http://localhost:8081/api/upms/permissions?systemId=${systemId}&roleId=${roleId}`);
-        const responseData = await response.json();
-        if (response.ok) {
-          const updatedPermissions: { [key: string]: boolean } = {};
-          responseData.data.forEach((perm: Permission) => {
-            updatedPermissions[perm.id] = perm.allowed;
-          });
-          setCheckedItems(updatedPermissions);
-          return;
-        }
-        showAlert(responseData.message, "warning");
-      } catch (error) {
-        console.error("API 錯誤:", error);
-        showAlert("系統錯誤，請稍後再試！", "danger");
-      }
+    const fetchedPermissions = await fetchPermissions(systemUuid, roleId, showAlert);
+    setRoles(fetchedPermissions);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getSystems();
     };
-    fetchPermissions();
-  }, [roleId, systemId]);
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getRoles();
+    };
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await getPermissions();
+    };
+    fetchData();
+  }, [systemUuid, roleId]);
 
   // 處理系統選單變動
   const handleSystemChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSystemId(event.target.value);
+    setSystemUuid(event.target.value);
   };
 
   // 處理角色選單變動
