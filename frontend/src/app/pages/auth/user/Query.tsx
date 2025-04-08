@@ -3,7 +3,7 @@ import { User } from '../../model/UserModel';
 export const fetchUsers = async (searchKeyword: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
     const response = await fetch(
-      `http://localhost:8081/api/upms/users?keyword=${encodeURIComponent(searchKeyword)}`
+      `http://localhost:8081/api/upms/user?keyword=${encodeURIComponent(searchKeyword)}`
     );
     const responseData = await response.json();
     if (response.ok) {
@@ -24,7 +24,7 @@ export const fetchUsers = async (searchKeyword: string, showAlert: (message: str
 
 export const createUser = async (user: User, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch("http://localhost:8081/api/upms/users", {
+    const response = await fetch("http://localhost:8081/api/upms/user", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -52,7 +52,7 @@ export const createUser = async (user: User, showAlert: (message: string, type: 
 
 export const editUser = async (user: User, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/users/${user.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/user/${user.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -79,7 +79,7 @@ export const editUser = async (user: User, showAlert: (message: string, type: 's
 
 export const deleteUser = async (user: User, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/users/${user.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/user/${user.id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),

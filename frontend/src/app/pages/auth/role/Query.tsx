@@ -3,7 +3,7 @@ import { Role } from '../../model/RoleModel';
 export const fetchRoles = async (searchKeyword: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
     const response = await fetch(
-      `http://localhost:8081/api/upms/roles?keyword=${encodeURIComponent(searchKeyword)}`
+      `http://localhost:8081/api/upms/role?keyword=${encodeURIComponent(searchKeyword)}`
     );
     const responseData = await response.json();
     if (response.ok) {
@@ -24,7 +24,7 @@ export const fetchRoles = async (searchKeyword: string, showAlert: (message: str
 
 export const createRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch("http://localhost:8081/api/upms/roles", {
+    const response = await fetch("http://localhost:8081/api/upms/role", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(role),
@@ -52,7 +52,7 @@ export const createRole = async (role: Role, showAlert: (message: string, type: 
 
 export const editRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/role/${role.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(role),
@@ -79,7 +79,7 @@ export const editRole = async (role: Role, showAlert: (message: string, type: 's
 
 export const deleteRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/roles/${role.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/role/${role.id}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(role),

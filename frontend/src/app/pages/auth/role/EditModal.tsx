@@ -168,7 +168,7 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
                   {touched.orders && errors.orders && (
                     <div className="fv-plugins-message-container">
                       <div className="fv-help-block">
-                        <span role="alert">排序值必須為 0 ~ 100</span>
+                        <span role="alert">排序值必須為 1 ~ 100</span>
                       </div>
                     </div>
                   )}
