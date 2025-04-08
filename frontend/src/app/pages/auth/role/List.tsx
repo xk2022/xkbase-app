@@ -3,7 +3,7 @@ import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
 import { Role } from '../../model/RoleModel';
-import { fetchRoles } from "./Query"; 
+import { fetchRoles } from "./Query";  
 
 interface RoleListProps {
   searchKeyword: string;

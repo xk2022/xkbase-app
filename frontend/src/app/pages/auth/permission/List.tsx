@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Tree } from './Tree';
+import { fetchPermissions } from './Query';
 
 interface PermissionListProps {
-    systemUuid: string | null;
-    roleId: number | null;
+    systemUuid: string;
+    roleId: number;
     showAlert: (message: string, type: "success" | "warning" | "danger") => void;
 }
 
@@ -17,6 +18,21 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
             [id]: !prev[id],
         }));
     };
+
+    const getPermissions = async () => {
+        if(!systemUuid || !roleId){
+            return;
+        }
+        const fetchedPermissions = await fetchPermissions(systemUuid, roleId, showAlert);
+        console.log(fetchedPermissions); 
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            await getPermissions();
+        };
+        fetchData();
+    }, [systemUuid, roleId]); 
 
     return (
         <>

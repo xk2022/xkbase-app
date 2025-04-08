@@ -6,7 +6,6 @@ import { Role } from '../../model/RoleModel';
 import { System } from '../../model/SystemModel';
 import { fetchSystems } from '../system/Query';
 import { fetchRoles } from '../role/Query';
-import { fetchPermissions } from './Query';
 import PermissionList from "./List";
 
 export function Overview() {
@@ -29,15 +28,6 @@ export function Overview() {
     setRoles(fetchedRoles);
   };
 
-  // 獲取權限列表的函數
-  const getPermissions = async () => {
-    if (!systemUuid || !roleId) {
-      return;
-    }
-    const fetchedPermissions = await fetchPermissions(systemUuid, roleId, showAlert);
-    setRoles(fetchedPermissions);
-  };
-
   useEffect(() => {
     const fetchData = async () => {
       await getSystems();
@@ -52,23 +42,16 @@ export function Overview() {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await getPermissions();
-    };
-    fetchData();
-  }, [systemUuid, roleId]);
-
-  // 處理系統選單變動
   const handleSystemChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("System Change:", event.target.value);
     setSystemUuid(event.target.value);
   };
-
-  // 處理角色選單變動
+  
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("Role Change:", event.target.value);
     setRoleId(Number(event.target.value));
   };
-
+  
   return (
     <Content>
       {alert && <Alert message={alert.message} type={alert.type} />}

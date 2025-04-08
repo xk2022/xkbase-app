@@ -3,7 +3,7 @@ import { Permission } from '../../model/PermissionModel';
 export const fetchPermissions = async (systemUuid: string, roleId: number, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
     const response = await fetch(
-      `http://localhost:8081/api/upms/permissions?systemId=${systemUuid}&roleId=${roleId}`
+      `http://localhost:8081/api/upms/permission/${systemUuid}/${roleId}`
     );
     const responseData = await response.json();
     if (response.ok) {
