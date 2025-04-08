@@ -24,7 +24,6 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
             return;
         }
         const fetchedPermissions = await fetchPermissions(systemUuid, roleId, showAlert);
-        console.log(fetchedPermissions); 
     };
 
     useEffect(() => {

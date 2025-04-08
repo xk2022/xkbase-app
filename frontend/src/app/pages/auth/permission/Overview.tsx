@@ -31,27 +31,33 @@ export function Overview() {
   useEffect(() => {
     const fetchData = async () => {
       await getSystems();
-    };
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const fetchData = async () => {
       await getRoles();
     };
     fetchData();
   }, []);
 
+  useEffect(() => {
+    if (systems && systems.length > 0 && systemUuid === null) {
+      const defaultSystem = systems[0].uuid;
+      setSystemUuid(defaultSystem);
+      handleSystemChange({ target: { value: defaultSystem } } as React.ChangeEvent<HTMLSelectElement>);
+    }
+
+    if (roles && roles.length > 0 && roleId === null) {
+      const defaultRole = roles[0].id;
+      setRoleId(defaultRole);
+      handleRoleChange({ target: { value: String(defaultRole) } } as React.ChangeEvent<HTMLSelectElement>);
+    }
+  }, [systems, roles]);
+
   const handleSystemChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("System Change:", event.target.value);
     setSystemUuid(event.target.value);
   };
-  
+
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("Role Change:", event.target.value);
     setRoleId(Number(event.target.value));
   };
-  
+
   return (
     <Content>
       {alert && <Alert message={alert.message} type={alert.type} />}
