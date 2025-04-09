@@ -74,7 +74,7 @@ export function Overview() {
         id: subPerm.id,
         name: subPerm.name,
         active: subPerm.active,
-        actions: subPerm.actions?.filter((action) => action.active).map((action) => ({
+        actions: subPerm.actions?.map((action) => ({
           id: action.id,
           name: action.name,
           active: action.active,
