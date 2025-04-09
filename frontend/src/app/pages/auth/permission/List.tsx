@@ -41,23 +41,39 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
     if (!systemUuid || !roleId) {
       return;
     }
+
     const result = await fetchPermissions(systemUuid, roleId, showAlert);
-    if (!result) {
-      return;
-    }
+    if (!result) return;
+
     setPermissionsDataState(result);
     setPermissionsData(result);
 
-    const initialChecked: { [key: string]: boolean } = {};
-    result.forEach((group: Permission) => {
-      group.permissions?.forEach((perm: Permission) => {
-        perm.actions?.forEach((action: Action) => {
-          const key = `${perm.name}_${action.name}`;
-          initialChecked[key] = action.active;
+    setCheckedItems((prevChecked) => {
+      const newChecked = { ...prevChecked };
+
+      result.forEach((group: Permission) => {
+        const groupKey = `group-${group.id}`;
+        if (!(groupKey in newChecked)) {
+          newChecked[groupKey] = group.active;
+        }
+
+        group.permissions?.forEach((perm: Permission) => {
+          const permKey = `perm-${perm.id}`;
+          if (!(permKey in newChecked)) {
+            newChecked[permKey] = perm.active;
+          }
+
+          perm.actions?.forEach((action: Action) => {
+            const actionKey = `${group.id}_${perm.id}_${action.name}`;
+            if (!(actionKey in newChecked)) {
+              newChecked[actionKey] = action.active;
+            }
+          });
         });
       });
+
+      return newChecked;
     });
-    setCheckedItems(initialChecked);
   };
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
@@ -80,7 +96,8 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
             <input
               className="form-check-input"
               type="checkbox"
-              checked={group.active} 
+              checked={!!checkedItems[`group-${group.id}`]}
+              onChange={() => handleCheckboxChange(`group-${group.id}`)}
               onClick={handleCheckboxClick}
             />
             <label className="form-check-label ms-2 mt-2"><h3>{group.name}</h3></label>
@@ -99,7 +116,8 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
                     <input
                       className="form-check-input"
                       type="checkbox"
-                      checked={perm.active} 
+                      checked={!!checkedItems[`perm-${perm.id}`]}
+                      onChange={() => handleCheckboxChange(`perm-${perm.id}`)}
                       onClick={handleCheckboxClick}
                     />
                     <label className="form-check-label ms-2 mt-2"><h4>{perm.name}</h4></label>
@@ -109,14 +127,14 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
                   <div className="ps-10">
                     <div className="form-check form-check-custom form-check-solid form-check-sm">
                       {perm.actions?.map((action: Action) => {
-                        const key = `${perm.name}_${action.name}`;
+                        const key = `${group.id}_${perm.id}_${action.name}`;
                         return (
                           <div className="d-inline-block me-5" key={key}>
                             <input
                               className="form-check-input"
                               type="checkbox"
                               id={key}
-                              checked={!!checkedItems[key]} 
+                              checked={!!checkedItems[key]}
                               onChange={() => handleCheckboxChange(key)}
                             />
                             <label className="form-check-label ms-2" htmlFor={key}>
