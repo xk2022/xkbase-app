@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchPermissions } from './Query';
 import { Permission, Action } from '../../model/PermissionModel';
-import { KTIcon } from "../../../../_metronic/helpers";
 
 interface PermissionListProps {
   systemUuid: string;
@@ -17,10 +16,14 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
   const [openPermissions, setOpenPermissions] = useState<{ [key: string]: boolean }>({});
 
   const handleCheckboxChange = (key: string) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
+    setCheckedItems((prev) => {
+      const newChecked = {
+        ...prev,
+        [key]: !prev[key],
+      };
+      syncToPermissionsData(newChecked);
+      return newChecked;
+    });
   };
 
   const toggleGroup = (groupId: string) => {
@@ -37,10 +40,36 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
     }));
   };
 
+  const syncToPermissionsData = (checked: { [key: string]: boolean }) => {
+    const updated = permissionsData.map((group) => {
+      const groupKey = `group-${group.id}`;
+      const updatedGroup: Permission = {
+        ...group,
+        active: !!checked[groupKey],
+        permissions: group.permissions?.map((perm) => {
+          const permKey = `perm-${perm.id}`;
+          return {
+            ...perm,
+            active: !!checked[permKey],
+            actions: perm.actions?.map((action) => {
+              const actionKey = `${group.id}_${perm.id}_${action.name}`;
+              return {
+                ...action,
+                active: !!checked[actionKey],
+              };
+            }) || [],
+          };
+        }) || [],
+      };
+      return updatedGroup;
+    });
+
+    setPermissionsDataState(updated);
+    setPermissionsData(updated);
+  };
+
   const getPermissions = async () => {
-    if (!systemUuid || !roleId) {
-      return;
-    }
+    if (!systemUuid || !roleId) return;
 
     const result = await fetchPermissions(systemUuid, roleId, showAlert);
     if (!result) return;
@@ -48,32 +77,24 @@ const PermissionList: React.FC<PermissionListProps> = ({ systemUuid, roleId, sho
     setPermissionsDataState(result);
     setPermissionsData(result);
 
-    setCheckedItems((prevChecked) => {
-      const newChecked = { ...prevChecked };
+    const newChecked: { [key: string]: boolean } = {};
 
-      result.forEach((group: Permission) => {
-        const groupKey = `group-${group.id}`;
-        if (!(groupKey in newChecked)) {
-          newChecked[groupKey] = group.active;
-        }
+    result.forEach((group: Permission) => {
+      const groupKey = `group-${group.id}`;
+      newChecked[groupKey] = group.active;
 
-        group.permissions?.forEach((perm: Permission) => {
-          const permKey = `perm-${perm.id}`;
-          if (!(permKey in newChecked)) {
-            newChecked[permKey] = perm.active;
-          }
+      group.permissions?.forEach((perm: Permission) => {
+        const permKey = `perm-${perm.id}`;
+        newChecked[permKey] = perm.active;
 
-          perm.actions?.forEach((action: Action) => {
-            const actionKey = `${group.id}_${perm.id}_${action.name}`;
-            if (!(actionKey in newChecked)) {
-              newChecked[actionKey] = action.active;
-            }
-          });
+        perm.actions?.forEach((action: Action) => {
+          const actionKey = `${group.id}_${perm.id}_${action.name}`;
+          newChecked[actionKey] = action.active;
         });
       });
-
-      return newChecked;
     });
+
+    setCheckedItems(newChecked);
   };
 
   const handleCheckboxClick = (e: React.MouseEvent) => {
