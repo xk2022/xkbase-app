@@ -124,7 +124,7 @@ export function Overview() {
       <div className="app-content flex-column-fluid">
         <div className="card">
           <div className="card-header border-0 pt-6">
-            <div className="card-toolbar d-flex align-items-center gap-3">
+            <div className="card-toolbar d-flex align-items-center gap-3 ms-auto">
               <select
                 className="form-select form-select-solid w-auto"
                 name="systemId"
