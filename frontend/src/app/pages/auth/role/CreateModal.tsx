@@ -2,18 +2,20 @@ import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { createRole } from './Query';
+import { System } from '../../model/SystemModel';
 
 interface CreateModalProps {
   createModal: boolean;
   onClose: () => void;
   showAlert: (message: string, type: "success" | "danger" | "warning") => void;
   onRoleCreated: () => void;
+  systems: System[];
 }
 
-export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: CreateModalProps) {
+export function CreateModal({ createModal, onClose, showAlert, onRoleCreated, systems }: CreateModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { id: 0, code: '', title: '', description: '', orders: 0 };
+  const initialFormState = { id: 0, code: '', title: '', description: '', systemUuids: [], orders: 0 };
   const initialErrorState = { code: false, title: false, orders: false };
   const initialTouchedState = { code: false, title: false, orders: false };
   const [formData, setFormData] = useState(initialFormState);
@@ -40,7 +42,8 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated }: 
     const newErrors = {
       code: formData.code.trim() === '',
       title: formData.title.trim() === '',
-      orders: formData.orders === 0 || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100
+      orders: formData.orders === 0 || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100,
+      systemUuids: null
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
