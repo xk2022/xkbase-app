@@ -3,6 +3,8 @@ import { Content } from "../../../../_metronic/layout/components/content";
 import { KTIcon } from "../../../../_metronic/helpers";
 import { useAlert } from "../../common/useAlert";
 import { CreateModal } from "./CreateModal";
+import { fetchSystems } from "../system/Query";
+import { System } from '../../model/SystemModel';
 import RoleList from "./List";
 
 export function Overview() {
@@ -11,6 +13,7 @@ export function Overview() {
   const [searchKeyword, setSearchKeyword] = useState('');
   const [listKey, setListKey] = useState(0);
   const [tempKeyword, setTempKeyword] = useState('');
+  const [systems, setSystems] = useState<System[]>([]);
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
@@ -18,13 +21,20 @@ export function Overview() {
     }
   };
 
+  const handleRoleCreated = () => {
+    setListKey(prevKey => prevKey + 1);
+  };
+
+  // 獲取角色列表的函數
+  const getSystems = async () => {
+    const fetchedSystems = await fetchSystems(showAlert);
+    setSystems(fetchedSystems);
+  };
+
   useEffect(() => {
+    getSystems();
     setSearchKeyword('');
   }, []);
-
-  const handleRoleCreated = () => {
-    setListKey(prevKey => prevKey + 1); 
-  };
 
   return (
     <Content>
@@ -61,13 +71,19 @@ export function Overview() {
             </div>
           </div>
           <div className="card-body py-4">
-            <RoleList key={listKey} searchKeyword={searchKeyword} showAlert={showAlert} />
+            <RoleList key={listKey} searchKeyword={searchKeyword} showAlert={showAlert} systems={systems}/>
           </div>
         </div>
       </div>
 
-      <CreateModal createModal={createModal} onClose={() => setCreateModal(false)} showAlert={showAlert} onRoleCreated={handleRoleCreated} />
-       
+      <CreateModal 
+        createModal={createModal} 
+        onClose={() => setCreateModal(false)} 
+        showAlert={showAlert} 
+        onRoleCreated={handleRoleCreated} 
+        systems={systems}
+      />
+
     </Content>
   );
 }

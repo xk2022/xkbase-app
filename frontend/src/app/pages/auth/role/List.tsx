@@ -1,16 +1,18 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { KTIcon } from '../../../../_metronic/helpers';
 import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
 import { Role } from '../../model/RoleModel';
-import { fetchRoles } from "./Query";  
+import { System } from "../../model/SystemModel";
+import { fetchRoles } from "./Query";
 
 interface RoleListProps {
   searchKeyword: string;
   showAlert: (message: string, type: "success" | "warning" | "danger") => void;
+  systems: System[];
 }
 
-const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
+const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert, systems }) => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [editModal, setEditModalOpen] = useState(false);
   const [deleteModal, setDeleteModalOpen] = useState(false);
@@ -40,6 +42,20 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
     setRoles(fetchedRoles);
   };
 
+  // 取得系統
+  const systemMap = useMemo(() => {
+    return new Map(systems.map(system => [system.uuid, system.name]));
+  }, [systems]);
+
+  // 取得系統名稱
+  const getSystemName = (systemUuids: string[]) => {
+    if (!systemUuids?.length) {
+      return "未分配系統";
+    }
+    const names = systemUuids.map(uuid => systemMap.get(uuid) || "未知系統");
+    return names.join("、");
+  };
+
   // 初始化 及 當 searchKeyword 更新時重新獲取角色資料
   useEffect(() => {
     const fetchData = async () => {
@@ -57,6 +73,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
               <td className="min-w-125px">名稱</td>
               <td className="min-w-125px">標題</td>
               <td className="min-w-125px">描述</td>
+              <td className="min-w-125px">系統</td>
               <td className="min-w-125px">排序</td>
               <td className="min-w-125px">功能</td>
             </tr>
@@ -68,6 +85,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert }) => {
                   <td>{role.code}</td>
                   <td>{role.title}</td>
                   <td>{role.description}</td>
+                  <td>{getSystemName(role.systemUuids)}</td>
                   <td>{role.orders}</td>
                   <td>
                     <button

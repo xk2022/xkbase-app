@@ -4,7 +4,7 @@ import { EditModal } from "./EditModal";
 import { DeleteModal } from "./DeleteModal";
 import { User } from '../../model/UserModel';
 import { Role } from '../../model/RoleModel';
-import { fetchUsers } from './Query';
+import { fetchUsers } from './Query'; 
 
 interface UserListProps {
   searchKeyword: string;
