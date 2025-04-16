@@ -15,7 +15,7 @@ interface CreateModalProps {
 export function CreateModal({ createModal, onClose, showAlert, onRoleCreated, systems }: CreateModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { id: 0, code: '', title: '', description: '', systemUuids: [] as string[], orders: 0 };
+  const initialFormState = { uuid: '', code: '', title: '', description: '', systemUuids: [] as string[], orders: 1 };
   const initialErrorState = { code: false, title: false, orders: false };
   const initialTouchedState = { code: false, title: false, orders: false };
   const [formData, setFormData] = useState(initialFormState);
@@ -167,7 +167,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated, sy
                                 ...prev,
                                 systemUuids: e.target.checked
                                   ? [...prev.systemUuids, uuid]
-                                  : prev.systemUuids.filter((id) => id !== uuid),
+                                  : prev.systemUuids.filter((uuid) => uuid !== uuid),
                               }));
                             }}
                           />

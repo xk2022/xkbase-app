@@ -3,7 +3,7 @@ export interface PermissionUpdate {
 }
 
 export interface Permission {
-    id: number;
+    uuid: string;
     name: string;
     active: boolean;
     actions: Action[] | null;
@@ -11,7 +11,7 @@ export interface Permission {
 }
 
 export interface Action {
-    id: number;
+    uuid: string;
     name: string;
     active: boolean;
 }

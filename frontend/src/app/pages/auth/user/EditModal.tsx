@@ -166,13 +166,13 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
                   <div className="col-lg-10">
                     <select
                       className="form-select form-select-solid"
-                      name="roleId"
-                      value={formData.roleId}
+                      name="roleUuid"
+                      value={formData.roleUuid}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     >
                       {roles.map(role => (
-                        <option key={role.id} value={role.id}>{role.code}</option>
+                        <option key={role.uuid} value={role.uuid}>{role.code}</option>
                       ))}
                     </select>
                   </div>

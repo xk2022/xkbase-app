@@ -17,7 +17,7 @@ export function Overview() {
   const [roles, setRoles] = useState<Role[]>();
   const [systems, setSystems] = useState<System[]>();
   const [systemUuid, setSystemUuid] = useState<string | null>(null);
-  const [roleId, setRoleId] = useState<number | null>(null);
+  const [roleUuid, setRoleUuid] = useState<string | null>(null);
   const [permissionsData, setPermissionsData] = useState<Permission[]>([]);
 
   // 獲取系統列表的函數
@@ -47,9 +47,9 @@ export function Overview() {
       handleSystemChange({ target: { value: defaultSystem } } as React.ChangeEvent<HTMLSelectElement>);
     }
 
-    if (roles && roles.length > 0 && roleId === null) {
-      const defaultRole = roles[0].id;
-      setRoleId(defaultRole);
+    if (roles && roles.length > 0 && roleUuid === null) {
+      const defaultRole = roles[0].uuid;
+      setRoleUuid(defaultRole);
       handleRoleChange({ target: { value: String(defaultRole) } } as React.ChangeEvent<HTMLSelectElement>);
     }
   }, [systems, roles]);
@@ -59,23 +59,23 @@ export function Overview() {
   };
 
   const handleRoleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setRoleId(Number(event.target.value));
+    setRoleUuid(event.target.value);
   };
 
   const getSelectedPermissions = (): PermissionUpdate => {
     const selectedPermissions: Permission[] = permissionsData.map((perm) => {
       const actions: Action[] = perm.actions?.filter((action) => action.active).map((action) => ({
-        id: action.id,
+        uuid: action.uuid,
         name: action.name,
         active: action.active,
       })) || [];
 
       const subPermissions: Permission[] = perm.permissions?.map((subPerm) => ({
-        id: subPerm.id,
+        uuid: subPerm.uuid,
         name: subPerm.name,
         active: subPerm.active,
         actions: subPerm.actions?.map((action) => ({
-          id: action.id,
+          uuid: action.uuid,
           name: action.name,
           active: action.active,
         })) || [],
@@ -83,7 +83,7 @@ export function Overview() {
       })) || [];
 
       const permission: Permission = {
-        id: perm.id,
+        uuid: perm.uuid,
         name: perm.name,
         active: perm.active,
         actions: actions,
@@ -96,7 +96,7 @@ export function Overview() {
   };
 
   const handleSave = async () => {
-    if (!systemUuid || !roleId) {
+    if (!systemUuid || !roleUuid) {
       showAlert("請選擇系統和角色！", "warning");
       return;
     }
@@ -104,7 +104,7 @@ export function Overview() {
     btnRef.current?.setAttribute('disabled', 'true');
     btnRef.current?.setAttribute('data-kt-indicator', 'on');
     await new Promise(resolve => setTimeout(resolve, 3000));
-    const success = await editPermissions(selectedPermissions, systemUuid, roleId, showAlert);
+    const success = await editPermissions(selectedPermissions, systemUuid, roleUuid, showAlert);
     btnRef.current?.removeAttribute('disabled');
     btnRef.current?.removeAttribute("data-kt-indicator");
   };
@@ -145,7 +145,7 @@ export function Overview() {
               >
                 {roles && roles.length > 0 ? (
                   roles.map((role) => (
-                    <option key={role.id} value={role.id}>{role.code}</option>
+                    <option key={role.uuid} value={role.uuid}>{role.code}</option>
                   ))
                 ) : (
                   <option disabled>無角色可選</option>
@@ -171,7 +171,7 @@ export function Overview() {
           <div className="card-body py-4">
             <PermissionList
               systemUuid={systemUuid ?? ''}
-              roleId={roleId ?? 0}
+              roleUuid={roleUuid ?? ''}
               showAlert={showAlert}
               setPermissionsData={setPermissionsData}
             />
