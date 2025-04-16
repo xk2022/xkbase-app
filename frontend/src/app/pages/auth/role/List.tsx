@@ -81,7 +81,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert, systems }
           <tbody>
             {roles.length > 0 ? (
               roles.map((role) => (
-                <tr key={role.id}>
+                <tr key={role.uuid}>
                   <td>{role.code}</td>
                   <td>{role.title}</td>
                   <td>{role.description}</td>

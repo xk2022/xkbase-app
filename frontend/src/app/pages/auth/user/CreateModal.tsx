@@ -14,7 +14,7 @@ interface CreateModalProps {
 
 export function CreateModal({ createModal, onClose, showAlert, onUserCreated, roles }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { id: 0, username: '', email: '', cellPhone: '', roleId: roles.length > 0 ? Number(roles[0].id) : 0, password: '', enabled: true, locked: false, lastLogin: '' };
+  const initialFormState = { uuid: '', username: '', email: '', cellPhone: '', roleUuid: roles.length > 0 ? roles[0].uuid : '', password: '', enabled: true, locked: false, lastLogin: '' };
   const initialErrorState = { username: false, email: false, cellPhone: false, password: false };
   const initialTouchedState = { username: false, email: false, cellPhone: false, password: false };
   const [formData, setFormData] = useState(initialFormState);
@@ -25,7 +25,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
   useEffect(() => {
     setFormData(prevState => ({
       ...prevState,
-      roleId: prevState.roleId || (roles.length > 0 ? roles[0].id : 0),
+      roleUuid: prevState.roleUuid || (roles.length > 0 ? roles[0].uuid : ''),
     }));
   }, [roles]);
 
@@ -33,7 +33,7 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: name === "roleId" ? Number(value) : value,
+      [name]: name === "roleUuid" ? value : value,
     });
     if (touched[name as keyof typeof touched]) {
       setErrors({ ...errors, [name]: value.trim() === '' });
@@ -200,13 +200,13 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
                   <div className="col-lg-10">
                     <select
                       className="form-select form-select-solid"
-                      name="roleId"
-                      value={formData.roleId}
+                      name="roleUuid"
+                      value={formData.roleUuid}
                       onChange={handleChange}
                       onBlur={handleBlur}
                     >
                       {roles.map(role => (
-                        <option key={role.id} value={role.id}>{role.code}</option>
+                        <option key={role.uuid} value={role.uuid}>{role.code}</option>
                       ))}
                     </select>
                   </div>

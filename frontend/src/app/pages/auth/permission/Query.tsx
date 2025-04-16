@@ -1,10 +1,10 @@
 import { Permission, PermissionUpdate } from '../../model/PermissionModel'
 import { useAlert } from '../../common/useAlert';
 
-export const fetchPermissions = async (systemUuid: string, roleId: number, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
+export const fetchPermissions = async (systemUuid: string, roleUuid: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
     const response = await fetch(
-      `http://localhost:8081/api/upms/permission/${systemUuid}/${roleId}`
+      `http://localhost:8081/api/upms/permission/${systemUuid}/${roleUuid}`
     );
     const responseData = await response.json();
     if (response.ok) {
@@ -23,9 +23,9 @@ export const fetchPermissions = async (systemUuid: string, roleId: number, showA
   }
 }; 
 
-export const editPermissions = async (permission: PermissionUpdate, systemUuid: string, roleId: number, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
+export const editPermissions = async (permission: PermissionUpdate, systemUuid: string, roleUuid: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/permission/${systemUuid}/${roleId}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/permission/${systemUuid}/${roleUuid}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(permission),

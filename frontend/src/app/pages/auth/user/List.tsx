@@ -45,11 +45,11 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
 
   // 取得角色
   const roleMap = useMemo(() => {
-    return new Map(roles.map(role => [role.id, role.code]));
+    return new Map(roles.map(role => [role.uuid, role.code]));
   }, [roles]);
   
-  const getRoleCode = (roleId: number) => {
-    return roleMap.get(roleId) || "未分配角色";
+  const getRoleCode = (roleUuid: string) => {
+    return roleMap.get(roleUuid) || "未分配角色";
   };
 
   // 初始化取得使用者清單
@@ -79,11 +79,11 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
           <tbody>
             {users.length > 0 ? (
               users.map((user) => (
-                <tr key={user.id}>
+                <tr key={user.uuid}>
                   <td>{user.username}</td>
                   <td>{user.email}</td>
                   <td>{user.cellPhone}</td>
-                  <td>{getRoleCode(user.roleId)}</td>
+                  <td>{getRoleCode(user.roleUuid)}</td>
                   <td>
                     {user.enabled ? (
                       <span className="badge badge-light-success fw-bolder me-auto px-4 py-3">啟用</span>

@@ -52,7 +52,7 @@ export const createRole = async (role: Role, showAlert: (message: string, type: 
 
 export const editRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/role/${role.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/role/${role.uuid}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(role),
@@ -79,7 +79,7 @@ export const editRole = async (role: Role, showAlert: (message: string, type: 's
 
 export const deleteRole = async (role: Role, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/role/${role.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/role/${role.uuid}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(role),

@@ -1,9 +1,9 @@
 export interface User {
-    id: number;
+    uuid: string;
     username: string;
     email: string;
     cellPhone: string;
-    roleId: number;
+    roleUuid: string;
     password: string;
     enabled: boolean;
     locked: boolean;

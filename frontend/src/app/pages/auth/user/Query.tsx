@@ -52,7 +52,7 @@ export const createUser = async (user: User, showAlert: (message: string, type: 
 
 export const editUser = async (user: User, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/user/${user.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/user/${user.uuid}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
@@ -79,7 +79,7 @@ export const editUser = async (user: User, showAlert: (message: string, type: 's
 
 export const deleteUser = async (user: User, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
-    const response = await fetch(`http://localhost:8081/api/upms/user/${user.id}`, {
+    const response = await fetch(`http://localhost:8081/api/upms/user/${user.uuid}`, {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(user),
