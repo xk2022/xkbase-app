@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { Role } from '../../model/RoleModel';
+import { System } from '../../model/SystemModel';
 import { editRole } from './Query';
 
 interface EditModalProps {
@@ -10,9 +11,10 @@ interface EditModalProps {
   role: Role | null;
   showAlert: (message: string, type: "success" | "danger" | "warning") => void;
   onRoleUpdated: () => void;
+  systems: System[];
 }
 
-export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }: EditModalProps) {
+export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated, systems }: EditModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
   const initialErrorState = { code: false, title: false, orders: false };
@@ -44,6 +46,7 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
       code: formData.code.trim() === '',
       title: formData.title.trim() === '',
       orders: isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100,
+      systemUuids: formData.systemUuids.length === 0
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
@@ -51,7 +54,12 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
     }
     btnRef.current?.setAttribute('disabled', 'true');
     btnRef.current?.setAttribute('data-kt-indicator', 'on');
-    const success = await editRole(formData, showAlert);
+    // 重新排序避免排序錯誤
+    const sortedSystemUuids = systems
+      .map(s => s.uuid)
+      .filter(uuid => formData.systemUuids.includes(uuid));
+    const newFormData = { ...formData, systemUuids: sortedSystemUuids };
+    const success = await editRole(newFormData, showAlert);
     btnRef.current?.removeAttribute('disabled');
     btnRef.current?.removeAttribute("data-kt-indicator");
     if (success) {
@@ -143,6 +151,41 @@ export function EditModal({ editModal, onClose, role, showAlert, onRoleUpdated }
                       value={formData.description}
                       onChange={handleChange}
                     />
+                  </div>
+                </div>
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">系統</label>
+                  <div className="col-lg-10">
+                    <div className='d-flex mt-3'>
+                      {systems.map((system) => (
+                        <label
+                          key={system.uuid}
+                          className="form-check form-check-sm form-check-custom form-check-solid me-5"
+                        >
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value={system.uuid}
+                            checked={formData.systemUuids.includes(system.uuid)}
+                            onChange={(e) => {
+                              const uuid = e.target.value;
+                              setFormData((prev) => {
+                                if (!prev) return prev;
+                                const newUuids = e.target.checked
+                                  ? [...prev.systemUuids, uuid]
+                                  : prev.systemUuids.filter((id) => id !== uuid);
+                                return {
+                                  ...prev,
+                                  systemUuids: newUuids,
+                                };
+                              });
+                            }}
+                          />
+                          <span className="form-check-label">{system.name}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
 

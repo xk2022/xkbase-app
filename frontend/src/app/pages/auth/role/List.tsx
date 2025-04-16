@@ -123,6 +123,7 @@ const RoleList: React.FC<RoleListProps> = ({ searchKeyword, showAlert, systems }
           role={selectedRole}
           showAlert={showAlert}
           onRoleUpdated={handleRoleUpdated}
+          systems={systems}
         />
       )}
 
