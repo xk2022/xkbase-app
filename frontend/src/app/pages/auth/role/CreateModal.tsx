@@ -15,7 +15,7 @@ interface CreateModalProps {
 export function CreateModal({ createModal, onClose, showAlert, onRoleCreated, systems }: CreateModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { id: 0, code: '', title: '', description: '', systemUuids: [], orders: 0 };
+  const initialFormState = { id: 0, code: '', title: '', description: '', systemUuids: [] as string[], orders: 0 };
   const initialErrorState = { code: false, title: false, orders: false };
   const initialTouchedState = { code: false, title: false, orders: false };
   const [formData, setFormData] = useState(initialFormState);
@@ -43,7 +43,7 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated, sy
       code: formData.code.trim() === '',
       title: formData.title.trim() === '',
       orders: formData.orders === 0 || isNaN(Number(formData.orders)) || Number(formData.orders) < 0 || Number(formData.orders) > 100,
-      systemUuids: null
+      systemUuids: formData.systemUuids.length === 0
     };
     setErrors(newErrors);
     if (Object.values(newErrors).some((error) => error)) {
@@ -145,6 +145,36 @@ export function CreateModal({ createModal, onClose, showAlert, onRoleCreated, sy
                       value={formData.description}
                       onChange={handleChange}
                     />
+                  </div>
+                </div>
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">系統</label>
+                  <div className="col-lg-10">
+                    <div className='d-flex mt-3'>
+                      {systems.map((system) => (
+                        <label
+                          key={system.uuid}
+                          className="form-check form-check-sm form-check-custom form-check-solid me-5"
+                        >
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            value={system.uuid}
+                            onChange={(e) => {
+                              const uuid = e.target.value;
+                              setFormData((prev) => ({
+                                ...prev,
+                                systemUuids: e.target.checked
+                                  ? [...prev.systemUuids, uuid]
+                                  : prev.systemUuids.filter((id) => id !== uuid),
+                              }));
+                            }}
+                          />
+                          <span className="form-check-label">{system.name}</span>
+                        </label>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
