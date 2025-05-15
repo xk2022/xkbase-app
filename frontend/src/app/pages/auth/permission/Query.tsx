@@ -1,5 +1,4 @@
-import { Permission, PermissionUpdate } from '../../model/PermissionModel'
-import { useAlert } from '../../common/useAlert';
+import { PermissionUpdate } from '../../model/PermissionModel'
 
 export const fetchPermissions = async (systemUuid: string, roleUuid: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
@@ -21,7 +20,7 @@ export const fetchPermissions = async (systemUuid: string, roleUuid: string, sho
     showAlert("獲取資料失敗，請稍後再試", "danger");
     return [];
   }
-}; 
+};
 
 export const editPermissions = async (permission: PermissionUpdate, systemUuid: string, roleUuid: string, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
   try {
