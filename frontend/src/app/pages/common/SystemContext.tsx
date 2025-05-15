@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import { System } from '../../auth/system/Model';
+import { System } from '../model/SystemModel';
 
 interface SystemContextType {
   systems: System[];
