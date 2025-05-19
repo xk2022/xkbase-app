@@ -3,7 +3,7 @@ import { Content } from '../../../../_metronic/layout/components/content';
 import { KTIcon } from '../../../../_metronic/helpers';
 import { User } from '../../model/UserModel';
 import { Role } from '../../model/RoleModel';
-import { editUser } from './Query'; 
+import { editUser } from './Query';
 
 interface EditModalProps {
   editModal: boolean;
@@ -17,8 +17,8 @@ interface EditModalProps {
 export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, roles }: EditModalProps) {
   // 按鈕loading初始化
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialErrorState = { username: false, email: false, cellPhone: false };
-  const initialTouchedState = { username: false, email: false, cellPhone: false };
+  const initialErrorState = { account: false, username: false, email: false, cellPhone: false };
+  const initialTouchedState = { account: false, username: false, email: false, cellPhone: false };
   const [formData, setFormData] = useState<User | null>(null);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -43,6 +43,7 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
       return;
     }
     const newErrors = {
+      account: formData.account.trim() === '',
       username: formData.username.trim() === '',
       email: formData.email.trim() === '',
       cellPhone: formData.cellPhone.trim() === ''
@@ -86,6 +87,29 @@ export function EditModal({ editModal, onClose, user, showAlert, onUserUpdated, 
             </div>
             <form className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">帳號</label>
+                  <div className="col-lg-10">
+                    <input
+                      placeholder="請輸入帳號"
+                      className="form-control form-control-solid"
+                      type="text"
+                      name="account"
+                      autoComplete="off"
+                      value={formData.account}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </div>
+                  {touched.account && errors.account && (
+                    <div className="fv-plugins-message-container">
+                      <div className="fv-help-block">
+                        <span role="alert">帳號不得為空</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>

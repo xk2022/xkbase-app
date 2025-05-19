@@ -66,6 +66,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
         <table className="table align-middle table-row-dashed fs-6 gy-5 dataTable no-footer">
           <thead>
             <tr className="text-start text-muted fw-bolder fs-7 text-uppercase gs-0">
+              <td className="min-w-125px">帳號</td>
               <td className="min-w-125px">名稱</td>
               <td className="min-w-125px">信箱</td>
               <td className="min-w-125px">手機</td>
@@ -80,6 +81,7 @@ const UserList: React.FC<UserListProps> = ({ searchKeyword, showAlert, roles }) 
             {users.length > 0 ? (
               users.map((user) => (
                 <tr key={user.uuid}>
+                  <td>{user.account}</td>
                   <td>{user.username}</td>
                   <td>{user.email}</td>
                   <td>{user.cellPhone}</td>

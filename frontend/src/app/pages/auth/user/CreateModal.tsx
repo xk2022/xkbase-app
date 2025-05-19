@@ -14,9 +14,9 @@ interface CreateModalProps {
 
 export function CreateModal({ createModal, onClose, showAlert, onUserCreated, roles }: CreateModalProps) {
   const btnRef = useRef<HTMLButtonElement | null>(null);
-  const initialFormState = { uuid: '', username: '', email: '', cellPhone: '', roleUuid: roles.length > 0 ? roles[0].uuid : '', password: '', enabled: true, locked: false, lastLogin: '' };
-  const initialErrorState = { username: false, email: false, cellPhone: false, password: false };
-  const initialTouchedState = { username: false, email: false, cellPhone: false, password: false };
+  const initialFormState = { uuid: '', account: '', username: '', email: '', cellPhone: '', roleUuid: roles.length > 0 ? roles[0].uuid : '', password: '', enabled: true, locked: false, lastLogin: '' };
+  const initialErrorState = { account: false, username: false, email: false, cellPhone: false, password: false };
+  const initialTouchedState = { account: false, username: false, email: false, cellPhone: false, password: false };
   const [formData, setFormData] = useState(initialFormState);
   const [errors, setErrors] = useState(initialErrorState);
   const [touched, setTouched] = useState(initialTouchedState);
@@ -49,8 +49,9 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
   const handleSubmit = async (e: React.FormEvent) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     e.preventDefault();
-    setTouched({ username: true, email: true, cellPhone: true, password: true });
+    setTouched({ account: true, username: true, email: true, cellPhone: true, password: true });
     const newErrors = {
+      account: formData.account.trim() === '',
       username: formData.username.trim() === '',
       email: !emailRegex.test(formData.email),
       cellPhone: formData.cellPhone.trim() === '' || isNaN(Number(formData.cellPhone)),
@@ -97,6 +98,29 @@ export function CreateModal({ createModal, onClose, showAlert, onUserCreated, ro
             </div>
             <form id="kt_modal_add_user_form" className="form" onSubmit={handleSubmit}>
               <div className="modal-body scroll-y mx-5 mx-xl-15 my-7">
+
+                <div className="row fv-row mb-6">
+                  <label className="col-lg-2 col-form-label required fw-bold fs-6">帳號</label>
+                  <div className="col-lg-10">
+                    <input
+                      placeholder="請輸入帳號"
+                      className="form-control form-control-solid"
+                      type="text"
+                      name="account"
+                      autoComplete="off"
+                      value={formData.account}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                    />
+                  </div>
+                  {touched.account && errors.account && (
+                    <div className="fv-plugins-message-container">
+                      <div className="fv-help-block">
+                        <span role="alert">帳號不得為空</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
                 <div className="row fv-row mb-6">
                   <label className="col-lg-2 col-form-label required fw-bold fs-6">名稱</label>
