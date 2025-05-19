@@ -10,14 +10,14 @@ import { useAlert } from '../../../pages/common/useAlert'
 import { setAuth } from '../core/AuthHelpers'
 
 const loginSchema = Yup.object().shape({
-  username: Yup.string()
+  account: Yup.string()
     .required('帳號為必填...'),
   password: Yup.string()
     .required('密碼為必填...'),
 })
 
 const initialValues = {
-  username: '',
+  account: '',
   password: '',
 }
 
@@ -70,21 +70,21 @@ export function Login() {
             placeholder='請輸入帳號...'
             type='text'
             autoComplete='off'
-            {...formik.getFieldProps('username')}
+            {...formik.getFieldProps('account')}
             className={clsx(
               'form-control bg-transparent',
               {
-                'is-invalid': formik.touched.username && formik.errors.username
+                'is-invalid': formik.touched.account && formik.errors.account
               },
               {
-                'is-valid': formik.touched.username && !formik.errors.username,
+                'is-valid': formik.touched.account && !formik.errors.account,
               }
             )}
           />
-          {formik.touched.username && formik.errors.username && (
+          {formik.touched.account && formik.errors.account && (
             <div className='fv-plugins-message-container'>
               <div className='fv-help-block'>
-                <span role='alert'>{formik.errors.username}</span>
+                <span role='alert'>{formik.errors.account}</span>
               </div>
             </div>
           )}

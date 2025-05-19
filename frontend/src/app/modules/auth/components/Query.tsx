@@ -12,6 +12,14 @@ export const signin = async (login: LoginModel, showAlert: (message: string, typ
       showAlert("查無此使用者", "danger");
       return null;
     }
+    if(responseData.data.locked){
+      showAlert("帳號已被鎖定，請聯絡管理員", "warning");
+      return null;
+    }
+    if(responseData.data.enabled){
+      showAlert("帳號尚未啟用，請聯絡管理員", "warning");
+      return null;
+    }
     showAlert("登入成功", "success");
     return responseData;
   } catch (error) {
