@@ -1,29 +1,21 @@
-import { Login } from '../../../pages/model/LoginModel'
+import { LoginModel } from '../../../pages/model/LoginModel'
 
-export const signin = async (login: Login, showAlert: (message: string, type: "success" | "warning" | "danger") => void) => {
+export const signin = async (login: LoginModel, showAlert: (message: string, type: 'success' | 'danger' | 'warning') => void) => {
   try {
     const response = await fetch(`http://localhost:8081/api/auth/signin`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(login),
     });
-    if (response.ok) {
-      showAlert("編輯成功！", "success");
-      return true;
-    }
     const responseData = await response.json();
-    if (response.ok) {
-      return responseData.data;
+    if(!responseData.data){
+      showAlert("查無此使用者", "danger");
+      return null;
     }
-    if (Array.isArray(responseData.errorDetails.length)) {
-      showAlert(responseData.errorDetails.join("\n"), "warning");
-      return [];
-    }
-    showAlert(responseData.errorDetails, "warning");
-    return [];
+    showAlert("登入成功", "success");
+    return responseData;
   } catch (error) {
     console.error("API 錯誤:", error);
-    showAlert("獲取資料失敗，請稍後再試", "danger");
-    return [];
+    return null;
   }
 };

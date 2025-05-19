@@ -1,36 +1,42 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {AuthModel} from './_models'
+import {UserModel} from './_models'
 
-const AUTH_LOCAL_STORAGE_KEY = 'kt-auth-react-v'
-const getAuth = (): AuthModel | undefined => {
+const AUTH_USER_STORAGE_KEY = 'authUser'
+const AUTH_TOKEN_STORAGE_KEY = 'authToken'
+
+const getAuth = (): UserModel | undefined => {
   if (!localStorage) {
     return
   }
 
-  const lsValue: string | null = localStorage.getItem(AUTH_LOCAL_STORAGE_KEY)
-  if (!lsValue) {
+  const value: string | null = localStorage.getItem(AUTH_USER_STORAGE_KEY)
+  if (!value) {
     return
   }
 
   try {
-    const auth: AuthModel = JSON.parse(lsValue) as AuthModel
+    const auth: UserModel = JSON.parse(value) as UserModel
     if (auth) {
-      // You can easily check auth_token expiration also
       return auth
     }
   } catch (error) {
-    console.error('AUTH LOCAL STORAGE PARSE ERROR', error)
+    console.error('AUTH USER STORAGE PARSE ERROR', error)
   }
 }
 
-const setAuth = (auth: AuthModel) => {
+const getToken = (): string | undefined => {
+  return localStorage.getItem(AUTH_TOKEN_STORAGE_KEY) ?? undefined;
+}
+
+const setAuth = (auth: UserModel) => {
   if (!localStorage) {
     return
   }
 
   try {
-    const lsValue = JSON.stringify(auth)
-    localStorage.setItem(AUTH_LOCAL_STORAGE_KEY, lsValue)
+    const value = JSON.stringify(auth);
+    localStorage.setItem(AUTH_USER_STORAGE_KEY, value);
+    localStorage.setItem(AUTH_TOKEN_STORAGE_KEY, auth.token);
   } catch (error) {
     console.error('AUTH LOCAL STORAGE SAVE ERROR', error)
   }
@@ -38,11 +44,12 @@ const setAuth = (auth: AuthModel) => {
 
 const removeAuth = () => {
   if (!localStorage) {
-    return
+    return;
   }
 
   try {
-    localStorage.removeItem(AUTH_LOCAL_STORAGE_KEY)
+    localStorage.removeItem(AUTH_USER_STORAGE_KEY);
+    localStorage.removeItem(AUTH_TOKEN_STORAGE_KEY);
   } catch (error) {
     console.error('AUTH LOCAL STORAGE REMOVE ERROR', error)
   }
@@ -53,8 +60,8 @@ export function setupAxios(axios: any) {
   axios.interceptors.request.use(
     (config: {headers: {Authorization: string}}) => {
       const auth = getAuth()
-      if (auth && auth.api_token) {
-        config.headers.Authorization = `Bearer ${auth.api_token}`
+      if (auth && auth.token) {
+        config.headers.Authorization = `Bearer ${auth.token}`
       }
 
       return config
@@ -63,4 +70,4 @@ export function setupAxios(axios: any) {
   )
 }
 
-export {getAuth, setAuth, removeAuth, AUTH_LOCAL_STORAGE_KEY}
+export {getAuth, getToken, setAuth, removeAuth, AUTH_USER_STORAGE_KEY}

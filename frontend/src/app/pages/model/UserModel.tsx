@@ -1,5 +1,6 @@
 export interface User {
     uuid: string;
+    account: string;
     username: string;
     email: string;
     cellPhone: string;
