@@ -1,3 +1,22 @@
+export interface PermissionAction {
+  id: number;
+  name: string;
+  active: boolean;
+}
+
+export interface PermissionDTO {
+  id: number;
+  name: string;
+  active: boolean;
+  actions: PermissionAction[];
+}
+
+export interface SystemDTO {
+  systemUuid: string;
+  name: string;
+  permissionDTOS: PermissionDTO[];
+}
+
 export interface UserModel {
   uuid: string;
   username: string;
@@ -8,23 +27,4 @@ export interface UserModel {
   locked: boolean;
   token: string;
   systemDTOs: SystemDTO[] | null;
-}
-
-export interface SystemDTO {
-  systemUuid: string;
-  name: string;
-}
-
-export interface PermissionDTO {
-  id: number;
-  name: string;
-  active: boolean;
-  permissionDTOs: PermissionDTO[] | null;
-  actions: Action[] | null;
-}
-
-export interface Action {
-  id: string;
-  name: string;
-  active: boolean;
 }
