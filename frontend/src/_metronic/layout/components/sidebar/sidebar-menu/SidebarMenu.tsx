@@ -36,8 +36,14 @@ const SidebarMenu = () => {
           <div className='mb-10'>
             <label className='form-label'>Select an Option</label>
             <Select
-              className='react-select-styled' 
-              classNamePrefix='react-select' 
+              className='react-select-styled'
+              classNamePrefix='react-select'
+              placeholder='請選擇系統...'
+              options={options}
+              value={options.find(option => option.value === selectedSystem)}
+              onChange={(selectedOption) => setSelectedSystem(selectedOption?.value || null)}
+              menuPortalTarget={document.body}
+              menuPosition='fixed'
               styles={{
                 container: (base) => ({
                   ...base,
@@ -55,12 +61,13 @@ const SidebarMenu = () => {
                   minWidth: '150px', // 小屏幕适配，防止变得太窄
                   maxWidth: '100%', // 最大宽度保持自适应
                 }),
+                menuPortal: (base) => ({
+                  ...base,
+                  zIndex: 9999,
+                }),
               }}
-              options={options}
-              value={options.find(option => option.value === selectedSystem)}
-              onChange={(selectedOption) => setSelectedSystem(selectedOption?.value || null)}
-              placeholder='Choose...'
             />
+
 
           </div>
         </div>

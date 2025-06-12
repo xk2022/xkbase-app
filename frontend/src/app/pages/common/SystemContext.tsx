@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { System } from '../model/SystemModel';
+import { getAuth } from "../../modules/auth/core/AuthHelpers";
 
 interface SystemContextType {
   systems: System[];
@@ -13,16 +14,21 @@ export const SystemProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // 取得系統清單
   const fetchSystems = async () => {
-    try {
-      const response = await fetch(`http://localhost:8081/api/adm/system`);
-      const responseData = await response.json();
-      if (response.ok) {
-        setSystems(responseData.data);
-      } else {
-        console.error("獲取系統清單失敗:", responseData.errorDetails);
-      }
-    } catch (error) {
-      console.error("API 錯誤:", error);
+    const user = getAuth();
+    if (user && Array.isArray(user.systemDTOs)) {
+      // 如果你需要轉換成 System 型別，可做 mapping
+      const parsed: System[] = user.systemDTOs.map(dto => ({
+        uuid: dto.systemUuid,
+        code: dto.name, // 假設沒有對應就重複 name
+        name: dto.name,
+        description: '',     // 沒有描述就預設空字串
+        enabled: true        // 預設 true，可依需要更精細處理
+      }))
+      console.log(parsed);
+      setSystems(parsed);
+    } else {
+      setSystems([])
+      console.warn('尚未登入或無 systemDTOs')
     }
   };
 

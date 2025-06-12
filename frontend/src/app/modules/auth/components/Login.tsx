@@ -7,7 +7,8 @@ import { useFormik } from 'formik'
 import { useAuth } from '../core/Auth'
 import { signin } from './Query'
 import { useAlert } from '../../../pages/common/useAlert'
-import { setAuth } from '../core/AuthHelpers'
+import { processUserLogin } from '../core/AuthHelpers'
+import { tryDevLogin } from '../core/devMock'
 
 const loginSchema = Yup.object().shape({
   account: Yup.string()
@@ -31,13 +32,26 @@ export function Login() {
     validationSchema: loginSchema,
     onSubmit: async (values, { setSubmitting }) => {
       setLoading(true);
+
+      // 👇 特例帳號：直接登入（繞過 API）
+      const mockUser = tryDevLogin(values.account, values.password);
+      if (mockUser) {
+        console.log(mockUser);
+        processUserLogin(mockUser);
+        setCurrentUser(mockUser);
+        setLoading(false);
+        return;
+      }
+
       const auth = await signin(values, showAlert);
       setLoading(false);
+
       if (!auth || !auth.data) {
         setSubmitting(false);
         return;
       }
-      setAuth(auth.data);
+
+      processUserLogin(auth.data);
       setCurrentUser(auth.data);
     },
   })
