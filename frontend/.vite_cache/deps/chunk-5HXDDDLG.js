@@ -28,8 +28,8 @@ function _setPrototypeOf(t, e) {
 }
 
 export {
-  _objectWithoutPropertiesLoose,
   _extends,
+  _objectWithoutPropertiesLoose,
   _setPrototypeOf
 };
-//# sourceMappingURL=chunk-VKKCJAML.js.map
+//# sourceMappingURL=chunk-5HXDDDLG.js.map

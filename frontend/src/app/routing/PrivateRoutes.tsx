@@ -28,6 +28,7 @@ const pageImports: Record<string, () => Promise<{ default: React.ComponentType<R
   UserPage: () => import("../pages/auth/user/index"),
   RolePage: () => import("../pages/auth/role/index"),
   PermissionPage: () => import("../pages/auth/permission/index"),
+  OrderPage: () => import("../pages/order/index"),
 };
 
 const routesConfig = [
@@ -43,6 +44,7 @@ const routesConfig = [
   { key: 'UserPage', path: 'auth/user/*' },
   { key: 'RolePage', path: 'auth/role/*' },
   { key: 'PermissionPage', path: 'auth/permission/*' },
+  { key: 'OrderPage', path: 'order/*' },
 ]
 // 使用 `map()` 統一處理 `lazy()`
 const pages = routesConfig.map(({ key, path }) => ({

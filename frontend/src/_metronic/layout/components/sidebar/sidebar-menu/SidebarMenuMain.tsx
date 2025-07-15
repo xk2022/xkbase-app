@@ -11,6 +11,18 @@ const SidebarMenuMain = () => {
         fontIcon='bi-app-indicator'
       />
       <SidebarMenuItemWithSub
+        to='/order'
+        title='訂單管理'
+        fontIcon='bi-cart'
+        icon='delivery-3'
+      >
+        <SidebarMenuItem to='/order/overview' title='訂單總覽' hasBullet={true} />
+        <SidebarMenuItem to='/order/list' title='訂單列表' hasBullet={true} />
+        <SidebarMenuItem to='/order/create' title='建立訂單' hasBullet={true} />
+        <SidebarMenuItem to='/order/assign' title='訂單指派' hasBullet={true} />
+        <SidebarMenuItem to='/order/report' title='訂單報表' hasBullet={true} />
+      </SidebarMenuItemWithSub>
+      <SidebarMenuItemWithSub
         to='/auth'
         title='權限'
         fontIcon='bi-archive'
