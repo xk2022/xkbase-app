@@ -12,6 +12,8 @@ dist
 dist-ssr
 *.local
 package-lock.json
+vite_cache/
+.cache/
 
 # Editor directories and files
 .vscode/*
