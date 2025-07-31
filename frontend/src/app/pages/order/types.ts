@@ -53,6 +53,7 @@ export interface ImportOrderDetails {
   containerReturnLocation: string
   containerReturnDate: string
   containerReturnTime: string
+  containerCount: string
   notes?: string
 }
 

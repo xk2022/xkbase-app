@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Modal } from 'react-bootstrap'
 import { useNavigate } from 'react-router-dom'
 import { OrderType, ExportOrderDetails, ImportOrderDetails } from './types'
 import { useCreateOrder } from './hooks'
@@ -7,9 +8,65 @@ import { CustomerSelect } from './components/CustomerSelect'
 import { ToastNotification } from './components/ToastNotification'
 
 export const OrderCreate: React.FC = () => {
+  // Modal 狀態
+  const [showTypeModal, setShowTypeModal] = useState(false)
+  const [pendingOrderType, setPendingOrderType] = useState<OrderType | null>(null)
   const navigate = useNavigate()
   const createOrderMutation = useCreateOrder()
   const [orderType, setOrderType] = useState<OrderType>('EXPORT')
+  // 切換訂單類型時的防呆
+  const handleOrderTypeChange = (newType: OrderType) => {
+    if (newType !== orderType) {
+      setPendingOrderType(newType)
+      setShowTypeModal(true)
+    }
+  }
+
+  const confirmOrderTypeChange = () => {
+    setOrderType(pendingOrderType as OrderType)
+    setPendingOrderType(null)
+    setShowTypeModal(false)
+    // 清空資料
+    setExportDetails({
+      date: '',
+      shippingCompany: '',
+      shipName: '',
+      voyage: '',
+      customsClearanceDate: '',
+      containerPickupCode: '',
+      containerType: '',
+      containerPickupLocation: '',
+      containerNumber: '',
+      containerDropoffLocation: '',
+      loadingLocation: '',
+      loadingDate: '',
+      loadingTime: '',
+    })
+    setImportDetails({
+      date: '',
+      deliveryOrderLocation: '',
+      shippingCompany: '',
+      shipName: '',
+      voyage: '',
+      containerNumber: '',
+      containerType: '',
+      containerYard: '',
+      containerPickupDeadline: '',
+      deliveryLocation: '',
+      deliveryDate: '',
+      deliveryTime: '',
+      containerReturnLocation: '',
+      containerReturnDate: '',
+      containerReturnTime: '',
+      containerCount: '',
+    })
+    setNotes('')
+  }
+
+  const cancelOrderTypeChange = () => {
+    setPendingOrderType(null)
+    setShowTypeModal(false)
+  }
   const [customerId, setCustomerId] = useState('')
   const [customerName, setCustomerName] = useState('')
   const [errors, setErrors] = useState<string[]>([])
@@ -49,6 +106,7 @@ export const OrderCreate: React.FC = () => {
     containerReturnLocation: '',
     containerReturnDate: '',
     containerReturnTime: '',
+    containerCount: '', // 櫃數
   })
   const [notes, setNotes] = useState('')
 
@@ -177,12 +235,25 @@ export const OrderCreate: React.FC = () => {
               <select
                 className='form-select'
                 value={orderType}
-                onChange={(e) => setOrderType(e.target.value as OrderType)}
+                onChange={(e) => handleOrderTypeChange(e.target.value as OrderType)}
                 required
               >
                 <option value='EXPORT'>出口</option>
                 <option value='IMPORT'>進口</option>
               </select>
+      {/* 切換訂單類型確認 Modal */}
+      <Modal show={showTypeModal} onHide={cancelOrderTypeChange} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>切換訂單類型</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          切換訂單類型將清空所有已填資料，是否確認切換？
+        </Modal.Body>
+        <Modal.Footer>
+          <button className='btn btn-primary' onClick={confirmOrderTypeChange}>確認</button>
+          <button className='btn btn-secondary' onClick={cancelOrderTypeChange}>取消</button>
+        </Modal.Footer>
+      </Modal>
             </div>
           </div>
 
@@ -329,7 +400,7 @@ export const OrderCreate: React.FC = () => {
                   />
                 </div>
                 <div className='col-md-4'>
-                  <label className='form-label'>提貨單位置(DO)</label>
+                  <label className='form-label'>提貨單位置</label>
                   <input
                     type='text'
                     className='form-control'
@@ -338,6 +409,17 @@ export const OrderCreate: React.FC = () => {
                   />
                 </div>
                 <div className='col-md-4'>
+                  <label className='form-label'>領櫃期限</label>
+                  <input
+                    type='date'
+                    className='form-control'
+                    value={importDetails.containerPickupDeadline}
+                    onChange={(e) => handleImportDetailsChange('containerPickupDeadline', e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className='row mb-3'>
+              <div className='col-md-4'>
                   <label className='form-label'>船公司</label>
                   <input
                     type='text'
@@ -346,8 +428,6 @@ export const OrderCreate: React.FC = () => {
                     onChange={(e) => handleImportDetailsChange('shippingCompany', e.target.value)}
                   />
                 </div>
-              </div>
-              <div className='row mb-3'>
                 <div className='col-md-4'>
                   <label className='form-label'>船名/航次</label>
                   <input
@@ -366,6 +446,17 @@ export const OrderCreate: React.FC = () => {
                     onChange={(e) => handleImportDetailsChange('containerNumber', e.target.value)}
                   />
                 </div>
+              </div>
+              <div className='row mb-3'>
+                <div className='col-md-4'>
+                  <label className='form-label'>櫃場</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    value={importDetails.containerYard}
+                    onChange={(e) => handleImportDetailsChange('containerYard', e.target.value)}
+                  />
+                </div>
                 <div className='col-md-4'>
                   <label className='form-label'>櫃型</label>
                   <select
@@ -380,26 +471,18 @@ export const OrderCreate: React.FC = () => {
                     <option value='45HQ'>45HQ</option>
                   </select>
                 </div>
+                <div className='col-md-4'>
+                  <label className='form-label'>數量</label>
+                  <input
+                    type='number'
+                    className='form-control'
+                    value={importDetails.containerCount}
+                    onChange={(e) => handleImportDetailsChange('containerCount', e.target.value)}
+                    min='1'
+                  />
+                </div>
               </div>
               <div className='row mb-3'>
-                <div className='col-md-4'>
-                  <label className='form-label'>櫃場</label>
-                  <input
-                    type='text'
-                    className='form-control'
-                    value={importDetails.containerYard}
-                    onChange={(e) => handleImportDetailsChange('containerYard', e.target.value)}
-                  />
-                </div>
-                <div className='col-md-4'>
-                  <label className='form-label'>領櫃期限</label>
-                  <input
-                    type='date'
-                    className='form-control'
-                    value={importDetails.containerPickupDeadline}
-                    onChange={(e) => handleImportDetailsChange('containerPickupDeadline', e.target.value)}
-                  />
-                </div>
                 <div className='col-md-4'>
                   <label className='form-label'>送貨地點</label>
                   <input
@@ -409,8 +492,6 @@ export const OrderCreate: React.FC = () => {
                     onChange={(e) => handleImportDetailsChange('deliveryLocation', e.target.value)}
                   />
                 </div>
-              </div>
-              <div className='row mb-3'>
                 <div className='col-md-4'>
                   <label className='form-label'>送貨日期</label>
                   <input
@@ -429,7 +510,9 @@ export const OrderCreate: React.FC = () => {
                     onChange={(e) => handleImportDetailsChange('deliveryTime', e.target.value)}
                   />
                 </div>
-                <div className='col-md-4'>
+              </div>
+              <div className='row mb-3'>
+                                <div className='col-md-4'>
                   <label className='form-label'>還櫃地點</label>
                   <input
                     type='text'
@@ -438,9 +521,7 @@ export const OrderCreate: React.FC = () => {
                     onChange={(e) => handleImportDetailsChange('containerReturnLocation', e.target.value)}
                   />
                 </div>
-              </div>
-              <div className='row mb-3'>
-                <div className='col-md-6'>
+                <div className='col-md-4'>
                   <label className='form-label'>還櫃日期</label>
                   <input
                     type='date'
@@ -449,7 +530,7 @@ export const OrderCreate: React.FC = () => {
                     onChange={(e) => handleImportDetailsChange('containerReturnDate', e.target.value)}
                   />
                 </div>
-                <div className='col-md-6'>
+                <div className='col-md-4'>
                   <label className='form-label'>還櫃時間</label>
                   <input
                     type='time'
@@ -475,17 +556,9 @@ export const OrderCreate: React.FC = () => {
 
           {/* 操作按鈕 */}
           <div className='d-flex justify-content-end'>
-            <button
-              type='button'
-              className='btn btn-light me-3'
-              onClick={() => navigate('/order/list')}
-              disabled={isSubmitting}
-            >
-              取消
-            </button>
             <button 
               type='submit' 
-              className='btn btn-primary'
+              className='btn btn-primary me-3'
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -496,6 +569,14 @@ export const OrderCreate: React.FC = () => {
               ) : (
                 '建立訂單'
               )}
+            </button>
+            <button
+              type='button'
+              className='btn btn-light'
+              onClick={() => navigate('/order/list')}
+              disabled={isSubmitting}
+            >
+              取消
             </button>
           </div>
         </form>
