@@ -18,6 +18,7 @@ import { ContainerBillingCard } from './cards/ContainerBillingCard'
 import { ContainerDispatchCard } from './cards/ContainerDispatchCard'
 import { ContainerLogsCard } from './cards/ContainerLogsCard'
 import { OrderContainerStatusBar } from './cards/OrderContainerStatusBar'
+import type { OrderContainerStatus } from './cards/OrderContainerStatusBar'
 
 export const DetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
@@ -72,7 +73,7 @@ export const DetailPage: React.FC = () => {
           <div className='text-center py-10 text-muted'>查無貨櫃資料</div>
         ) : (
           <div className='row g-6'>
-            <OrderContainerStatusBar status={detail.status} />
+            <OrderContainerStatusBar status={detail.status as OrderContainerStatus} />
 
             {/* 上排：基本 + 計費 */}
             <div className='col-12 col-lg-6'>

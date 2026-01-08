@@ -74,3 +74,25 @@ export async function fetchContainers(
     }
   }
 }
+
+export async function deleteContainer(
+  id: string,
+  showAlert?: AlertFn,
+): Promise<boolean> {
+  if (shouldUseMockDataWithTemp()) {
+    console.log('[Mock] 模擬刪除貨櫃', id)
+    await new Promise(resolve => setTimeout(resolve, 500))
+    showAlert?.('貨櫃刪除成功 (Mock)', 'success')
+    return true
+  }
+
+  try {
+    await http.delete(`${API_PREFIX}/${id}`)
+    showAlert?.('貨櫃刪除成功', 'success')
+    return true
+  } catch (e) {
+    console.error(e)
+    showAlert?.('刪除貨櫃失敗，請稍後再試', 'danger')
+    return false
+  }
+}

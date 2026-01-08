@@ -4,7 +4,7 @@ import { shouldUseMockDataWithTemp } from '@/shared/utils/useMockData'
 import { ApiError } from '@/app/pages/common/ApiError'
 import type { OrderDetail } from './Model'
 import { MOCK_ORDER_DETAIL_MAP } from './mockOrderDetail'
-import { ApiResponse } from '../../model/ApiResponse'
+import { ApiResponse } from '@/app/pages/model/ApiResponse'
 
 const API_PREFIX = '/api/tom/orders'
 

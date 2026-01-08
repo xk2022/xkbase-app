@@ -1,6 +1,6 @@
 // src/app/pages/tom/order/CreateForm.tsx
 import React, { useMemo, useState } from 'react'
-import type { OrderFormValues } from './Model'
+import type { OrderFormValues } from '../Model'
 
 /** ===============================================================
  * Types
@@ -138,7 +138,7 @@ export const CreateForm: React.FC<Props> = ({
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
       >,
     ) =>
-      setValues((p) => ({ ...p, [k]: e.target.value }))
+      setValues((p: OrderFormValues) => ({ ...p, [k]: e.target.value }))
 
   const touch = (k: keyof OrderFormValues) => () =>
     setTouched((p) => ({ ...p, [k]: true }))
@@ -339,7 +339,7 @@ export const CreateForm: React.FC<Props> = ({
                   // 轉大寫（保留原字元數，不會破壞游標）
                   const next = (el.value ?? '').toUpperCase()
 
-                  setValues((p) => ({ ...p, containerNo: next }))
+                  setValues((p: OrderFormValues) => ({ ...p, containerNo: next }))
 
                   // 還原游標位置（避免跳到最後）
                   requestAnimationFrame(() => {

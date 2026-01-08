@@ -51,26 +51,25 @@ export function Login() {
       setLoading(false)
       setSubmitting(false)
       return
-
-      // 註：以下代碼在離線模式下不會執行
+      
+      /* 註：以下代碼在離線模式下不會執行
       // 一般情況：呼叫後端 /auth/login
       // const user = await signin(values, showAlert)
+      // if (!user) {
+      //   // 登入失敗，訊息已經在 signin 裡 showAlert 了
+      //   return
+      // }
+      // // 3) 登入成功：寫入 localStorage + context
+      // // 先設置到 localStorage
+      // processUserLogin(user)
+      // // 再設置到 Context
+      // setCurrentUser(user)
+      // // 明確導航到 dashboard
+      // navigate('/dashboard', { replace: true })
 
       setLoading(false)
       setSubmitting(false)
-
-      if (!user) {
-        // 登入失敗，訊息已經在 signin 裡 showAlert 了
-        return
-      }
-
-      // 3) 登入成功：寫入 localStorage + context
-      // 先設置到 localStorage
-      processUserLogin(user)
-      // 再設置到 Context
-      setCurrentUser(user)
-      // 明確導航到 dashboard
-      navigate('/dashboard', { replace: true })
+      */
     },
   })
 

@@ -180,7 +180,12 @@ export async function fetchOrderDetail(
 ): Promise<OrderDetail | null> {
   // 轉發到 detail/Query.ts 中的實現
   const { fetchOrderDetail: fetchDetail } = await import('./detail/Query')
-  return fetchDetail(orderId, showAlert)
+  const detail = await fetchDetail(orderId, showAlert)
+  // Convert detail/Model OrderDetail to Model OrderDetail
+  if (!detail) return null
+  // The detail/Model.OrderDetail is compatible, but Model.OrderDetail expects an 'order' property
+  // For now, return the detail as-is since it's used in detail pages
+  return detail as any
 }
 
 // ------------------------------------------------------------

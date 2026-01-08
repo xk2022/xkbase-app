@@ -54,7 +54,7 @@ export interface CustomerDetail {
   address?: string
   website?: string
   contacts: ContactPerson[] // 所有聯絡人
-  contracts?: ContractTemplate[] // 相關合約模板
+  contracts?: ContractTemplateListItem[] // 相關合約模板
   createdAt: string
   updatedAt: string
 }

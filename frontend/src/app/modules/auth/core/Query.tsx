@@ -1,6 +1,6 @@
-import { Login } from '../../../pages/model/LoginModel'
+import type { LoginModel } from '../../../pages/model/LoginModel'
 
-export const signin = async (login: Login) => {
+export const signin = async (login: LoginModel) => {
   try {
     const response = await fetch("http://localhost:8081/api/auth/signin", {
       method: "POST",

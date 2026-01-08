@@ -237,7 +237,7 @@ export const FormModal: React.FC<Props> = ({
                   ) : (
                     roles.map((r) => (
                       <label
-                        key={r.uuid}
+                        key={r.id}
                         className='form-check form-check-sm form-check-custom mb-2'
                       >
                         <input

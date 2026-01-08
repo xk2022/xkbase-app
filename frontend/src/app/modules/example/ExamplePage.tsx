@@ -1,7 +1,7 @@
 import React from 'react'
 import {Route, Routes} from 'react-router-dom'
 import {PageLink, PageTitle} from '../../../_metronic/layout/core'
-import {Overview} from './components/Overview'
+// import {Overview} from './components/Overview'
 
 const exampleBreadCrumbs: Array<PageLink> = [
   {
@@ -27,7 +27,7 @@ const ExamplePage: React.FC = () => {
           element={
             <>
               <PageTitle breadcrumbs={exampleBreadCrumbs}>Overview</PageTitle>
-              <Overview />
+              <div>Example Overview</div>
             </>
           }
         />

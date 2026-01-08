@@ -34,7 +34,9 @@ export default defineConfig(({ mode }) => {
     },
     // 🌟 dev 用 '/'，prod 用 '/xkBase/'
     // base: isProd ? '/xkBase/' : '/',
-    base: '/xkBase/',
+    // base: '/xkBase/',
+
+  base: '/xkbase-app/', // ✅ repo 名稱 + 前後斜線
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

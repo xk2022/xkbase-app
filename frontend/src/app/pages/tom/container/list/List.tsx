@@ -9,7 +9,7 @@ import { ConfirmDeleteModal } from '@/app/pages/common/ConfirmDeleteModal'
 
 import { Column, PagedTable } from '@/app/pages/common/PagedTable'
 import type { Container } from '../Model'
-import { fetchContainers } from '../Query'
+import { fetchContainers, deleteContainer } from '../Query'
 
 /**
  * ===============================================================
@@ -81,7 +81,7 @@ const ContainerList: React.FC<ContainerListProps> = ({
         keyword: searchKeyword?.trim() ? searchKeyword.trim() : undefined,
       }
 
-      const data = await fetchContainers(query, showAlert)
+      const data = await fetchContainers(query)
 
       setContainers(data.content)
       setTotalElements(data.totalElements)

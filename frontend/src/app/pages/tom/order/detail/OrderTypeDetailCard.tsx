@@ -22,7 +22,8 @@ export const OrderTypeDetailCard: React.FC<Props> = ({ detail }) => {
   const isImport = detail.orderType === 'IMPORT'
   const isExport = detail.orderType === 'EXPORT'
 
-  const d = isImport ? detail.importDetail : isExport ? detail.exportDetail : undefined
+  const importDetail = isImport ? detail.importDetail : undefined
+  const exportDetail = isExport ? detail.exportDetail : undefined
 
   return (
     <div className='card'>
@@ -35,34 +36,34 @@ export const OrderTypeDetailCard: React.FC<Props> = ({ detail }) => {
       </div>
 
       <div className='card-body'>
-        {!d ? (
+        {!importDetail && !exportDetail ? (
           <div className='text-muted'>尚無明細資料</div>
         ) : (
           <div className='table-responsive'>
             <table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-3'>
               <tbody>
                 {/* ✅ Import 常用欄位（你可依後端 DTO 對齊） */}
-                {isImport && (
+                {isImport && importDetail && (
                   <>
-                    <Row label='提貨/送貨單地點' value={d.deliveryOrderLocation} />
-                    <Row label='進口報關號' value={d.importDeclNo} />
-                    <Row label='提單號 BL No' value={d.blNo} />
-                    <Row label='通關放行時間' value={d.customsReleaseTime} />
-                    <Row label='倉庫' value={d.warehouse} />
-                    <Row label='到港通知/文件備註' value={d.arrivalNotice} />
+                    <Row label='提貨/送貨單地點' value={importDetail.deliveryOrderLocation} />
+                    <Row label='進口報關號' value={importDetail.importDeclNo} />
+                    <Row label='提單號 BL No' value={importDetail.blNo} />
+                    <Row label='通關放行時間' value={importDetail.customsReleaseTime} />
+                    <Row label='倉庫' value={importDetail.warehouse} />
+                    <Row label='到港通知/文件備註' value={importDetail.arrivalNotice} />
                   </>
                 )}
 
                 {/* ✅ Export 常用欄位（先放一組保守欄位） */}
-                {isExport && (
+                {isExport && exportDetail && (
                   <>
-                    <Row label='訂艙號 Booking No' value={d.bookingNo} />
-                    <Row label='裝櫃日' value={d.stuffingDate} />
-                    <Row label='結關時間' value={d.cutoffTime} />
-                    <Row label='出口報關號' value={d.exportDeclNo} />
-                    <Row label='裝櫃地點' value={d.stuffingLocation} />
-                    <Row label='S/O No' value={d.soNo} />
-                    <Row label='報關行' value={d.customsBroker} />
+                    <Row label='訂艙號 Booking No' value={exportDetail.bookingNo} />
+                    <Row label='裝櫃日' value={exportDetail.stuffingDate} />
+                    <Row label='結關時間' value={exportDetail.cutoffTime} />
+                    <Row label='出口報關號' value={exportDetail.exportDeclNo} />
+                    <Row label='裝櫃地點' value={exportDetail.stuffingLocation} />
+                    <Row label='S/O No' value={exportDetail.soNo} />
+                    <Row label='報關行' value={exportDetail.customsBroker} />
                   </>
                 )}
               </tbody>

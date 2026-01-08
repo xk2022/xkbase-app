@@ -52,10 +52,42 @@ export interface OrderDetail {
   containerCount: number
   orderStatus: string
   createdTime: string
+  orderType?: 'IMPORT' | 'EXPORT'
 
   // ===== 下面是為了 5 張卡預留（都 optional，不影響 mock）=====
   containers?: OrderContainerItem[]
   billing?: OrderBilling
   dispatch?: OrderDispatch
   logs?: OrderLog[]
+  assignments?: Array<{
+    uuid?: string
+    vehicleUuid?: string
+    driverUuid?: string
+    assignedTime?: string
+    note?: string
+  }>
+  statusLogs?: Array<{
+    uuid?: string
+    createdTime?: string
+    fromStatus?: string
+    toStatus?: string
+    reason?: string
+  }>
+  importDetail?: {
+    deliveryOrderLocation?: string
+    importDeclNo?: string
+    blNo?: string
+    customsReleaseTime?: string
+    warehouse?: string
+    arrivalNotice?: string
+  }
+  exportDetail?: {
+    bookingNo?: string
+    stuffingDate?: string
+    cutoffTime?: string
+    exportDeclNo?: string
+    stuffingLocation?: string
+    soNo?: string
+    customsBroker?: string
+  }
 }

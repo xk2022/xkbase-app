@@ -1,5 +1,5 @@
 // src/app/pages/crm/portal/mockContainerProgress.tsx
-import type { ContainerProgress } from '../../Model'
+import type { ContainerProgress } from '../Model'
 
 // Mock 貨櫃進度數據映射
 export const MOCK_CONTAINER_PROGRESS_MAP: Record<string, ContainerProgress> = {
