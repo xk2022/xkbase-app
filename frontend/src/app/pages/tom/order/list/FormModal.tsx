@@ -74,8 +74,10 @@ export const FormModal: React.FC<Props> = ({
       return
     }
 
-    setOrderType(editingOrder.orderType ?? 'export')
-    setContainerNumber(editingOrder.containerNumber ?? '')
+    // Note: OrderListItem may not have orderType or containerNumber
+    // These fields might need to be fetched from detail if needed
+    setOrderType('export')
+    setContainerNumber('')
   }, [open, editingOrder])
 
   // =============================================================
@@ -123,16 +125,11 @@ export const FormModal: React.FC<Props> = ({
           shipDate,
           note: note.trim() || undefined,
         }
-        await updateOrder(editingOrder.orderId, payload, showAlert)
+        await updateOrder(editingOrder.id, payload, showAlert)
       } else {
-        const payload: CreateOrderReq = {
-          orderType,
-          customerUuid: Number(customerId),
-          containerNumber: normalizeText(containerNumber),
-          shipDate,
-          note: note.trim(),
-        }
-        // await createOrder(payload, showAlert)
+        // For now, create is not implemented in this modal
+        // Use the full create page instead
+        showAlert('請使用建立訂單頁面來建立新訂單', 'info')
       }
 
       onSaved()

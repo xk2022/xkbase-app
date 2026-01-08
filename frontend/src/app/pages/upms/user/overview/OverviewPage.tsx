@@ -90,7 +90,7 @@ export const OverviewPage: React.FC = () => {
         const mockUser = MOCK_USERS.find((u) => u.id === user.id)
         return {
           ...user,
-          joinedAt: mockUser?.joinedAt,
+          joinedAt: mockUser?.joinedAt ?? undefined,
         }
       })
 
@@ -317,8 +317,8 @@ export const OverviewPage: React.FC = () => {
                         {recentUsers.length > 0
                           ? formatDate(
                               shouldUseMockData()
-                                ? MOCK_USERS.find((u) => u.id === recentUsers[0].id)?.joinedAt
-                                : recentUsers[0].joined_day
+                                ? MOCK_USERS.find((u) => u.id === recentUsers[0].id)?.joinedAt ?? undefined
+                                : recentUsers[0].joined_day ?? undefined
                             )
                           : '-'}
                       </span>

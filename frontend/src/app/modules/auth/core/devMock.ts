@@ -15,6 +15,8 @@ export const tryDevLogin = (
       uuid: 'mock-uuid',
       account: 'mock', // ✅ 用於 Mock 數據判斷
       username: 'Mock 測試用戶',
+      name: 'Mock 測試用戶',
+      fullname: 'Mock 測試用戶',
       email: 'mock@example.com',
       cellPhone: '0912345678',
       roleUuid: 'role-mock',

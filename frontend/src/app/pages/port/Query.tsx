@@ -4,8 +4,8 @@ import type { AlertFn } from '@/app/pages/common/AlertType'
 import { shouldUseMockDataWithTemp } from '@/shared/utils/useMockData'
 import { ApiError } from '@/app/pages/common/ApiError'
 
-import { ApiResponse } from '../../model/ApiResponse'
-import { PageResult } from '../../model/PageResult'
+import { ApiResponse } from '@/app/pages/model/ApiResponse'
+import { PageResult } from '@/app/pages/model/PageResult'
 
 import type {
   Port,

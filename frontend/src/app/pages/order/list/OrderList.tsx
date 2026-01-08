@@ -62,6 +62,7 @@ export const OrderList: React.FC = () => {
         containerReturnLocation: '台中港',
         containerReturnDate: '2025-01-17',
         containerReturnTime: '16:00',
+        containerCount: '1',
       },
       history: []
     }

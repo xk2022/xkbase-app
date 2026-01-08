@@ -10,6 +10,7 @@ import { AppToolbar } from '@/app/pages/common/AppToolbar'
 import { toUndef, trim } from '@/app/pages/common/form/formUtils'
 
 import type { CreateContainerFormValues, CreateContainerReq } from '../Model'
+import { createContainer } from '../Query'
 
 /**
  * ===============================================================
@@ -34,8 +35,8 @@ const toCreateReq = (v: CreateContainerFormValues): CreateContainerReq => {
     containerNo: trim(v.containerNo),
     type: trim(v.type),
     status: v.status,
-    weight: toUndef(v.weight),
-    remark: toUndef(v.remark),
+    weight: toUndef(v.weight) || '',
+    remark: toUndef(v.remark) || '',
   }
 }
 
