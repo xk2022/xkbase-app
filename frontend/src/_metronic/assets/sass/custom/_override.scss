@@ -1,0 +1,13 @@
+// frontend/src/_metronic/assets/sass/custom/_override.scss
+.table-row-hover:hover {
+  background-color: #f9fafb !important;
+}
+
+tbody tr.table-row-hover {
+  transition: background-color 0.15s ease;
+}
+
+tbody tr.table-row-hover:hover {
+  background-color: #f9fafb !important;
+  cursor: pointer;
+}

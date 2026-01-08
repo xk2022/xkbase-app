@@ -21,24 +21,28 @@ import {ErrorsPage} from '../modules/errors/ErrorsPage'
 /* Logout：登出頁面（清除登入狀態）。 */
 /* useAuth：用來 獲取目前使用者 currentUser。 */
 import {Logout, AuthPage, useAuth} from '../modules/auth'
-import {App} from '../App'
+import {App} from '../App' 
 
 /**
  * Base URL of the website. 設定 BASE_URL
  *
  * @see https://facebook.github.io/create-react-app/docs/using-the-public-folder
  */
-const {BASE_URL} = import.meta.env
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const { BASE_URL, VITE_DEMO_MODE } = import.meta.env as any
 
 /**
  * (1) currentUser 確認使用者狀態：useAuth() 會回傳 currentUser，用來判斷 使用者是否登入。
  * (2) BrowserRouter 負責前端路由管理：管理網站的 URL，basename={BASE_URL} 讓應用根據 BASE_URL 正確運行。
- * (3) Route 定義各個路由
+ * (3) Route 定義各個路由 
  * 
  * @returns 
  */
 const AppRoutes: FC = () => {
-  const {currentUser} = useAuth()
+  const { currentUser } = useAuth()
+  const isDemo = String(VITE_DEMO_MODE).toLowerCase() === 'true'
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const isAuthed = isDemo || !!currentUser
   
   return (
     <BrowserRouter basename={BASE_URL}>

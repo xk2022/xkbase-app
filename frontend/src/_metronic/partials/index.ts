@@ -2,6 +2,7 @@ export * from './layout/quick-links/QuicLinks'
 export * from './layout/SearchModal'
 export * from './layout/InboxCompose'
 export * from './layout/header-menus/HeaderUserMenu'
+export {HeaderRoleMenu, RoleProvider, useRole} from './layout/header-menus/HeaderRoleMenu'
 export * from './layout/create-app/CreateApp'
 export * from './layout/theme-mode/ThemeModeProvider'
 

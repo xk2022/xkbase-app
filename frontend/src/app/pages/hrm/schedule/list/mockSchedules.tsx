@@ -1,0 +1,41 @@
+// src/app/pages/hrm/schedule/list/mockSchedules.tsx
+import type { ScheduleListItem } from '../Model'
+
+export const MOCK_SCHEDULES: ScheduleListItem[] = [
+  {
+    id: '1',
+    driverId: '1',
+    driverName: '張三',
+    weekStartDate: '2024-01-01',
+    weekEndDate: '2024-01-07',
+    mondayHours: 8,
+    tuesdayHours: 8,
+    wednesdayHours: 8,
+    thursdayHours: 8,
+    fridayHours: 8,
+    saturdayHours: 4,
+    sundayHours: 0,
+    totalWeeklyHours: 44,
+    status: 'confirmed',
+    createdAt: '2023-12-28T10:00:00Z',
+    updatedAt: '2023-12-28T10:00:00Z',
+  },
+  {
+    id: '2',
+    driverId: '2',
+    driverName: '李四',
+    weekStartDate: '2024-01-01',
+    weekEndDate: '2024-01-07',
+    mondayHours: 8,
+    tuesdayHours: 8,
+    wednesdayHours: 8,
+    thursdayHours: 8,
+    fridayHours: 8,
+    saturdayHours: 0,
+    sundayHours: 0,
+    totalWeeklyHours: 40,
+    status: 'confirmed',
+    createdAt: '2023-12-28T10:00:00Z',
+    updatedAt: '2023-12-28T10:00:00Z',
+  },
+]

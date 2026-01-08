@@ -1,0 +1,47 @@
+// src/app/pages/hrm/driver/list/mockDrivers.tsx
+import type { DriverListItem } from '../Model'
+
+export const MOCK_DRIVERS: DriverListItem[] = [
+  {
+    id: '1',
+    name: '張三',
+    licenseNumber: 'A123456789',
+    licenseType: '大貨車',
+    licenseExpiryDate: '2025-12-31',
+    qualificationCert: 'Q001',
+    qualificationExpiryDate: '2025-06-30',
+    phone: '0912-345-678',
+    email: 'zhang@example.com',
+    status: 'active',
+    createdAt: '2024-01-15T10:00:00Z',
+    updatedAt: '2024-01-15T10:00:00Z',
+  },
+  {
+    id: '2',
+    name: '李四',
+    licenseNumber: 'B987654321',
+    licenseType: '聯結車',
+    licenseExpiryDate: '2026-03-31',
+    qualificationCert: 'Q002',
+    qualificationExpiryDate: '2025-09-30',
+    phone: '0923-456-789',
+    email: 'li@example.com',
+    status: 'active',
+    createdAt: '2024-02-20T10:00:00Z',
+    updatedAt: '2024-02-20T10:00:00Z',
+  },
+  {
+    id: '3',
+    name: '王五',
+    licenseNumber: 'C111222333',
+    licenseType: '大貨車',
+    licenseExpiryDate: '2025-08-15',
+    qualificationCert: 'Q003',
+    qualificationExpiryDate: '2025-12-31',
+    phone: '0934-567-890',
+    email: 'wang@example.com',
+    status: 'active',
+    createdAt: '2024-03-10T10:00:00Z',
+    updatedAt: '2024-03-10T10:00:00Z',
+  },
+]

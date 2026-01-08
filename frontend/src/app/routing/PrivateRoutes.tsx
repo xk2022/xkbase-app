@@ -1,3 +1,4 @@
+// src/app/routing/PrivateRoutes.tsx
 /* Main import libraries */
 /* lazy()：讓 React 懶加載（Lazy Load）組件，減少初始載入時間。 */
 /* Suspense：用來 處理懶加載時的 UI 過渡效果。 */
@@ -24,11 +25,44 @@ const pageImports: Record<string, () => Promise<{ default: React.ComponentType<R
   WidgetsPage: () => import("../modules/widgets/WidgetsPage"),
   UsersPage: () => import("../modules/apps/user-management/UsersPage"),
 
-  SystemPage: () => import("../pages/auth/system/index"),
-  UserPage: () => import("../pages/auth/user/index"),
-  RolePage: () => import("../pages/auth/role/index"),
-  PermissionPage: () => import("../pages/auth/permission/index"),
-  OrderPage: () => import("../pages/order/index"),
+  // UPMS
+  UPMSDashboardPage: () => import("../pages/upms/dashboard/index"),
+  RolePage: () => import("../pages/upms/role/index"),
+  PermissionPage: () => import("../pages/upms/permission/index"),
+
+  // TOM
+  ContainerPage: () => import("../pages/tom/container/index"),
+  TransportTasksPage: () => import("../pages/tom/tasks/index"),
+  TOMDashboardPage: () => import("../pages/tom/dashboard/index"),
+
+  // ADM
+  ADMDashboardPage: () => import("../pages/adm/dashboard/index"),
+
+  // FMS
+  FMSDashboardPage: () => import("../pages/fms/dashboard/index"),
+
+  // HRM
+  HRMDashboardPage: () => import("../pages/hrm/dashboard/index"),
+
+  SystemPage: () => import("../pages/upms/system/index"),
+  UserPage: () => import("../pages/upms/user/index"),
+  OrderPage: () => import("../pages/tom/order/index"),
+  DictPage: () => import('../pages/adm/dictionary/index'),
+
+  VehiclePage: () => import("../pages/fms/vehicle/index"),
+  DriverPage: () => import('../pages/fms/driver/index'),
+  HRMDriverPage: () => import('../pages/hrm/driver/index'),
+  SchedulePage: () => import('../pages/hrm/schedule/index'),
+  SalaryPage: () => import('../pages/hrm/salary/index'),
+  SamplePage: () => import('../pages/sample/v1/index'),
+
+  // PORT
+  PortDashboardPage: () => import("../pages/port/dashboard/index"),
+  PortPage: () => import("../pages/port/index"),
+
+  // CRM
+  CRMPage: () => import('../pages/crm/index'),
+
 };
 
 const routesConfig = [
@@ -40,11 +74,40 @@ const routesConfig = [
   { key: 'WidgetsPage', path: 'crafted/widgets/*' },
   { key: 'UsersPage', path: 'apps/user-management/*' },
 
-  { key: 'SystemPage', path: 'auth/system/*' },
-  { key: 'UserPage', path: 'auth/user/*' },
-  { key: 'RolePage', path: 'auth/role/*' },
-  { key: 'PermissionPage', path: 'auth/permission/*' },
-  { key: 'OrderPage', path: 'order/*' },
+  // UPMS
+  { key: 'UPMSDashboardPage', path: 'upms/dashboard' },
+  { key: 'RolePage', path: 'upms/role/*' },
+  { key: 'PermissionPage', path: 'upms/permission/*' },
+
+  // TOM
+  { key: 'ContainerPage', path: 'tom/container/*' },
+  { key: 'TransportTasksPage', path: 'tom/tasks/*' },
+  { key: 'TOMDashboardPage', path: 'tom/dashboard' },
+
+  // ADM
+  { key: 'ADMDashboardPage', path: 'adm/dashboard' },
+
+  // FMS
+  { key: 'FMSDashboardPage', path: 'fms/dashboard' },
+
+  // HRM
+  { key: 'HRMDashboardPage', path: 'hrm/dashboard' },
+
+  { key: 'SystemPage', path: 'upms/system/*' },
+  { key: 'UserPage', path: 'upms/user/*' },
+  { key: 'OrderPage', path: 'tom/order/*' },
+  { key: 'DictPage', path: 'adm/dictionary/*' },
+  { key: 'VehiclePage', path: 'fms/vehicle/*' },
+  { key: 'DriverPage', path: 'fms/driver/*' },
+  { key: 'HRMDriverPage', path: 'hrm/driver/*' },
+  { key: 'SchedulePage', path: 'hrm/schedule/*' },
+  { key: 'SalaryPage', path: 'hrm/salary/*' },
+  { key: 'SamplePage', path: 'sample/v1/*' },
+
+  // PORT
+  { key: 'PortDashboardPage', path: 'port/dashboard' },
+  { key: 'PortPage', path: 'port/*' },
+  { key: 'CRMPage', path: 'crm/*' },
 ]
 // 使用 `map()` 統一處理 `lazy()`
 const pages = routesConfig.map(({ key, path }) => ({
@@ -76,14 +139,20 @@ const PrivateRoutes = () => {
   )
 }
 
+function RouteErrorBoundary({children}:{children:React.ReactNode}) {
+  try { return <>{children}</> } catch (e) { 
+    return <div className="p-5 text-danger">頁面載入失敗</div>
+  }
+}
+
 const SuspensedView: FC<WithChildren> = ({ children }) => {
   const baseColor = getCSSVariableValue('--bs-primary')
-  TopBarProgress.config({
-    barColors: { '0': baseColor },
-    barThickness: 1,
-    shadowBlur: 5,
-  })
-  return <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
+  TopBarProgress.config({ barColors:{'0': baseColor}, barThickness: 1, shadowBlur: 5 })
+  return (
+    <RouteErrorBoundary>
+      <Suspense fallback={<TopBarProgress />}>{children}</Suspense>
+    </RouteErrorBoundary>
+  )
 }
 
 export { PrivateRoutes }
