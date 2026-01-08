@@ -1,0 +1,1 @@
+import{r as u}from"./react-DwkAs-v9.js";function l(){const[e,a]=u.useState({}),[o,i]=u.useState(!1),n=t=>()=>a(s=>({...s,[t]:!0})),c=()=>i(!0),r=(t,s)=>(o||e[t])&&!!s[t];return{touched:e,submitted:o,touch:n,markSubmitted:c,showError:r,invalidClass:(t,s)=>r(t,s)?"is-invalid":""}}export{l as u};

@@ -1,0 +1,1 @@
+import{r as o}from"./react-DwkAs-v9.js";function d(t,n,e){var u=o.useRef(t!==void 0),c=o.useState(n),f=c[0],i=c[1],s=t!==void 0,v=u.current;return u.current=s,!s&&v&&f!==n&&i(n),[s?t:f,o.useCallback(function(p){for(var a=arguments.length,m=new Array(a>1?a-1:0),r=1;r<a;r++)m[r-1]=arguments[r];e&&e.apply(void 0,[p].concat(m)),i(p)},[e])]}export{d as u};
