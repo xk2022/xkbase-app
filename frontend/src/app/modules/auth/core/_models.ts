@@ -19,7 +19,10 @@ export interface SystemDTO {
 
 export interface UserModel {
   uuid: string;
+  account: string,
+  name: string,
   username: string;
+  fullname: string;
   email: string;
   cellPhone: string;
   roleUuid: string;

@@ -26,3 +26,13 @@
 #root {
   display: contents;
 }
+/* 修正 react-select 在 sidebar 被撐高 */
+.react-select__control {
+  min-height: 36px !important;
+  height: 36px !important;
+}
+
+.react-select__value-container {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}

@@ -6,7 +6,7 @@ export interface Auth {
     roleUuid: string;
     enabled: boolean;
     locked: boolean;
-    token: string;
+    accessToken: string;
     systemDTOs: SystemDTO[] | null;
 }
 

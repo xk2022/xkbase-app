@@ -1,5 +1,14 @@
 {
   "compilerOptions": {
+    /* 設定匯入的根目錄為 src，讓相對路徑更簡潔。 */
+    "baseUrl": "src",
+    /* 自定義匯入別名，例如 @modules/tom → src/modules/tom。需搭配 vite.config.ts alias。 */
+    "paths": {
+      "@/*": ["*"],
+      "@shared/*": ["shared/*"],
+      "@modules/*": ["modules/*"]
+    }, 
+
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],

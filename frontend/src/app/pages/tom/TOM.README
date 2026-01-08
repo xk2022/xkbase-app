@@ -1,0 +1,267 @@
+很好，這一段其實已經「內容齊全但結構太密」，我會幫你 **整理 → 定模組邊界 → 對齊 TOM / FMS → 對應選單 v1~v3**，讓你可以直接進入實作階段，而不是再卡在規格。
+
+下面我會分 **5 個層次**來整理。
+
+---
+
+# 一、模組切分總覽（先定邊界，避免 TOM / FMS 打架）
+
+你目前的內容其實已經隱含一個很好的切分：
+
+| 模組           | 英文                         | 負責什麼           | 不負責什麼   |
+| ------------ | -------------------------- | -------------- | ------- |
+| **TOM**      | Transport Order Management | 訂單生命週期         | 不管車輛怎麼跑 |
+| **FMS**      | Fleet Management System    | 車輛 / 司機 / 派遣流程 | 不管訂單細節  |
+| **UPMS**     | User & Permission          | 身分 / 權限        | 不碰業務    |
+| **Customer** | Customer Management        | 貨主資料           | 不碰訂單流程  |
+
+👉 **一句話定義**
+
+* **TOM 管「單」**
+* **FMS 管「人 + 車 + 路」**
+
+這樣後面 API、DB、畫面都不會亂。
+
+---
+
+# 二、TOM（訂單管理模組）整理後規格（可直接當 PRD）
+
+## 1️⃣ TOM 模組定位
+
+**模組名稱**
+
+> 訂單管理模組（TOM – Transport Order Management）
+
+**目標**
+
+* 管理進 / 出口貨櫃訂單的 **建立 → 派單前 → 執行中 → 完成 / 取消**
+* 提供查詢、狀態追蹤、歷史紀錄與報表
+
+---
+
+## 2️⃣ TOM 功能分級（v1 → v3）
+
+### ✅ v1（MVP，必做）
+
+* 訂單建立（進口 / 出口）
+* 訂單列表 / 查詢
+* 訂單狀態（pending / assigned / in_transit / completed / cancelled）
+* 未派單訂單可編輯 / 刪除
+* 指派車輛（手動）
+* 基本操作紀錄（order_logs）
+
+### 🔜 v2（營運用）
+
+* 自動派單（依規則）
+* 進度更新（司機回報）
+* 角色區分（報關行 / 管理員 / 司機）
+* GPS（若有）
+
+### 🔮 v3（管理層）
+
+* 統計報表
+* 匯出 Excel / PDF
+* 車輛使用率、客戶統計
+
+---
+
+# 三、TOM 核心資料模型（你寫得很好，我幫你「定語意」）
+
+## 1️⃣ 訂單核心（orders）
+
+### 共用欄位（Import / Export 都有）
+
+| 欄位                      | 說明                                                      |
+| ----------------------- | ------------------------------------------------------- |
+| order_id                | yyyyMMdd-流水號                                            |
+| order_type              | import / export                                         |
+| customer_id             | 貨主                                                      |
+| status                  | pending / assigned / in_transit / completed / cancelled |
+| created_at / updated_at | 系統維護                                                    |
+
+---
+
+## 2️⃣ 出口訂單（Export）
+
+> **重點語意：上貨 → 交櫃**
+
+* ship_date（出口日期）
+* shipping_company
+* vessel_voyage
+* clearance_date
+* pickup_code
+* container_type
+* pickup_yard
+* container_number
+* delivery_yard
+* loading_location / date / time
+* note
+
+---
+
+## 3️⃣ 進口訂單（Import）
+
+> **重點語意：提櫃 → 送貨 → 還櫃**
+
+* ship_date（進口）
+* delivery_order_location (DO)
+* shipping_company
+* vessel_voyage
+* container_number
+* container_type
+* container_yard
+* last_pickup_date
+* delivery_location / date / time
+* return_yard / date / time
+* note
+
+---
+
+## 4️⃣ 操作紀錄（order_logs）
+
+> **非常重要：後面所有稽核、歷史都靠它**
+
+* action（CREATE / UPDATE / STATUS_CHANGE / DELETE）
+* operator_id
+* created_at
+
+---
+
+# 四、UI 畫面對齊（你之後切頁面會超順）
+
+## 1️⃣ 建立訂單（/order/create）
+
+### 區塊結構
+
+* 訂單類型（Radio：出口 / 進口）
+* 客戶選擇（Select + 新增）
+* **動態表單**
+
+  * Export → 出口欄位
+  * Import → 進口欄位
+* 提交 → status = pending
+
+---
+
+## 2️⃣ 訂單列表（/order/list）
+
+### 篩選區（可折疊）
+
+* 訂單類型
+* 客戶
+* 狀態
+* 日期區間（起訖）
+* 櫃號 / 船名模糊查詢
+
+### 列表
+
+* 訂單編號
+* 類型
+* 客戶
+* 狀態（badge）
+* 櫃號
+* 時間
+
+### 操作（依狀態 + 權限）
+
+* 檢視
+* 編輯（pending only）
+* 派單
+* 刪除（pending only）
+
+---
+
+## 3️⃣ 訂單詳情（/order/:id）
+
+* 基本資料
+* 狀態 stepper
+* 指派資訊
+* 操作紀錄
+* （v2）地圖 / GPS
+
+---
+
+# 五、TOM × FMS 職責切線（這一段最關鍵）
+
+## TOM 負責
+
+* 訂單內容
+* 訂單狀態
+* 指派「結果」
+
+## FMS 負責
+
+* 車輛可用性
+* 司機任務
+* 派遣流程
+* 實際執行進度
+
+👉 **派單流程實際上是：**
+
+```
+TOM(order: pending)
+   ↓ 指派
+FMS(建立 dispatch / task)
+   ↓
+TOM(order → assigned)
+```
+
+---
+
+# 六、選單結構（你這段設計是「正確的」，我幫你確認）
+
+### ORDER（TOM）
+
+```tsx
+<SidebarMenuItemWithSub to='/order' title='訂單管理'>
+  <SidebarMenuItem to='/order/overview' title='訂單總覽' />
+  <SidebarMenuItem to='/order/list' title='訂單列表' />
+  <SidebarMenuItem to='/order/create' title='建立訂單' />
+  <SidebarMenuItem to='/order/assign' title='訂單指派' />
+  <SidebarMenuItem to='/order/report' title='訂單報表' />
+</SidebarMenuItemWithSub>
+```
+
+### FMS（派遣 / 執行）
+
+```tsx
+<SidebarMenuItemWithSub to='/fms/dispatch' title='派遣流程'>
+  <SidebarMenuItem to='/fms/dispatch/list' title='派遣列表' />
+  <SidebarMenuItem to='/fms/dispatch/start' title='開始派遣' />
+  <SidebarMenuItem to='/fms/dispatch/assign' title='指派訂單' />
+  <SidebarMenuItem to='/fms/dispatch/sign' title='簽收' />
+  <SidebarMenuItem to='/fms/dispatch/complete' title='完成派遣' />
+</SidebarMenuItemWithSub>
+```
+
+👉 **這個切法完全符合 DDD + 實務系統**
+
+---
+
+# 七、下一步我建議你怎麼做（實作路線）
+
+**Step 1（最優先）**
+
+* TOM v1：
+
+  * OrderEntity（Import / Export）
+  * OrderStatus enum
+  * Create / List / Update pending
+
+**Step 2**
+
+* 訂單指派 API（TOM → FMS bridge）
+
+**Step 3**
+
+* FMS DispatchEntity（接單）
+
+---
+
+如果你願意，下一步我可以直接幫你做其中一個：
+
+1️⃣ **TOM OrderEntity（Import / Export）完整 Java Entity + Aggregate 設計**
+2️⃣ **TOM v1 API 規格（Request / Response DTO）**
+3️⃣ **前端頁面結構（Create / List / Detail）Component 拆法**
+
+你選一個，我直接進入「寫程式階段」。

@@ -27,7 +27,16 @@ const useAuth = () => {
 }
 
 const AuthProvider: FC<WithChildren> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<UserModel | undefined>()
+  // 從 localStorage 讀取初始狀態，避免閃爍
+  const [currentUser, setCurrentUser] = useState<UserModel | undefined>(() => {
+    // 嘗試從 localStorage 讀取用戶信息
+    try {
+      return authHelper.getAuth()
+    } catch {
+      return undefined
+    }
+  })
+  
   const logout = () => {
     authHelper.removeAuth();
     setCurrentUser(undefined);
@@ -48,21 +57,37 @@ const AuthInit: FC<WithChildren> = ({ children }) => {
   useEffect(() => {
     const token = authHelper.getToken();
     const user = authHelper.getAuth();
+    
+    // 檢查是否有認證信息
     if (!token || !user) {
+      // 清除可能的殘留數據
       logout();
-      navigate('');
+      // 如果不在登入頁面，才導航到登入頁
+      const currentPath = window.location.pathname;
+      const isAuthPage = currentPath === '/auth' || currentPath.startsWith('/auth/');
+      if (!isAuthPage) {
+        navigate('/auth', { replace: true });
+      }
       setShowSplashScreen(false);
       return;
     }
+    
     try {
+      // 設置當前用戶到 Context
       setCurrentUser(user);
     } catch (error) {
+      console.error('AuthInit error:', error);
       logout();
-      navigate('');
+      const currentPath = window.location.pathname;
+      const isAuthPage = currentPath === '/auth' || currentPath.startsWith('/auth/');
+      if (!isAuthPage) {
+        navigate('/auth', { replace: true });
+      }
     } finally {
       setShowSplashScreen(false);
     }
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // 只在組件掛載時執行一次
 
   return showSplashScreen ? <LayoutSplashScreen /> : <>{children}</>
 }
