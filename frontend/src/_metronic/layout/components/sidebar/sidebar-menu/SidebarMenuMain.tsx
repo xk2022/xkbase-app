@@ -4,9 +4,11 @@ import {SidebarMenuItem} from './SidebarMenuItem'
 import {useSystem} from '../../../../../app/pages/common/SystemContext'
 import {useRole} from '../../../../../_metronic/partials'
 import {useLayout} from '../../../core'
-import {KTIcon} from '../../../../helpers'
+import {KTIcon, checkIsActive} from '../../../../helpers'
 import {useMemo} from 'react'
 import {MENU_CONFIG, type MenuSectionConfig, type MenuItemConfig} from './menuConfig'
+import {useNavigate, useLocation} from 'react-router-dom'
+import clsx from 'clsx'
 
 /**
  * 根據系統和權限過濾菜單項
@@ -112,6 +114,12 @@ const SidebarMenuMain = () => {
   const filteredConfig = useFilteredMenuConfig()
   const {config} = useLayout()
   const {app} = config
+  const {systems, selectedSystemCode} = useSystem()
+  const navigate = useNavigate()
+  const {pathname} = useLocation()
+
+  // 當沒有選中系統時，顯示系統列表
+  const showSystemList = !selectedSystemCode
 
   return (
     <>
@@ -176,6 +184,45 @@ const SidebarMenuMain = () => {
           })}
         </div>
       ))}
+
+      {/* 當沒有選中系統時，顯示系統列表 */}
+      {showSystemList && systems.length > 0 && (
+        <>
+          <div className='menu-item'>
+            <div className='menu-content pt-8 pb-2'>
+              <span className='menu-section text-muted text-uppercase fs-8 ls-1'>
+                系統列表
+              </span>
+            </div>
+          </div>
+          {systems.map((system) => {
+            const systemCode = system.code?.toUpperCase() || ''
+            const dashboardPath = `/${systemCode.toLowerCase()}/dashboard`
+            const isActive = checkIsActive(pathname, dashboardPath)
+            return (
+              <div key={system.id} className='menu-item'>
+                <a
+                  className={clsx('menu-link without-sub', {active: isActive})}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    navigate(dashboardPath)
+                  }}
+                  style={{ cursor: 'pointer' }}
+                >
+                  {app?.sidebar?.default?.menu?.iconType === 'svg' && (
+                    <span className='menu-icon'>
+                      <KTIcon iconName='element-11' className='fs-2' />
+                    </span>
+                  )}
+                  <span className='menu-title'>
+                    {system.code} | {system.name}
+                  </span>
+                </a>
+              </div>
+            )
+          })}
+        </>
+      )}
 
       {/* ============================
             --- 以下為 Metronic 原生內容 ---

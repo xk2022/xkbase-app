@@ -1,6 +1,7 @@
 // src/app/pages/upms/system/List.tsx
 import React, { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import { KTIcon } from '@/_metronic/helpers'
 
@@ -168,7 +169,7 @@ const SystemList: React.FC<SystemListProps> = ({
     { header: '系統名稱', className: 'min-w-180px' },
     { header: '狀態', className: 'min-w-100px' },
     { header: '建立時間', className: 'min-w-125px' },
-    { header: '操作', className: 'text-end min-w-100px' },
+    { header: '操作', className: 'text-end min-w-220px' },
   ]
 
   return (
@@ -201,48 +202,67 @@ const SystemList: React.FC<SystemListProps> = ({
             </td>
             <td>
               {s.createdTime ? (
-                <span className='text-muted fw-semibold'>{formatDateTime(s.createdTime)}</span>
+                <div className='badge badge-light fw-bolder'>{formatDateTime(s.createdTime)}</div>
               ) : (
                 <span className='text-muted'>-</span>
               )}
             </td>
 
+            {/* Actions */}
             <td className='text-end' onClick={(e) => e.stopPropagation()}>
-              <div className='d-flex justify-content-end gap-2'>
-                <button
-                  className='btn btn-light-primary btn-sm'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    goDetail(s)
-                  }}
-                  title='查看詳情'
+              <div className='d-flex justify-content-end align-items-center'>
+                {/* 查看按鈕 - 灰色 */}
+                <OverlayTrigger
+                  placement='top'
+                  overlay={<Tooltip>查看詳情</Tooltip>}
                 >
-                  <KTIcon iconName='eye' className='fs-2' />
-                </button>
-
-                {onEdit && (
                   <button
-                    className='btn btn-light-warning btn-sm'
+                    className='btn btn-light-secondary btn-sm'
                     onClick={(e) => {
                       e.preventDefault()
-                      onEdit(s)
+                      goDetail(s)
                     }}
-                    title='編輯'
                   >
-                    <KTIcon iconName='message-edit' className='fs-2' />
+                    <KTIcon iconName='eye' className='fs-2 me-1' />
+                    查看
                   </button>
+                </OverlayTrigger>
+
+                {/* 編輯按鈕 - 藍色 */}
+                {onEdit && (
+                  <OverlayTrigger
+                    placement='top'
+                    overlay={<Tooltip>編輯系統</Tooltip>}
+                  >
+                    <button
+                      className='btn btn-light-primary btn-sm ms-2'
+                      onClick={(e) => {
+                        e.preventDefault()
+                        onEdit(s)
+                      }}
+                    >
+                      <KTIcon iconName='message-edit' className='fs-2 me-1' />
+                      編輯
+                    </button>
+                  </OverlayTrigger>
                 )}
 
-                <button
-                  className='btn btn-light-danger btn-sm'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    openDelete(s)
-                  }}
-                  title='刪除'
+                {/* 刪除按鈕 - 紅色，間距拉開 */}
+                <OverlayTrigger
+                  placement='top'
+                  overlay={<Tooltip>刪除系統（不可復原）</Tooltip>}
                 >
-                  <KTIcon iconName='trash' className='fs-2' />
-                </button>
+                  <button
+                    className='btn btn-light-danger btn-sm ms-4'
+                    onClick={(e) => {
+                      e.preventDefault()
+                      openDelete(s)
+                    }}
+                  >
+                    <KTIcon iconName='trash' className='fs-2 me-1' />
+                    刪除
+                  </button>
+                </OverlayTrigger>
               </div>
             </td>
           </tr>

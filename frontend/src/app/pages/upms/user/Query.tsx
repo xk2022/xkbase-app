@@ -15,7 +15,7 @@ import {
 } from './Model'
 import { AlertFn } from '@/app/pages/common/AlertType'
 import { shouldUseMockData } from '@/shared/utils/useMockData'
-import { MOCK_USERS, MOCK_USER_PROFILES, generateMockUserId } from './mockUsers'
+import { MOCK_USERS, MOCK_USER_PROFILES } from '../__mock__/mockUsers'
 
 const API_PREFIX = '/api/upms/users'
 
@@ -79,6 +79,14 @@ export async function fetchUsers(
           u.name?.toLowerCase().includes(keyword) ||
           u.email?.toLowerCase().includes(keyword)
       )
+    }
+
+    // 狀態篩選
+    if (query.enabled !== undefined) {
+      filtered = filtered.filter((u) => u.enabled === query.enabled)
+    }
+    if (query.locked !== undefined) {
+      filtered = filtered.filter((u) => u.locked === query.locked)
     }
 
     // 分頁處理
@@ -213,7 +221,7 @@ export async function updateUserProfile(
   id: string,
   payload: {name: string; email?: string | null; phone?: string | null}
 ) {
-  await http.patch<ApiResponse<unknown>>(`/api/upms/users/${id}`, payload)
+  await http.patch<ApiResponse<unknown>>(`/api/upms/users/${id}/profile`, payload)
 }
 
 
@@ -371,4 +379,38 @@ export async function fetchUserPermissions(
     showAlert?.('取得權限摘要失敗（已改用快取資料）', 'warning')
     return []
   }
+}
+
+// ------------------------------------------------------------
+// Overview Page 專用工具函數
+// ------------------------------------------------------------
+
+/**
+ * 取得鎖定使用者的 ID 集合
+ * @returns 鎖定使用者的 ID Set
+ */
+export function getLockedUserIds(): Set<string> {
+  if (shouldUseMockData()) {
+    // Mock 模式：從 MOCK_USERS 取得 locked 狀態
+    return new Set(
+      MOCK_USERS.filter((u) => u.locked).map((u) => u.id)
+    )
+  }
+  // 真實 API 模式：目前 User 模型沒有 locked 欄位
+  // 如果需要，應該從 UserListResp 或 UserProfile 取得
+  // 暫時返回空集合，等待後端 API 支援
+  return new Set<string>()
+}
+
+/**
+ * 取得使用者的加入時間（處理 Mock 和真實 API 的差異）
+ * @param user 使用者物件
+ * @returns 加入時間字串（ISO 格式）或 undefined
+ */
+export function getUserJoinedAt(user: User): string | undefined {
+  if (shouldUseMockData()) {
+    const mockUser = MOCK_USERS.find((u) => u.id === user.id)
+    return mockUser?.joinedAt
+  }
+  return user.joined_day
 }

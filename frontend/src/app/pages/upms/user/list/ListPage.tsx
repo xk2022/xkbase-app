@@ -15,6 +15,8 @@ import { User } from '../Model'
 
 import { fetchRoles } from '../../role/Query'
 import { Role } from '../../role/Model'
+import { QueryRequestProvider } from '@/app/modules/apps/user-management/users-list/core/QueryRequestProvider'
+import { QueryResponseProvider } from '@/app/modules/apps/user-management/users-list/core/QueryResponseProvider'
 
 // 如果你要完全改成「開頁面」：FormModal / editingUser / formModalOpen 之後可以移除
 import { FormModal } from './FormModal'
@@ -123,79 +125,83 @@ export function ListPage() {
   // Render
   // ===============================================================
   return (
-    <Content>
-      {alert && <Alert message={alert.message} type={alert.type} />}
+    <QueryRequestProvider>
+      <QueryResponseProvider>
+        <Content>
+          {alert && <Alert message={alert.message} type={alert.type} />}
 
-      <AppToolbar
-        title='使用者列表'
-        breadcrumbs={[
-          { label: '權限管理', href: '#'},
-          { label: '使用者', active: true },
-        ]}
-      />
+          <AppToolbar
+            title='使用者列表'
+            breadcrumbs={[
+              { label: '權限管理', href: '#'},
+              { label: '使用者', active: true },
+            ]}
+          />
 
-      {/* Content */}
-      <div className='flex-column-fluid'>
-        <div className='card'>
-          {/* Header：搜尋 + 新增 */}
-          <div className='card-header border-0 pt-6'>
-            <div className='card-title'>
-              <div className='d-flex align-items-center position-relative my-1'>
-                <KTIcon iconName='magnifier' className='fs-1 position-absolute ms-6' />
-                <input
-                  type='text'
-                  className='form-control form-control-solid w-250px ps-14'
-                  placeholder='搜尋使用者...'
-                  value={tempKeyword}
-                  onChange={(e) => setTempKeyword(e.target.value)}
-                  onKeyDown={handleSearchKeyDown}
+          {/* Content */}
+          <div className='flex-column-fluid'>
+            <div className='card'>
+              {/* Header：搜尋 + 新增 */}
+              <div className='card-header border-0 pt-6'>
+                <div className='card-title'>
+                  <div className='d-flex align-items-center position-relative my-1'>
+                    <KTIcon iconName='magnifier' className='fs-1 position-absolute ms-6' />
+                    <input
+                      type='text'
+                      className='form-control form-control-solid w-250px ps-14'
+                      placeholder='搜尋使用者...'
+                      value={tempKeyword}
+                      onChange={(e) => setTempKeyword(e.target.value)}
+                      onKeyDown={handleSearchKeyDown}
+                    />
+                  </div>
+                </div>
+
+                <div className='card-toolbar'>
+                  <div className='d-flex justify-content-end gap-2' data-kt-user-table-toolbar='base'>
+                    <UsersListFilter />
+
+                    <button
+                      type='button'
+                      className='btn btn-primary'
+                      onClick={openCreate}
+                    >
+                      <KTIcon iconName='plus' className='fs-2' />
+                      新增使用者
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Body：清單 */}
+              <div className='card-body py-4'>
+                <UserList
+                  key={listKey}
+                  searchKeyword={searchKeyword}
+                  showAlert={showAlert}
+                  roles={roles}
+                  // 把 openEdit 傳給 List，用來打開 FormModal（編輯模式）
+                  onEdit={openEdit}
+                  // 你如果有 onReload / onDeleted 之類，可以呼叫 reloadList()
                 />
               </div>
             </div>
-
-            <div className='card-toolbar'>
-              <div className='d-flex justify-content-end gap-2' data-kt-user-table-toolbar='base'>
-                <UsersListFilter />
-
-                <button
-                  type='button'
-                  className='btn btn-primary'
-                  onClick={openCreate}
-                >
-                  <KTIcon iconName='plus' className='fs-2' />
-                  新增使用者
-                </button>
-              </div>
-            </div>
           </div>
 
-          {/* Body：清單 */}
-          <div className='card-body py-4'>
-            <UserList
-              key={listKey}
-              searchKeyword={searchKeyword}
-              showAlert={showAlert}
-              roles={roles}
-              // 把 openEdit 傳給 List，用來打開 FormModal（編輯模式）
-              onEdit={openEdit}
-              // 你如果有 onReload / onDeleted 之類，可以呼叫 reloadList()
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* 共用 Edit Modal 簡易編輯 */}
-      <FormModal
-        open={formModalOpen}
-        onClose={() => {
-          setFormModalOpen(false)
-          setEditingUser(null)
-        }}
-        showAlert={showAlert}
-        roles={roles}
-        editingUser={editingUser}
-        onSaved={reloadList}
-      />
-    </Content>
+          {/* 共用 Edit Modal 簡易編輯 */}
+          <FormModal
+            open={formModalOpen}
+            onClose={() => {
+              setFormModalOpen(false)
+              setEditingUser(null)
+            }}
+            showAlert={showAlert}
+            roles={roles}
+            editingUser={editingUser}
+            onSaved={reloadList}
+          />
+        </Content>
+      </QueryResponseProvider>
+    </QueryRequestProvider>
   )
 }

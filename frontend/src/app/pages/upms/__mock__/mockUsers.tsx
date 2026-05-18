@@ -4,7 +4,7 @@
  * 用於開發和測試環境
  */
 
-import type { User, UserListResp, UserProfile } from './Model'
+import type { UserListResp, UserProfile } from '../user/Model'
 
 /**
  * Mock 使用者列表數據

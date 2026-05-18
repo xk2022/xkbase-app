@@ -10,9 +10,15 @@ import { CreatePage } from './create/CreatePage'
 import { DetailPage } from './detail/DetailPage'
 import { PermissionPage } from './permissions/PermissionPage'
 
-const roleBreadCrumbs: Array<PageLink> = [
+export const roleBreadCrumbs: Array<PageLink> = [
   {
-    title: '角色與權限',
+    title: '權限管理',
+    path: '/upms',
+    isSeparator: false,
+    isActive: false,
+  },
+  {
+    title: '角色',
     path: '/upms/role/overview',
     isSeparator: false,
     isActive: false,

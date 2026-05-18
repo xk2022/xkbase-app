@@ -36,17 +36,18 @@ export type MenuItemConfig = {
  * 根據系統代碼和權限來決定是否顯示
  */
 export const MENU_CONFIG: MenuSectionConfig[] = [
-//   {
-//     items: [
-//       {
-//         type: 'item',
-//         to: '/dashboard',
-//         title: '儀錶板',
-//         icon: 'element-11',
-//         fontIcon: 'bi-app-indicator',
-//       },
-//     ],
-//   },
+  // HOME 首頁
+  {
+    items: [
+      {
+        type: 'item',
+        to: '/dashboard',
+        title: 'HOME',
+        icon: 'home-2',
+        fontIcon: 'bi-app-indicator',
+      },
+    ],
+  },
 
   // UPMS 權限管理 - 整體區塊
   {
@@ -76,7 +77,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '總覽使用者',
         icon: 'chart-line',
         hasBullet: true,
-        requiredPermission: 'upms.user.read',
+        requiredPermission: 'UPMS_USER_VIEW',
       },
       {
         type: 'item',
@@ -84,7 +85,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '使用者列表',
         icon: 'row-vertical',
         hasBullet: true,
-        requiredPermission: 'upms.user.read',
+        requiredPermission: 'UPMS_USER_VIEW',
       },
       {
         type: 'item',
@@ -92,7 +93,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '新增使用者',
         icon: 'plus',
         hasBullet: true,
-        requiredPermission: 'upms.user.create',
+        requiredPermission: 'UPMS_USER_CREATE',
       },
       {
         type: 'item',
@@ -100,7 +101,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '使用者安全設定',
         icon: 'lock',
         hasBullet: true,
-        requiredPermission: 'upms.user.update',
+        requiredPermission: 'UPMS_USER_UPDATE',
       },
     ],
   },
@@ -117,7 +118,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '總覽角色',
         icon: 'chart-line',
         hasBullet: true,
-        requiredPermission: 'upms.role.read',
+        requiredPermission: 'UPMS_ROLE_VIEW',
       },
       {
         type: 'item',
@@ -125,7 +126,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '角色列表',
         icon: 'row-vertical',
         hasBullet: true,
-        requiredPermission: 'upms.role.read',
+        requiredPermission: 'UPMS_ROLE_VIEW',
       },
       {
         type: 'item',
@@ -133,7 +134,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '新增角色',
         icon: 'plus',
         hasBullet: true,
-        requiredPermission: 'upms.role.create',
+        requiredPermission: 'UPMS_ROLE_CREATE',
       },
     ],
   },
@@ -150,7 +151,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '總覽權限',
         icon: 'chart-line',
         hasBullet: true,
-        requiredPermission: 'upms.permission.read',
+        requiredPermission: 'UPMS_PERMISSION_VIEW',
       },
       {
         type: 'item',
@@ -158,7 +159,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '權限列表',
         icon: 'row-vertical',
         hasBullet: true,
-        requiredPermission: 'upms.permission.read',
+        requiredPermission: 'UPMS_PERMISSION_VIEW',
       },
       {
         type: 'item',
@@ -166,7 +167,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '新增權限',
         icon: 'plus',
         hasBullet: true,
-        requiredPermission: 'upms.permission.create',
+        requiredPermission: 'UPMS_PERMISSION_CREATE',
       },
     ],
   },
@@ -183,7 +184,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '總覽系統',
         icon: 'chart-line',
         hasBullet: true,
-        requiredPermission: 'upms.system.read',
+        requiredPermission: 'UPMS_SYSTEM_VIEW',
       },
       {
         type: 'item',
@@ -191,7 +192,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '系統列表',
         icon: 'row-vertical',
         hasBullet: true,
-        requiredPermission: 'upms.system.read',
+        requiredPermission: 'UPMS_SYSTEM_VIEW',
       },
       {
         type: 'item',
@@ -199,7 +200,7 @@ export const MENU_CONFIG: MenuSectionConfig[] = [
         title: '新增系統',
         icon: 'plus',
         hasBullet: true,
-        requiredPermission: 'upms.system.create',
+        requiredPermission: 'UPMS_SYSTEM_CREATE',
       },
     ],
   },

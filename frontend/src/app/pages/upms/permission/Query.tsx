@@ -10,7 +10,7 @@ import type {
 } from './Model'
 import type {AlertFn} from '@/app/pages/common/AlertType'
 import {shouldUseMockData} from '@/shared/utils/useMockData'
-import {MOCK_PERMISSIONS, MOCK_PERMISSION_DETAILS, generateMockPermissionId} from './mockPermissions'
+import {MOCK_PERMISSIONS, MOCK_PERMISSION_DETAILS, generateMockPermissionId} from '../__mock__/mockPermissions'
 
 /**
  * ===============================================================

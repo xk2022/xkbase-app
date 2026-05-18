@@ -3,6 +3,7 @@ import React, {useCallback, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 
 import {Content} from '@/_metronic/layout/components/content'
+import {KTIcon} from '@/_metronic/helpers'
 
 import {useAlert} from '@/app/pages/common/AlertType'
 import {AppToolbar} from '@/app/pages/common/AppToolbar'
@@ -46,8 +47,7 @@ export const CreatePage: React.FC = () => {
       try {
         const ok = await createSystem(toCreateReq(values), showAlert)
         if (ok) {
-          // 依你的路由調整：常見是導回 list 或 overview
-          navigate('/upms/system/list')
+          navigate('/upms/system/overview')
           return
         }
       } catch (e) {
@@ -67,21 +67,46 @@ export const CreatePage: React.FC = () => {
       <AppToolbar
         title='新增系統'
         breadcrumbs={[
-          {label: 'UPMS 權限管理', href: '#', active: false},
-          {label: '系統', active: false},
+          {label: '權限管理', href: '#', active: false},
+          {label: '系統管理', href: '/upms/system/list', active: false},
           {label: '新增', active: true},
         ]}
       />
 
-      <div className='container-fluid'>
+      {/* Body */}
+      <div className='flex-column-fluid'>
         <div className='card'>
-          <div className='card-body'>
+          {/* begin::Card Header */}
+          <div className='card-header border-0 pt-6'>
+            <div className='card-title'>
+              <div className='d-flex align-items-center'>
+                <KTIcon iconName='abstract-27' className='fs-2 me-2 text-primary' />
+                <h2 className='fw-bold text-gray-900 m-0'>建立新系統</h2>
+              </div>
+            </div>
+            <div className='card-toolbar'>
+              <button
+                type='button'
+                className='btn btn-light btn-active-light-primary'
+                onClick={handleCancel}
+                disabled={submitting}
+              >
+                <KTIcon iconName='arrow-left' className='fs-2' />
+                返回
+              </button>
+            </div>
+          </div>
+          {/* end::Card Header */}
+
+          {/* begin::Card Body */}
+          <div className='card-body py-6'>
             <CreateForm
               submitting={submitting}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
             />
           </div>
+          {/* end::Card Body */}
         </div>
       </div>
     </Content>

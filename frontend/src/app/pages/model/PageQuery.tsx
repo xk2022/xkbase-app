@@ -4,4 +4,6 @@ export interface PageQuery {
   page: number
   size: number
   keyword?: string
+  enabled?: boolean
+  locked?: boolean
 }

@@ -6,7 +6,14 @@ import { PageResult } from '../../model/PageResult'
 import { CreateSystemReq, System, UpdateSystemReq } from './Model'
 import { AlertFn } from '@/app/pages/common/AlertType'
 import { shouldUseMockData } from '@/shared/utils/useMockData'
-import { MOCK_SYSTEMS, generateMockSystemId } from './mockSystems'
+import { MOCK_SYSTEMS } from '../__mock__/mockSystems'
+
+/**
+ * 取得系統創建時間的輔助函數
+ */
+export function getSystemCreatedTime(system: System): string | undefined {
+  return system.createdTime
+}
 
 /**
  * ===============================================================

@@ -10,9 +10,7 @@ interface Props {
 }
 
 export const DeviceManagementCard: React.FC<Props> = ({
-  userId,
   onForceLogoutAll,
-  showAlert,
 }) => {
   return (
     <div className='card'>

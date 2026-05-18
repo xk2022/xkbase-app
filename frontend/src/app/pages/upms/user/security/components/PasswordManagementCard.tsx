@@ -11,7 +11,6 @@ interface Props {
 }
 
 export const PasswordManagementCard: React.FC<Props> = ({
-  userId,
   username,
   onPasswordReset,
   showAlert,

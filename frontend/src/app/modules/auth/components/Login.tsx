@@ -47,29 +47,27 @@ export function Login() {
       }
 
       // 2) 非 mock 帳號：顯示錯誤訊息（離線模式不支援其他帳號）
-      showAlert('離線模式只支援 mock / 1234 登入', 'danger')
-      setLoading(false)
-      setSubmitting(false)
-      return
+      // showAlert('離線模式只支援 mock / 1234 登入', 'danger')
+      // setLoading(false)
+      // setSubmitting(false)
+      // return
       
-      /* 註：以下代碼在離線模式下不會執行
       // 一般情況：呼叫後端 /auth/login
-      // const user = await signin(values, showAlert)
-      // if (!user) {
-      //   // 登入失敗，訊息已經在 signin 裡 showAlert 了
-      //   return
-      // }
-      // // 3) 登入成功：寫入 localStorage + context
-      // // 先設置到 localStorage
-      // processUserLogin(user)
-      // // 再設置到 Context
-      // setCurrentUser(user)
-      // // 明確導航到 dashboard
-      // navigate('/dashboard', { replace: true })
+      const user = await signin(values, showAlert)
+      if (!user) {
+        // 登入失敗，訊息已經在 signin 裡 showAlert 了
+        return
+      }
+      // 3) 登入成功：寫入 localStorage + context
+      // 先設置到 localStorage
+      processUserLogin(user)
+      // 再設置到 Context
+      setCurrentUser(user)
+      // 明確導航到 dashboard
+      navigate('/dashboard', { replace: true })
 
       setLoading(false)
       setSubmitting(false)
-      */
     },
   })
 

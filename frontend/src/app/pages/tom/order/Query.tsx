@@ -6,15 +6,16 @@ import { ApiError } from '@/app/pages/common/ApiError'
 
 import { ApiResponse } from '../../model/ApiResponse'
 import { PageResult } from '../../model/PageResult'
+import { PageQuery } from '../../model/PageQuery'
 
 import type {
   CreateTomOrderReq,
-  Order,
-  OrderDetail,
+  Order, 
   OrderListItem,
   TomOrderResp,
   UpdateOrderReq,
 } from './Model'
+import type { OrderDetail as DetailOrderDetail } from './detail/Model'
 import { MOCK_ORDERS } from './list/mockOrders'
 
 /**
@@ -103,9 +104,14 @@ export async function createTomOrder(
 //   }
 // }
 
+export interface OrderQueryParams extends PageQuery {
+  keyword?: string
+  status?: string
+}
+
 export async function fetchOrders(
-  query: any,
-  showAlert?: (msg: string, type: any) => void,
+  query: OrderQueryParams,
+  showAlert?: AlertFn,
 ): Promise<PageResult<OrderListItem>> {
   // 如果使用 Mock 數據（包含臨時啟用），返回假資料
   if (shouldUseMockDataWithTemp()) {
@@ -173,19 +179,16 @@ export async function fetchOrders(
  * 
  * 注意：實際實現請使用 detail/Query.ts 中的 fetchOrderDetail
  * 此處保留作為備用或統一路徑
+ * 
+ * 此函數返回 detail/Model.OrderDetail 類型，因為它用於 detail 頁面
  */
 export async function fetchOrderDetail(
   orderId: string,
   showAlert?: AlertFn,
-): Promise<OrderDetail | null> {
+): Promise<DetailOrderDetail | null> {
   // 轉發到 detail/Query.ts 中的實現
   const { fetchOrderDetail: fetchDetail } = await import('./detail/Query')
-  const detail = await fetchDetail(orderId, showAlert)
-  // Convert detail/Model OrderDetail to Model OrderDetail
-  if (!detail) return null
-  // The detail/Model.OrderDetail is compatible, but Model.OrderDetail expects an 'order' property
-  // For now, return the detail as-is since it's used in detail pages
-  return detail as any
+  return fetchDetail(orderId, showAlert)
 }
 
 // ------------------------------------------------------------

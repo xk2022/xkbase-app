@@ -1,3 +1,6 @@
+# ⚠️ 重要：此檔案中的 /xkBase/ 路徑必須與 src/shared/config/path.config.ts 中的 APP_BASE_PATH 保持一致。
+# 如需修改 base path，請同時更新兩個檔案。
+
 [build]
   base = "frontend"
   command = "npm run build"

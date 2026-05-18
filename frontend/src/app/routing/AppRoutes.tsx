@@ -25,15 +25,19 @@ import {App} from '../App'
 
 /**
  * Base URL of the website. 設定 BASE_URL
+ * 
+ * 注意：BASE_URL 已從統一配置檔案導入，確保與 vite.config.ts 中的 base 設定一致
  *
  * @see https://facebook.github.io/create-react-app/docs/using-the-public-folder
  */
+import { APP_BASE_PATH_NO_TRAILING } from '@/shared/config/path.config'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const { BASE_URL, VITE_DEMO_MODE } = import.meta.env as any
+const { VITE_DEMO_MODE } = import.meta.env as any
 
 /**
  * (1) currentUser 確認使用者狀態：useAuth() 會回傳 currentUser，用來判斷 使用者是否登入。
- * (2) BrowserRouter 負責前端路由管理：管理網站的 URL，basename={BASE_URL} 讓應用根據 BASE_URL 正確運行。
+ * (2) BrowserRouter 負責前端路由管理：管理網站的 URL，basename 讓應用根據 base path 正確運行。
  * (3) Route 定義各個路由 
  * 
  * @returns 
@@ -45,7 +49,7 @@ const AppRoutes: FC = () => {
   const isAuthed = isDemo || !!currentUser
   
   return (
-    <BrowserRouter basename={BASE_URL}>
+    <BrowserRouter basename={APP_BASE_PATH_NO_TRAILING}>
       <Routes>
         <Route element={<App />}>
           <Route path='error/*' element={<ErrorsPage />} />

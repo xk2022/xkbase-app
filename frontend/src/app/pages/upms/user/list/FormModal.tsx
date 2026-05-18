@@ -1,6 +1,7 @@
 // src/app/pages/upms/user/FormModal.tsx
 import React, { useEffect, useState } from 'react'
 import { KTIcon } from '@/_metronic/helpers'
+import { OverlayTrigger, Tooltip } from 'react-bootstrap'
 
 import type { AlertType } from '@/app/pages/common/AlertType'
 import type { Role } from '../../role/Model'
@@ -185,16 +186,48 @@ export const FormModal: React.FC<Props> = ({
               <div className='col-12 col-md-6 d-flex flex-column gap-3'>
                 <div>
                   <label className='form-label required'>帳號（username）</label>
-                  <input
-                    className='form-control'
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    placeholder='例如：admin'
-                    autoFocus
-                  />
-                  <div className='text-muted fs-8 mt-1'>
-                    會自動 trim + lower（避免 Admin / admin 重複）
-                  </div>
+                  {isEdit ? (
+                    <OverlayTrigger
+                      placement='top'
+                      overlay={<Tooltip>帳號建立後不可修改</Tooltip>}
+                    >
+                      <div className='position-relative' style={{ cursor: 'not-allowed' }}>
+                        <input
+                          className='form-control'
+                          value={username}
+                          disabled
+                          placeholder='例如：admin'
+                          style={{ paddingRight: '2.5rem', cursor: 'not-allowed' }}
+                        />
+                        <span
+                          className='position-absolute'
+                          style={{
+                            right: '0.75rem',
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                            color: 'var(--kt-text-muted)',
+                            pointerEvents: 'none',
+                            zIndex: 1,
+                          }}
+                        >
+                          <KTIcon iconName='lock' className='fs-3' />
+                        </span>
+                      </div>
+                    </OverlayTrigger>
+                  ) : (
+                    <>
+                      <input
+                        className='form-control'
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        placeholder='例如：admin'
+                        autoFocus
+                      />
+                      <div className='text-muted fs-8 mt-1'>
+                        會自動 trim + lower（避免 Admin / admin 重複）
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {!isEdit && (

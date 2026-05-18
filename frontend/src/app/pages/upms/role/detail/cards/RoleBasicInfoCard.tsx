@@ -1,120 +1,97 @@
-// RoleBasicInfoCard.tsx
+// src/app/pages/upms/role/detail/cards/RoleBasicInfoCard.tsx
 import React from 'react'
 import {KTIcon} from '@/_metronic/helpers'
-import type {AlertFn} from '@/app/pages/common/AlertType'
-
 import {Role} from '../../Model'
 
-type Props = {
+interface Props {
   detail: Role
-  reload: () => void | Promise<void>
-  showAlert?: AlertFn
-  onEdit?: () => void
-  onDelete?: () => void
 }
 
 const fmt = (v?: string | number | boolean | null) =>
   v === null || v === undefined || v === '' ? '-' : String(v)
 
-const enabledBadge = (enabled: boolean) => {
-  if (enabled) {
-    return (
-      <span className='badge badge-light-success fw-bolder px-4 py-3'>啟用</span>
-    )
-  }
+export const RoleBasicInfoCard: React.FC<Props> = ({detail}) => {
   return (
-    <span className='badge badge-light-secondary fw-bolder px-4 py-3'>停用</span>
-  )
-}
-
-export const RoleBasicInfoCard: React.FC<Props> = ({
-  detail,
-  reload,
-  showAlert,
-  onEdit,
-  onDelete,
-}) => {
-  return (
-    <div className='card mb-5'>
-      <div className='card-header align-items-center'>
-        <div className='card-title m-0'>
-          <div className='d-flex align-items-center gap-2'>
-            <KTIcon iconName='information-4' className='fs-2' />
-            <h3 className='fw-bold m-0'>基本資訊</h3>
-          </div>
-        </div>
-
-        <div className='card-toolbar d-flex align-items-center gap-2'>
-          {/* 右上角狀態（展示用） */}
-          {detail.enabled ? (
-            <span className='badge badge-light-success'>啟用</span>
-          ) : (
-            <span className='badge badge-light-secondary'>停用</span>
-          )}
-
-          {/* 右上角：編輯 */}
-          {onEdit && (
-            <button
-              type='button'
-              className='btn btn-sm btn-light-primary'
-              onClick={onEdit}
-            >
-              <KTIcon iconName='pencil' className='fs-3 me-1' />
-              編輯
-            </button>
-          )}
-          {onDelete && (
-            <button
-              type='button'
-              className='btn btn-sm btn-light-danger'
-              onClick={onDelete}
-            >
-              <KTIcon iconName='trash' className='fs-3 me-1' />
-              刪除
-            </button>
-          )}
-        </div>
+    <div className='card h-100'>
+      <div className='card-header border-0 pt-6'>
+        <h3 className='card-title align-items-start flex-column'>
+          <span className='card-label fw-bold fs-3 mb-1'>基本資訊</span>
+          <span className='text-muted mt-1 fw-semibold fs-7'>
+            角色的基本資訊與設定
+          </span>
+        </h3>
       </div>
 
-      <div className='card-body'>
+      <div className='card-body pt-0'>
         <div className='table-responsive'>
-          <table className='table table-row-dashed table-row-gray-200 align-middle gs-0 gy-3'>
+          <table className='table table-row-dashed table-row-gray-300 align-middle gs-0 gy-4'>
             <tbody>
               <tr>
-                <td className='text-muted'>角色代碼</td>
-                <td className='fw-semibold'>
-                  <span className='badge badge-light text-gray-800'>{fmt(detail.code)}</span>
-                  <span className='text-muted fs-8 ms-3'>（建立後不可修改）</span>
+                <td className='text-muted min-w-150px'>
+                  <div className='d-flex align-items-center'>
+                    <KTIcon iconName='code' className='fs-4 text-gray-500 me-2' />
+                    <span className='fw-semibold'>角色代碼</span>
+                  </div>
+                </td>
+                <td className='fw-bold text-gray-800'>
+                  <span className='badge badge-light-info fs-6 fw-bold px-3 py-2'>
+                    {fmt(detail.code)}
+                  </span>
+                  <span className='text-muted fs-7 ms-3'>（建立後不可修改）</span>
                 </td>
               </tr>
               <tr>
-                <td className='text-muted'>角色名稱</td>
-                <td className='fw-semibold'>{fmt(detail.name)}</td>
+                <td className='text-muted'>
+                  <div className='d-flex align-items-center'>
+                    <KTIcon iconName='user' className='fs-4 text-gray-500 me-2' />
+                    <span className='fw-semibold'>角色名稱</span>
+                  </div>
+                </td>
+                <td className='fw-bold text-gray-800'>{fmt(detail.name)}</td>
               </tr>
               <tr>
-                <td className='text-muted'>描述</td>
-                <td className='fw-semibold'>
+                <td className='text-muted'>
+                  <div className='d-flex align-items-center'>
+                    <KTIcon iconName='document' className='fs-4 text-gray-500 me-2' />
+                    <span className='fw-semibold'>描述</span>
+                  </div>
+                </td>
+                <td className='fw-bold text-gray-800'>
                   {detail.description ? (
-                    <span>{detail.description}</span>
+                    <span className='text-gray-700'>{detail.description}</span>
                   ) : (
                     <span className='text-muted'>無描述</span>
                   )}
                 </td>
               </tr>
               <tr>
-                <td className='text-muted'>狀態</td>
-                <td className='fw-semibold'>
+                <td className='text-muted'>
+                  <div className='d-flex align-items-center'>
+                    <KTIcon iconName='check-circle' className='fs-4 text-gray-500 me-2' />
+                    <span className='fw-semibold'>狀態</span>
+                  </div>
+                </td>
+                <td>
                   {detail.enabled ? (
-                    <span className='badge badge-light-success'>啟用</span>
+                    <span className='badge badge-light-success fs-6 fw-bold px-3 py-2'>
+                      啟用
+                    </span>
                   ) : (
-                    <span className='badge badge-light-secondary'>停用</span>
+                    <span className='badge badge-light-secondary fs-6 fw-bold px-3 py-2'>
+                      停用
+                    </span>
                   )}
                 </td>
               </tr>
               <tr>
-                <td className='text-muted'>權限數量</td>
-                <td className='fw-semibold'>
-                  <span className='badge badge-light-primary'>
+                <td className='text-muted'>
+                  <div className='d-flex align-items-center'>
+                    <KTIcon iconName='shield-tick' className='fs-4 text-gray-500 me-2' />
+                    <span className='fw-semibold'>權限數量</span>
+                  </div>
+                </td>
+                <td>
+                  <span className='badge badge-light-primary fs-6 fw-bold px-3 py-2'>
                     {detail.permissionCount ?? detail.permissionCodes?.length ?? 0} 個權限
                   </span>
                 </td>

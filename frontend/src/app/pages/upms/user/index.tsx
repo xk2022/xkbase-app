@@ -28,7 +28,6 @@ const userBreadCrumbs: Array<PageLink> = [
 const UserPage: React.FC = () => {
   return (
     <Routes>
-      {/* v1 先以 Overview = 列表主畫面為主 */}
       <Route
         path='overview'
         element={
@@ -38,7 +37,7 @@ const UserPage: React.FC = () => {
           </>
         }
       />
-      {/* 如果你要多一個 /upms/user/list，也可以先共用 Overview */}
+      
       <Route
         path='list'
         element={

@@ -30,4 +30,6 @@ export interface UserModel {
   locked: boolean;
   token: string;
   systemDTOs: SystemDTO[] | null;
+  permissionCodes?: string[]; // 後端返回的權限碼列表
+  roleCodes?: string[]; // 後端返回的角色碼列表
 }

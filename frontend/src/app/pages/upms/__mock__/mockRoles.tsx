@@ -4,7 +4,7 @@
  * 用於開發和測試環境
  */
 
-import type { Role, RoleListResp } from './Model'
+import type { Role, RoleListResp } from '../role/Model'
 
 /**
  * Mock 角色列表數據

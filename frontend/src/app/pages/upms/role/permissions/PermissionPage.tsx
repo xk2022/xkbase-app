@@ -4,7 +4,7 @@ import {useParams, useNavigate} from 'react-router-dom'
 import {Spinner} from 'react-bootstrap'
 
 import {Content} from '@/_metronic/layout/components/content'
-import {KTIcon} from '@/_metronic/helpers'
+import {KTIcon, useDebounce} from '@/_metronic/helpers'
 import {useAlert} from '@/app/pages/common/AlertType'
 import {AppToolbar} from '@/app/pages/common/AppToolbar'
 
@@ -38,6 +38,9 @@ export const PermissionPage: React.FC = () => {
   const [searchKeyword, setSearchKeyword] = useState('')
   const [selectedSystemCode, setSelectedSystemCode] = useState<string>('')
 
+  // 請求去抖：延遲 300ms
+  const debouncedSearchKeyword = useDebounce(searchKeyword, 300)
+
   // 載入角色資訊
   const loadRole = useCallback(async () => {
     if (!id) return
@@ -59,7 +62,7 @@ export const PermissionPage: React.FC = () => {
       const query = {
         page: 0,
         size: 1000, // 取得所有權限
-        keyword: searchKeyword.trim() || undefined,
+        keyword: debouncedSearchKeyword.trim() || undefined,
         systemCode: selectedSystemCode || undefined,
         enabled: true, // 只顯示啟用的權限
       }
@@ -69,17 +72,17 @@ export const PermissionPage: React.FC = () => {
       console.error(e)
       showAlert('取得權限列表失敗', 'danger')
     }
-  }, [searchKeyword, selectedSystemCode, showAlert])
+  }, [debouncedSearchKeyword, selectedSystemCode, showAlert])
 
-  // 初始化載入
+  // 初始化載入角色資訊
   useEffect(() => {
-    const init = async () => {
-      setLoading(true)
-      await Promise.all([loadRole(), loadPermissions()])
-      setLoading(false)
-    }
-    init()
-  }, [loadRole, loadPermissions])
+    loadRole()
+  }, [loadRole])
+
+  // 載入權限列表（使用去抖後的關鍵字）
+  useEffect(() => {
+    loadPermissions()
+  }, [loadPermissions])
 
   // 權限分組（依 systemCode）
   const groupedPermissions = useMemo(() => {
@@ -235,7 +238,7 @@ export const PermissionPage: React.FC = () => {
         title='角色權限設定'
         breadcrumbs={[
           {label: '權限管理', href: '#', active: false},
-          {label: '角色', active: false},
+          {label: '角色', href: '/upms/role/overview', active: false},
           {label: role.name, href: `/upms/role/${id}/detail`, active: false},
           {label: '權限設定', active: true},
         ]}

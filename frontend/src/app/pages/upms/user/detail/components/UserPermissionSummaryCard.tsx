@@ -1,5 +1,6 @@
 // src/app/pages/upms/user/detail/UserPermissionSummaryCard.tsx
 import React, {useEffect, useMemo, useState} from 'react'
+import {useNavigate} from 'react-router-dom'
 import {KTIcon} from '@/_metronic/helpers'
 import type {AlertFn} from '@/app/pages/common/AlertType'
 
@@ -18,6 +19,7 @@ type Props = {
  * - 支援 keyword filter（前端做，不打 API）
  */
 export const UserPermissionSummaryCard: React.FC<Props> = ({detail, showAlert}) => {
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
   const [serverPermissions, setServerPermissions] = useState<string[] | null>(null)
 
@@ -87,6 +89,15 @@ export const UserPermissionSummaryCard: React.FC<Props> = ({detail, showAlert}) 
 
         <div className='card-toolbar'>
           <div className='d-flex align-items-center gap-2'>
+            <button
+              type='button'
+              className='btn btn-sm btn-light-danger'
+              onClick={() => navigate(`/upms/user/${detail.id}/security`)}
+            >
+              <KTIcon iconName='shield-tick' className='fs-3 me-1' />
+              安全設定
+            </button>
+
             <button type='button' className='btn btn-sm btn-light' onClick={copyAll} disabled={filtered.length === 0}>
               <KTIcon iconName='copy' className='fs-3 me-1' />
               複製

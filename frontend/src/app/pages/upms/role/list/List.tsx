@@ -1,6 +1,7 @@
 // src/app/pages/upms/role/list/List.tsx
 import React, {useState} from 'react'
 import {useNavigate} from 'react-router-dom'
+import {OverlayTrigger, Tooltip} from 'react-bootstrap'
 
 import {KTIcon} from '@/_metronic/helpers'
 
@@ -150,42 +151,60 @@ const RoleList: React.FC<RoleListProps> = ({
               </span>
             </td>
             <td className='text-end' onClick={(e) => e.stopPropagation()}>
-              <div className='d-flex justify-content-end gap-2'>
-                <button
-                  className='btn btn-light-primary btn-sm'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    goDetail(role)
-                  }}
-                  title='查看詳情'
+              <div className='d-flex justify-content-end align-items-center'>
+                {/* 查看按鈕 - 灰色 */}
+                <OverlayTrigger
+                  placement='top'
+                  overlay={<Tooltip>查看詳情</Tooltip>}
                 >
-                  <KTIcon iconName='eye' className='fs-2' />
-                </button>
+                  <button
+                    className='btn btn-light-secondary btn-sm'
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      goDetail(role)
+                    }}
+                  >
+                    <KTIcon iconName='eye' className='fs-2 me-1' />
+                    查看
+                  </button>
+                </OverlayTrigger>
 
-                <button
-                  className='btn btn-light-warning btn-sm'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    onEdit(role)
-                  }}
-                  title='編輯'
+                {/* 編輯按鈕 - 藍色 */}
+                <OverlayTrigger
+                  placement='top'
+                  overlay={<Tooltip>編輯角色</Tooltip>}
                 >
-                  <KTIcon iconName='message-edit' className='fs-2' />
-                </button>
+                  <button
+                    className='btn btn-light-primary btn-sm ms-2'
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      onEdit(role)
+                    }}
+                  >
+                    <KTIcon iconName='message-edit' className='fs-2 me-1' />
+                    編輯
+                  </button>
+                </OverlayTrigger>
 
-                <button
-                  className='btn btn-light-danger btn-sm'
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    openDelete(role)
-                  }}
-                  title='刪除'
+                {/* 刪除按鈕 - 紅色，間距拉開 */}
+                <OverlayTrigger
+                  placement='top'
+                  overlay={<Tooltip>刪除角色（不可復原）</Tooltip>}
                 >
-                  <KTIcon iconName='trash' className='fs-2' />
-                </button>
+                  <button
+                    className='btn btn-light-danger btn-sm ms-4'
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      openDelete(role)
+                    }}
+                  >
+                    <KTIcon iconName='trash' className='fs-2 me-1' />
+                    刪除
+                  </button>
+                </OverlayTrigger>
               </div>
             </td>
           </tr>

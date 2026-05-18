@@ -1,5 +1,5 @@
 
-// src/app/pages/upms/role/Overview.tsx
+// src/app/pages/upms/role/list/ListPage.tsx
 import React, {useEffect, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 
@@ -7,11 +7,12 @@ import {Content} from '@/_metronic/layout/components/content'
 import {KTIcon} from '@/_metronic/helpers'
 
 import {useAlert} from '@/app/pages/common/AlertType'
-import { AppToolbar } from '@/app/pages/common/AppToolbar'
+import {AppToolbar} from '@/app/pages/common/AppToolbar'
 
 import {Role} from '../Model'
 import RoleList from './List'
-import { FormModal } from './FormModal'
+import {FormModal} from './FormModal'
+import {RolesListFilter} from './RolesListFilter'
 
 // 如果你要完全改成「開頁面」：FormModal / editingUser / formModalOpen 之後可以移除
 
@@ -74,12 +75,13 @@ export function ListPage() {
       <AppToolbar
         title='角色列表'
         breadcrumbs={[
-          { label: '權限管理', href: '#'},
-          { label: '角色', active: true },
+          {label: '權限管理', href: '#', active: false},
+          {label: '角色', href: '/upms/role/overview', active: false},
+          {label: '列表', href: '#', active: true},
         ]}
       />
 
-      <div className='flex-column-fluid'>
+      <div className='app-container container-fluid'>
         <div className="card">
           {/* Header：搜尋 + 新增 */}
           <div className="card-header border-0 pt-6">
@@ -98,14 +100,17 @@ export function ListPage() {
             </div>
 
             <div className="card-toolbar">
-              <button 
-                type="button" 
-                className="btn btn-primary" 
-                onClick={openCreate}
-              >
-                <KTIcon iconName="plus" className="fs-2" />
-                新增角色
-              </button>
+              <div className='d-flex justify-content-end gap-2' data-kt-role-table-toolbar='base'>
+                <RolesListFilter />
+                <button 
+                  type="button" 
+                  className="btn btn-primary" 
+                  onClick={openCreate}
+                >
+                  <KTIcon iconName="plus" className="fs-2" />
+                  新增角色
+                </button>
+              </div>
             </div>
           </div>
 

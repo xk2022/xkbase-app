@@ -1,14 +1,12 @@
 // src/shared/api/http.ts
 import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios'
 import { getToken } from '@/app/modules/auth/core/AuthHelpers'
+import { LOGIN_PATH } from '@/shared/config/path.config'
 
 // =============================
 // Constants
 // =============================
-
-// 你的前端 base path（因為你登入是 /xkBase/auth）
-const APP_BASE = import.meta.env.BASE_URL?.replace(/\/$/, '') || '' // e.g. "/xkBase"
-const LOGIN_PATH = `${APP_BASE}/auth` // ✅ "/xkBase/auth"
+// 注意：LOGIN_PATH 已從統一配置檔案導入，無需在此處定義
 
 // 1. 設定 baseURL（dev 走 Vite proxy，prod 用環境變數）
 // dev：走 Vite proxy（''），prod：走環境變數

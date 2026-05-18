@@ -4,7 +4,6 @@ import {useNavigate} from 'react-router-dom'
 import {Content} from '@/_metronic/layout/components/content'
 import {KTIcon} from '@/_metronic/helpers'
 import {useSystem} from '@/app/pages/common/SystemContext'
-import {useRole} from '@/_metronic/partials'
 import {MENU_CONFIG} from '@/_metronic/layout/components/sidebar/sidebar-menu/menuConfig'
 
 interface MenuItem {
@@ -21,8 +20,7 @@ interface SectionCard {
 }
 
 const UPMSDashboardPage: FC = () => {
-  const {hasSystemPermission, hasSystem, systems, setSelectedSystemUuid} = useSystem()
-  const {hasPermission: hasRolePermission} = useRole()
+  const {hasSystemPermission, hasSystem, systems, setSelectedSystemUuid, currentSystemPermissions} = useSystem()
   const navigate = useNavigate()
 
   // 自動選擇 UPMS 系統
@@ -33,7 +31,63 @@ const UPMSDashboardPage: FC = () => {
     }
   }, [systems, setSelectedSystemUuid])
 
-  // 獲取主要區塊的數據，顯示所有功能，但根據角色權限禁用
+  // Debug: 輸出權限調試資訊
+  useEffect(() => {
+    console.group('🔍 [UPMS Dashboard] 權限調試資訊')
+    console.log('📋 當前系統權限列表:', currentSystemPermissions)
+    console.log('📊 權限總數:', currentSystemPermissions.length)
+    
+    // 檢查使用者管理相關權限
+    console.group('👤 使用者管理權限檢查')
+    const userPermissions = {
+      'UPMS_USER_VIEW': currentSystemPermissions.includes('UPMS_USER_VIEW'),
+      'UPMS_USER_CREATE': currentSystemPermissions.includes('UPMS_USER_CREATE'),
+      'UPMS_USER_UPDATE': currentSystemPermissions.includes('UPMS_USER_UPDATE'),
+      'UPMS_USER_DELETE': currentSystemPermissions.includes('UPMS_USER_DELETE'),
+      'UPMS_USER_RESET_PWD': currentSystemPermissions.includes('UPMS_USER_RESET_PWD'),
+      'UPMS_USER_ENABLE': currentSystemPermissions.includes('UPMS_USER_ENABLE'),
+    }
+    console.table(userPermissions)
+    console.groupEnd()
+    
+    // 檢查角色管理相關權限
+    console.group('🎭 角色管理權限檢查')
+    const rolePermissions = {
+      'UPMS_ROLE_VIEW': currentSystemPermissions.includes('UPMS_ROLE_VIEW'),
+      'UPMS_ROLE_CREATE': currentSystemPermissions.includes('UPMS_ROLE_CREATE'),
+      'UPMS_ROLE_UPDATE': currentSystemPermissions.includes('UPMS_ROLE_UPDATE'),
+      'UPMS_ROLE_DELETE': currentSystemPermissions.includes('UPMS_ROLE_DELETE'),
+      'UPMS_ROLE_ASSIGN_PERM': currentSystemPermissions.includes('UPMS_ROLE_ASSIGN_PERM'),
+    }
+    console.table(rolePermissions)
+    console.groupEnd()
+    
+    // 檢查權限設定相關權限
+    console.group('🔐 權限設定權限檢查')
+    const permissionPermissions = {
+      'UPMS_PERMISSION_VIEW': currentSystemPermissions.includes('UPMS_PERMISSION_VIEW'),
+      'UPMS_PERMISSION_CREATE': currentSystemPermissions.includes('UPMS_PERMISSION_CREATE'),
+      'UPMS_PERMISSION_UPDATE': currentSystemPermissions.includes('UPMS_PERMISSION_UPDATE'),
+      'UPMS_PERMISSION_DELETE': currentSystemPermissions.includes('UPMS_PERMISSION_DELETE'),
+    }
+    console.table(permissionPermissions)
+    console.groupEnd()
+    
+    // 檢查系統管理相關權限
+    console.group('⚙️ 系統管理權限檢查')
+    const systemPermissions = {
+      'UPMS_SYSTEM_VIEW': currentSystemPermissions.includes('UPMS_SYSTEM_VIEW'),
+      'UPMS_SYSTEM_CREATE': currentSystemPermissions.includes('UPMS_SYSTEM_CREATE'),
+      'UPMS_SYSTEM_UPDATE': currentSystemPermissions.includes('UPMS_SYSTEM_UPDATE'),
+      'UPMS_SYSTEM_DELETE': currentSystemPermissions.includes('UPMS_SYSTEM_DELETE'),
+    }
+    console.table(systemPermissions)
+    console.groupEnd()
+    
+    console.groupEnd()
+  }, [currentSystemPermissions])
+
+  // 獲取主要區塊的數據，顯示所有功能，但根據系統權限禁用
   const sectionCards = useMemo(() => {
     const cards: SectionCard[] = []
 
@@ -57,12 +111,23 @@ const UPMSDashboardPage: FC = () => {
         }
 
         if (item.type === 'item') {
-          // 檢查是否有權限（系統權限 + 角色權限）
+          // 只檢查系統權限（從後端獲取的實際權限）
           let disabled = false
           if (item.requiredPermission) {
-            const hasSystemPerm = hasSystemPermission(item.requiredPermission)
-            const hasRolePerm = hasRolePermission(item.requiredPermission)
-            disabled = !hasSystemPerm || !hasRolePerm
+            const hasPerm = hasSystemPermission(item.requiredPermission)
+            disabled = !hasPerm
+            
+            // Debug: 輸出每個功能的權限檢查結果（僅針對使用者管理功能）
+            if (item.to.includes('/upms/user/')) {
+              console.log(`🔐 [使用者管理] ${item.title}`, {
+                path: item.to,
+                requiredPermission: item.requiredPermission,
+                hasPermission: hasPerm,
+                disabled: disabled,
+                status: disabled ? '❌ 禁用' : '✅ 可用',
+                inPermissionList: currentSystemPermissions.includes(item.requiredPermission)
+              })
+            }
           }
 
           items.push({
@@ -83,7 +148,7 @@ const UPMSDashboardPage: FC = () => {
     })
 
     return cards
-  }, [hasSystemPermission, hasSystem, hasRolePermission])
+  }, [hasSystemPermission, hasSystem, currentSystemPermissions])
 
   const handleItemClick = (path: string, disabled?: boolean) => {
     if (!disabled) {

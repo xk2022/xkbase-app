@@ -2,6 +2,7 @@
 import { http } from '@/shared/api/http'
 import { shouldUseMockDataWithTemp } from '@/shared/utils/useMockData'
 import { ApiError } from '@/app/pages/common/ApiError'
+import type { AlertFn } from '@/app/pages/common/AlertType'
 import type { OrderDetail } from './Model'
 import { MOCK_ORDER_DETAIL_MAP } from './mockOrderDetail'
 import { ApiResponse } from '@/app/pages/model/ApiResponse'
@@ -10,7 +11,7 @@ const API_PREFIX = '/api/tom/orders'
 
 export async function fetchOrderDetail(
   id: string,
-  showAlert?: (msg: string, type: any) => void,
+  showAlert?: AlertFn,
 ): Promise<OrderDetail | null> {
   // 如果使用 Mock 數據（包含臨時啟用），返回假資料
   if (shouldUseMockDataWithTemp()) {

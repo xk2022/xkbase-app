@@ -10,11 +10,11 @@ import {AppToolbar} from '@/app/pages/common/AppToolbar'
 // 你之後要新增/調整欄位，只動 Model/Query/Card，不動 Page
 import { System } from '../Model'
 import { fetchSystemDetail } from '../Query'
-// Cards（你可以先做空殼，逐步補）
-import {SystemBasicInfoCard} from './SystemBasicInfoCard'
-// import {SystemConfigCard} from './SystemConfigCard'
-// import {SystemPermissionSummaryCard} from './SystemPermissionSummaryCard'
-// import {SystemAuditLogCard} from './SystemAuditLogCard'
+// Cards
+import SystemBasicInfoCard from './components/SystemBasicInfoCard'
+// import SystemConfigCard from './components/SystemConfigCard'
+// import SystemPermissionSummaryCard from './components/SystemPermissionSummaryCard'
+// import SystemAuditLogCard from './components/SystemAuditLogCard'
 
 export const DetailPage: React.FC = () => {
   const {id} = useParams<{id: string}>()
@@ -41,19 +41,19 @@ export const DetailPage: React.FC = () => {
 
   useEffect(() => {
     loadDetail()
-  }, [])
+  }, [loadDetail])
 
   return (
     <Content>
       {/* Alert 顯示區 */}
       {alert && <Alert message={alert.message} type={alert.type} />}
 
-      {/* Toolbar：標題 + 麵包屑 */}
+      {/* Toolbar */}
       <AppToolbar
         title='系統詳情'
         breadcrumbs={[
-          {label: '系統管理', href: '#'},
-          {label: '系統', active: false},
+          {label: '權限管理', href: '#'},
+          {label: '系統管理', active: false},
           {label: '詳情', active: true},
         ]}
       />
@@ -70,7 +70,7 @@ export const DetailPage: React.FC = () => {
           <div className='row g-6'>
             {/* 基本資訊 */}
             <div className='col-12 col-lg-6'>
-              <SystemBasicInfoCard detail={detail} reload={loadDetail} />
+              <SystemBasicInfoCard detail={detail} reload={loadDetail} showAlert={showAlert} />
             </div>
 
             {/* 系統設定 / URL / 狀態等 */}

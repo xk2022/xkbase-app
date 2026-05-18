@@ -1,7 +1,7 @@
 /** 這樣的 vite.config.ts 可以：
  * 
  * 優化 React 加載（使用 SWC 替代 Babel）
- * 確保 /xkBase/ 適用於正式環境，開發時自動使用 /
+ * 確保 /xkBase/ 適用於開發環境，生產環境使用 /
  * 自動拆分 node_modules 內的模組，減少首屏 bundle
  * 優化 Vite 快取與 TS 加載
  * 這樣能 提升開發速度 & 優化部署！ 
@@ -10,9 +10,15 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { fileURLToPath, URL } from 'node:url';
 
+// =============================
+// Base Path 統一配置
+// =============================
+// 注意：此配置必須與 src/shared/config/path.config.ts 中的 APP_BASE_PATH 保持一致
+// 如需修改 base path，請同時更新兩個檔案
+// 開發環境使用 '/xkBase/'，生產環境使用 '/'
+const APP_BASE_PATH = process.env.NODE_ENV === 'production' ? '/' : '/xkBase/'
+
 // https://vitejs.dev/config/
-// 如果你的 vite.config.ts 有 base: '/metronic8/react/demo1/'，那麼 Vite 會將所有路徑加上該前綴。
-// base: process.env.NODE_ENV === 'production' ? '/xkBase' : '/',   server: {
 export default defineConfig(({ mode }) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isProd = mode === 'production';
@@ -32,11 +38,8 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-    // 🌟 dev 用 '/'，prod 用 '/xkBase/'
-    // base: isProd ? '/xkBase/' : '/',
-    // base: '/xkBase/',
-
-  base: '/xkbase-app/', // ✅ repo 名稱 + 前後斜線
+    // 🌟 使用統一的 base path 配置
+    base: APP_BASE_PATH,
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url)),

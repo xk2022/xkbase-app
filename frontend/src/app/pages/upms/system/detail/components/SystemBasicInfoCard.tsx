@@ -3,8 +3,8 @@ import React, {useEffect, useMemo, useState} from 'react'
 import { KTIcon } from '@/_metronic/helpers'
 import { AlertFn } from '@/app/pages/common/AlertType'
 
-import type {System} from '../Model'
-import {updateSystem} from '../Query'
+import type {System} from '../../Model'
+import {updateSystem} from '../../Query'
 
 /**
  * Design decision:
@@ -126,8 +126,15 @@ export const SystemBasicInfoCard: React.FC<Props> = (
           </div>
         </div>
 
-        {/* 右上角：編輯 */}
-        <div className='card-toolbar'>
+        <div className='card-toolbar d-flex align-items-center gap-2'>
+          {/* 右上角狀態（展示用） */}
+          {detail.enabled ? (
+            <span className='badge badge-light-success'>啟用</span>
+          ) : (
+            <span className='badge badge-light-secondary'>停用</span>
+          )}
+
+          {/* 右上角：編輯 */}
           {!editing ? (
             <button type='button' className='btn btn-sm btn-light-primary' onClick={onEdit}>
               <KTIcon iconName='pencil' className='fs-3 me-1' />

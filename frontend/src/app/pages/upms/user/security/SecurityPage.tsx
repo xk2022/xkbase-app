@@ -1,10 +1,9 @@
 // src/app/pages/upms/user/security/SecurityPage.tsx
 import React, {useCallback, useEffect, useState} from 'react'
-import {useParams, useNavigate} from 'react-router-dom'
+import {useParams} from 'react-router-dom'
 import {Spinner} from 'react-bootstrap'
 
 import {Content} from '@/_metronic/layout/components/content'
-import {KTIcon} from '@/_metronic/helpers'
 import {useAlert} from '@/app/pages/common/AlertType'
 import {AppToolbar} from '@/app/pages/common/AppToolbar'
 
@@ -12,10 +11,10 @@ import {UserProfile} from '../Model'
 import {fetchUserProfile, resetUserPassword} from '../Query'
 
 // Security Cards
-import {PasswordManagementCard} from './cards/PasswordManagementCard'
-import {LoginHistoryCard} from './cards/LoginHistoryCard'
-import {DeviceManagementCard} from './cards/DeviceManagementCard'
-import {SecuritySummaryCard} from './cards/SecuritySummaryCard'
+import {PasswordManagementCard} from './components/PasswordManagementCard'
+import {LoginHistoryCard} from './components/LoginHistoryCard'
+import {DeviceManagementCard} from './components/DeviceManagementCard'
+import {SecuritySummaryCard} from './components/SecuritySummaryCard'
 
 /**
  * ===============================================================
@@ -31,17 +30,21 @@ import {SecuritySummaryCard} from './cards/SecuritySummaryCard'
  */
 export const SecurityPage: React.FC = () => {
   const {id} = useParams<{id: string}>()
-  const navigate = useNavigate()
   const {alert, showAlert, Alert} = useAlert()
 
   const [loading, setLoading] = useState(true)
   const [detail, setDetail] = useState<UserProfile | null>(null)
 
   const loadDetail = useCallback(async () => {
-    if (!id) return
+    if (!id) {
+      setLoading(false)
+      setDetail(null)
+      showAlert('缺少使用者 ID，請從使用者列表選擇使用者後進入安全設定頁面', 'warning')
+      return
+    }
     setLoading(true)
     try {
-      const data = await fetchUserProfile(id)
+      const data = await fetchUserProfile(id, showAlert)
       setDetail(data)
     } catch (e) {
       console.error(e)
@@ -114,15 +117,37 @@ export const SecurityPage: React.FC = () => {
   if (!detail) {
     return (
       <Content>
+        {alert && <Alert message={alert.message} type={alert.type} />}
         <AppToolbar
           title='使用者安全設定'
           breadcrumbs={[
             {label: '權限管理', href: '#', active: false},
-            {label: '使用者', active: false},
+            {label: '使用者', href: '/upms/user/list', active: false},
             {label: '安全設定', active: true},
           ]}
         />
-        <div className='text-center py-10 text-muted'>查無使用者資料</div>
+        <div className='app-container container-fluid'>
+          <div className='card'>
+            <div className='card-body text-center py-10'>
+              <div className='text-muted mb-4'>
+                {!id ? (
+                  <>
+                    <p className='fs-4 fw-bold text-gray-800 mb-2'>缺少使用者 ID</p>
+                    <p>請從使用者列表選擇使用者後進入安全設定頁面</p>
+                    <a href='/upms/user/list' className='btn btn-primary mt-4'>
+                      前往使用者列表
+                    </a>
+                  </>
+                ) : (
+                  <>
+                    <p className='fs-4 fw-bold text-gray-800 mb-2'>查無使用者資料</p>
+                    <p>無法載入使用者 ID: {id} 的資料</p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
       </Content>
     )
   }

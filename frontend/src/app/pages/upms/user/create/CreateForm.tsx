@@ -38,7 +38,7 @@ export const CreateForm: React.FC<Props> = ({
     roleCodes: [],
     name: '',
     email: '',
-    phone: '',
+    phone: '', // 保留在 state 中但不在 UI 顯示
   })
 
   const [roleOptions, setRoleOptions] = useState<RoleOptionResp[]>([])
@@ -77,11 +77,13 @@ export const CreateForm: React.FC<Props> = ({
     const e: Partial<Record<keyof CreateUserFormValues, string>> = {}
 
     const username = normalize(values.username)
+    const name = normalize(values.name)
     const password = normalize(values.password)
     const confirm = normalize(values.confirmPassword)
     const email = normalize(values.email)
 
     if (!username) e.username = '帳號為必填'
+    if (!name) e.name = '顯示名稱為必填'
     if (!password) e.password = '密碼為必填'
     if (!confirm) e.confirmPassword = '請再次輸入密碼'
     if (password && confirm && password !== confirm)
@@ -109,9 +111,15 @@ export const CreateForm: React.FC<Props> = ({
   const touch = (k: keyof CreateUserFormValues) => () =>
     setTouched((p) => ({...p, [k]: true}))
 
-  const onRolesChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const codes = Array.from(e.target.selectedOptions).map((o) => o.value)
-    setValues((p) => ({...p, roleCodes: codes}))
+  const toggleRole = (code: string) => {
+    setValues((p) => {
+      const currentCodes = p.roleCodes ?? []
+      if (currentCodes.includes(code)) {
+        return {...p, roleCodes: currentCodes.filter((c) => c !== code)}
+      } else {
+        return {...p, roleCodes: [...currentCodes, code]}
+      }
+    })
   }
 
   const submit = async (e: React.FormEvent) => {
@@ -126,150 +134,183 @@ export const CreateForm: React.FC<Props> = ({
    * ------------------------------ */
   return (
     <form onSubmit={submit} className='form'>
-      <div className='row g-5 mb-5'>
-        {/* 第一行：帳號、顯示名稱 */}
-        <div className='col-12 col-lg-6'>
-          <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
-            帳號 <span className='text-danger'>*</span>
-          </label>
-          <input
-            type='text'
-            className={`form-control form-control-solid ${invalid('username')}`}
-            placeholder='例如：admin'
-            value={values.username}
-            onChange={setText('username')}
-            onBlur={touch('username')}
-            autoComplete='off'
-            disabled={submitting}
-          />
-          {show('username') && <div className='invalid-feedback'>{errors.username}</div>}
+      <div className='row g-6'>
+        {/* 左側：輸入欄位 */}
+        <div className='col-12 col-lg-7'>
+          <div className='d-flex flex-column gap-5'>
+            {/* 帳號 */}
+            <div>
+              <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
+                帳號 <span className='text-danger'>*</span>
+              </label>
+              <input
+                type='text'
+                className={`form-control form-control-solid ${invalid('username')}`}
+                placeholder='例如：admin'
+                value={values.username}
+                onChange={setText('username')}
+                onBlur={touch('username')}
+                autoComplete='off'
+                disabled={submitting}
+              />
+              {show('username') && <div className='invalid-feedback'>{errors.username}</div>}
+            </div>
+
+            {/* 顯示名稱 */}
+            <div>
+              <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
+                顯示名稱 <span className='text-danger'>*</span>
+              </label>
+              <input
+                type='text'
+                className={`form-control form-control-solid ${invalid('name')}`}
+                placeholder='例如：王小明'
+                value={values.name ?? ''}
+                onChange={setText('name')}
+                onBlur={touch('name')}
+                disabled={submitting}
+              />
+              {show('name') && <div className='invalid-feedback'>{errors.name}</div>}
+            </div>
+
+            {/* 初始密碼 */}
+            <div>
+              <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
+                初始密碼 <span className='text-danger'>*</span>
+              </label>
+              <input
+                type='password'
+                className={`form-control form-control-solid ${invalid('password')}`}
+                placeholder='請輸入初始密碼'
+                value={values.password}
+                onChange={setText('password')}
+                onBlur={touch('password')}
+                autoComplete='new-password'
+                disabled={submitting}
+              />
+              {show('password') && <div className='invalid-feedback'>{errors.password}</div>}
+              <div className='form-text text-muted fs-7 mt-1'>
+                密碼規則：8–20 碼，需包含英文與數字
+                <br />
+                使用者首次登入後可自行修改密碼
+              </div>
+            </div>
+
+            {/* 確認密碼 */}
+            <div>
+              <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
+                確認密碼 <span className='text-danger'>*</span>
+              </label>
+              <input
+                type='password'
+                className={`form-control form-control-solid ${invalid('confirmPassword')}`}
+                placeholder='請再次輸入密碼'
+                value={values.confirmPassword}
+                onChange={setText('confirmPassword')}
+                onBlur={touch('confirmPassword')}
+                autoComplete='new-password'
+                disabled={submitting}
+              />
+              {show('confirmPassword') && (
+                <div className='invalid-feedback'>{errors.confirmPassword}</div>
+              )}
+            </div>
+
+            {/* Email（選填） */}
+            <div>
+              <label className='form-label fw-bold fs-6 text-gray-700 mb-2'>
+                Email <span className='text-muted fs-7'>(選填)</span>
+              </label>
+              <input
+                type='email'
+                className={`form-control form-control-solid ${invalid('email')}`}
+                placeholder='example@company.com'
+                value={values.email ?? ''}
+                onChange={setText('email')}
+                onBlur={touch('email')}
+                disabled={submitting}
+              />
+              {show('email') && <div className='invalid-feedback'>{errors.email}</div>}
+            </div>
+          </div>
         </div>
 
-        <div className='col-12 col-lg-6'>
-          <label className='form-label fw-bold fs-6 text-gray-700 mb-2'>顯示名稱</label>
-          <input
-            type='text'
-            className='form-control form-control-solid'
-            placeholder='例如：王小明'
-            value={values.name ?? ''}
-            onChange={setText('name')}
-            disabled={submitting}
-          />
-        </div>
-      </div>
+        {/* 右側：角色選擇 */}
+        <div className='col-12 col-lg-5'>
+          <div className='card card-flush h-100'>
+            <div className='card-header border-0 pt-0 pb-4'>
+              <div className='card-title'>
+                <div className='form-text text-muted fs-7 mb-0'>
+                  使用者權限由角色決定，請遵守最小權限原則
+                </div>
+              </div>
+            </div>
+            <div className='card-body pt-0'>
+              <label className='form-label required fw-bold fs-6 text-gray-700 mb-3'>
+                角色 <span className='text-danger'>*</span>{' '}
+                {values.roleCodes.length > 0 && (
+                  <span className='badge badge-light-info ms-2'>
+                    已選 {values.roleCodes.length} 個
+                  </span>
+                )}
+              </label>
+              
+              <div
+                className={`border rounded p-3 ${invalid('roleCodes')}`}
+                style={{
+                  minHeight: 300,
+                  maxHeight: 400,
+                  overflowY: 'auto',
+                  borderColor: show('roleCodes') ? 'var(--kt-danger)' : undefined,
+                }}
+                onBlur={touch('roleCodes')}
+              >
+                {loadingRoles ? (
+                  <div className='text-center text-muted py-4'>
+                    <span className='spinner-border spinner-border-sm me-2' />
+                    載入角色中…
+                  </div>
+                ) : roleOptions.length === 0 ? (
+                  <div className='text-center text-muted py-4'>
+                    （目前沒有可選角色）
+                  </div>
+                ) : (
+                  roleOptions.map((r) => (
+                    <label
+                      key={r.code}
+                      className='form-check form-check-sm form-check-custom form-check-solid mb-3 d-flex align-items-center'
+                      style={{cursor: submitting ? 'not-allowed' : 'pointer'}}
+                    >
+                      <input
+                        type='checkbox'
+                        className='form-check-input'
+                        checked={values.roleCodes?.includes(r.code) ?? false}
+                        onChange={() => toggleRole(r.code)}
+                        disabled={submitting || loadingRoles}
+                      />
+                      <span className='form-check-label flex-grow-1'>
+                        <span className='fw-semibold'>{r.name}</span>
+                        <span className='text-muted fs-7 ms-2'>{r.code}</span>
+                      </span>
+                    </label>
+                  ))
+                )}
+              </div>
 
-      <div className='row g-5 mb-5'>
-        {/* 第二行：初始密碼、確認密碼 */}
-        <div className='col-12 col-lg-6'>
-          <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
-            初始密碼 <span className='text-danger'>*</span>
-          </label>
-          <input
-            type='password'
-            className={`form-control form-control-solid ${invalid('password')}`}
-            placeholder='請輸入初始密碼'
-            value={values.password}
-            onChange={setText('password')}
-            onBlur={touch('password')}
-            autoComplete='new-password'
-            disabled={submitting}
-          />
-          {show('password') && <div className='invalid-feedback'>{errors.password}</div>}
-        </div>
+              {show('roleCodes') && (
+                <div className='invalid-feedback d-block mt-2'>{errors.roleCodes}</div>
+              )}
 
-        <div className='col-12 col-lg-6'>
-          <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
-            確認密碼 <span className='text-danger'>*</span>
-          </label>
-          <input
-            type='password'
-            className={`form-control form-control-solid ${invalid('confirmPassword')}`}
-            placeholder='請再次輸入密碼'
-            value={values.confirmPassword}
-            onChange={setText('confirmPassword')}
-            onBlur={touch('confirmPassword')}
-            autoComplete='new-password'
-            disabled={submitting}
-          />
-          {show('confirmPassword') && (
-            <div className='invalid-feedback'>{errors.confirmPassword}</div>
-          )}
-        </div>
-      </div>
-
-      <div className='row g-5 mb-5'>
-        {/* 第三行：Email、電話 */}
-        <div className='col-12 col-lg-6'>
-          <label className='form-label fw-bold fs-6 text-gray-700 mb-2'>Email</label>
-          <input
-            type='email'
-            className={`form-control form-control-solid ${invalid('email')}`}
-            placeholder='example@company.com'
-            value={values.email ?? ''}
-            onChange={setText('email')}
-            onBlur={touch('email')}
-            disabled={submitting}
-          />
-          {show('email') && <div className='invalid-feedback'>{errors.email}</div>}
-        </div>
-
-        <div className='col-12 col-lg-6'>
-          <label className='form-label fw-bold fs-6 text-gray-700 mb-2'>電話</label>
-          <input
-            type='tel'
-            className='form-control form-control-solid'
-            placeholder='例如：0912-345-678'
-            value={values.phone ?? ''}
-            onChange={setText('phone')}
-            disabled={submitting}
-          />
-        </div>
-      </div>
-
-      <div className='mb-5'>
-        {/* 角色選擇 */}
-        <label className='form-label required fw-bold fs-6 text-gray-700 mb-2'>
-          角色 <span className='text-danger'>*</span>{' '}
-          {values.roleCodes.length > 0 && (
-            <span className='badge badge-light-info ms-2'>
-              已選 {values.roleCodes.length} 個
-            </span>
-          )}
-        </label>
-        <select
-          className={`form-select form-select-solid ${invalid('roleCodes')}`}
-          multiple
-          value={values.roleCodes ?? []}
-          onChange={onRolesChange}
-          onBlur={touch('roleCodes')}
-          disabled={submitting || loadingRoles}
-          style={{minHeight: 100}}
-        >
-          {roleOptions.length === 0 ? (
-            <option value='' disabled>
-              {loadingRoles ? '載入角色中…' : '（目前沒有可選角色）'}
-            </option>
-          ) : (
-            roleOptions.map((r) => (
-              <option key={r.code} value={r.code}>
-                {r.code}（{r.name}）
-              </option>
-            ))
-          )}
-        </select>
-
-        {show('roleCodes') && (
-          <div className='invalid-feedback d-block'>{errors.roleCodes}</div>
-        )}
-
-        <div className='form-text text-muted fs-7 mt-2'>
-          按住 <kbd className='badge badge-light-primary fs-8'>⌘</kbd>（Mac）或{' '}
-          <kbd className='badge badge-light-primary fs-8'>Ctrl</kbd>（Windows）可多選
+              <div className='form-text text-muted fs-7 mt-3'>
+                ⚠ 請避免給予 ADMIN 角色給非系統管理人員
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* begin::Actions */}
-      <div className='d-flex justify-content-end gap-3 pt-5 border-top'>
+      <div className='d-flex justify-content-end gap-3 pt-5 border-top mt-6'>
         <button
           type='button'
           className='btn btn-light btn-active-light-primary'

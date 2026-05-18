@@ -1,10 +1,10 @@
-// src/app/pages/upms/system/mockSystems.tsx
+// src/app/pages/upms/system/__mock__/mockSystems.tsx
 /**
  * UPMS System Mock 數據
  * 用於開發和測試環境
  */
 
-import type { System } from './Model'
+import type { System } from '../Model'
 
 /**
  * Mock 系統列表數據
@@ -68,10 +68,10 @@ export const MOCK_SYSTEMS: System[] = [
     id: '7',
     code: 'PORT',
     name: '港口管理系統',
-    enabled: true,
-    remark: '港口資訊、船期管理',
+    enabled: false,
+    remark: '港口資訊、船期管理（已停用）',
     createdTime: '2024-05-01T00:00:00+08:00',
-    updatedTime: '2025-01-09T10:00:00+08:00',
+    updatedTime: '2024-12-01T10:00:00+08:00',
   },
   {
     id: '8',
@@ -91,4 +91,11 @@ let mockSystemIdCounter = 100
 
 export function generateMockSystemId(): string {
   return String(mockSystemIdCounter++)
+}
+
+/**
+ * 取得系統創建時間的輔助函數
+ */
+export function getSystemCreatedTime(system: System): string | undefined {
+  return system.createdTime
 }

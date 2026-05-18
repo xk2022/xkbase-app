@@ -84,7 +84,7 @@ export function ListPage() {
                 <input
                   type='text'
                   className='form-control form-control-solid w-250px ps-14'
-                  placeholder='搜尋系統...'
+                  placeholder='請輸入關鍵字'
                   value={tempKeyword}
                   onChange={(e) => setTempKeyword(e.target.value)}
                   onKeyDown={handleSearchKeyDown}

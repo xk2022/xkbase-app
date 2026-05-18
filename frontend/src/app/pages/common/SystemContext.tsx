@@ -38,9 +38,18 @@ export function SystemProvider({children}: {children: React.ReactNode}) {
 
   // 獲取當前用戶在選中系統下的權限
   const currentSystemPermissions = useMemo(() => {
-    if (!currentUser || !selectedSystemUuid) return []
+    if (!currentUser || !selectedSystemCode) return []
     
-    // 從用戶的 systemDTOs 中找到對應的系統權限
+    // 優先使用 permissionCodes（後端直接返回的權限碼列表）
+    if (currentUser.permissionCodes && currentUser.permissionCodes.length > 0) {
+      // 過濾出屬於當前系統的權限（根據權限碼的前綴判斷，例如 UPMS_*）
+      return currentUser.permissionCodes.filter(code => {
+        const prefix = code.split('_')[0] // 取得系統代碼前綴
+        return prefix === selectedSystemCode
+      })
+    }
+    
+    // 降級方案：從用戶的 systemDTOs 中找到對應的系統權限
     const userSystem = currentUser.systemDTOs?.find(
       sys => sys.systemUuid === selectedSystemUuid
     )
@@ -60,7 +69,7 @@ export function SystemProvider({children}: {children: React.ReactNode}) {
     return userSystem.permissionDTOS
       .filter(perm => perm.active)
       .map(perm => perm.name)
-  }, [currentUser, selectedSystemUuid])
+  }, [currentUser, selectedSystemUuid, selectedSystemCode])
 
   // 檢查是否有指定權限
   const hasSystemPermission = useCallback((permission: string): boolean => {
